@@ -80,9 +80,9 @@ export default function StatsScreen({ onBack }: Props) {
           <View style={[tbl.table, { borderColor: colors.borderBox }]}>
             <View style={[tbl.row, { backgroundColor: colors.bgCard }]}>
               <Text style={[tbl.cell, tbl.wide, tbl.hTxt, { color: colors.textSecondary }]}>{t('stats.col_level')}</Text>
-              <Text style={[tbl.cell, tbl.hTxt, { color: colors.textSecondary }]}>{t('stats.col_games')}</Text>
-              <Text style={[tbl.cell, tbl.hTxt, { color: colors.textSecondary }]}>{t('stats.col_avg_time')}</Text>
-              <Text style={[tbl.cell, tbl.hTxt, { color: colors.textSecondary }]}>{t("stats.col_avg_errors")}</Text>
+              <Text style={[tbl.cell, tbl.hTxt, { color: colors.textSecondary }]} numberOfLines={2} adjustsFontSizeToFit>{t('stats.col_games')}</Text>
+              <Text style={[tbl.cell, tbl.hTxt, { color: colors.textSecondary }]} numberOfLines={2} adjustsFontSizeToFit>{t('stats.col_avg_time')}</Text>
+              <Text style={[tbl.cell, tbl.hTxt, { color: colors.textSecondary }]} numberOfLines={2} adjustsFontSizeToFit>{t("stats.col_avg_errors")}</Text>
             </View>
             {LEVELS.map(({ key }, i) => {
               const s = stats[key] ?? { gamesPlayed: 0, totalSeconds: 0, totalErrors: 0, bestTime: null, bestTimeErrors: 0 };

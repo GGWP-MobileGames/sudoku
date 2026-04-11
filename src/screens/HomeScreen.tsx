@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import {
   View, Text, TouchableOpacity, StyleSheet,
-  StatusBar, ScrollView, Animated, LayoutAnimation, Platform,
+  StatusBar, ScrollView, Animated, LayoutAnimation, Platform, Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS } from "../utils/theme";
@@ -64,11 +64,26 @@ export default function HomeScreen({ initialDifficulty, onStart, onResume, onSta
     });
   };
 
-  const handleStart = () => {
+  const doStart = () => {
     const entry = getRandomPuzzle(selected);
     onStart(selected, entry);
     // Nettoyage en arrière-plan, sans bloquer la navigation
     convertOngoingToAbandoned().catch(() => {});
+  };
+
+  const handleStart = () => {
+    if (savedGame) {
+      Alert.alert(
+        t("home.confirm_title"),
+        t("home.confirm_message"),
+        [
+          { text: t("home.confirm_cancel"), style: "cancel" },
+          { text: t("home.confirm_ok"), style: "destructive", onPress: doStart },
+        ]
+      );
+    } else {
+      doStart();
+    }
   };
 
   const diffLabel = savedGame?.difficulty ? t(`home.difficulties.${savedGame.difficulty}`) : '';

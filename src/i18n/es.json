@@ -13,6 +13,10 @@
     "daily_todo": "★  DESAFÍO DEL DÍA",
     "daily_done": "✓  DESAFÍO DEL DÍA",
     "stats_link": "Ver mis estadísticas",
+    "confirm_title": "Partida en curso",
+    "confirm_message": "Tienes una partida en curso. Empezar una nueva borrará tu progreso. ¿Continuar?",
+    "confirm_ok": "Nueva partida",
+    "confirm_cancel": "Cancelar",
     "difficulties": {
       "easy": "Fácil",
       "medium": "Intermedio",

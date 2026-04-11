@@ -13,6 +13,10 @@
     "daily_todo": "★  今日の挑戦",
     "daily_done": "✓  今日の挑戦",
     "stats_link": "統計を見る",
+    "confirm_title": "ゲーム中",
+    "confirm_message": "進行中のゲームがあります。新しいゲームを始めると進行状況が失われます。続けますか？",
+    "confirm_ok": "新しいゲーム",
+    "confirm_cancel": "キャンセル",
     "difficulties": {
       "easy": "かんたん",
       "medium": "ふつう",

@@ -13,6 +13,10 @@
     "daily_todo": "★  DAILY CHALLENGE",
     "daily_done": "✓  DAILY CHALLENGE",
     "stats_link": "View my statistics",
+    "confirm_title": "Game in progress",
+    "confirm_message": "You have a game in progress. Starting a new game will erase your progress. Continue?",
+    "confirm_ok": "New game",
+    "confirm_cancel": "Cancel",
     "difficulties": {
       "easy": "Easy",
       "medium": "Medium",

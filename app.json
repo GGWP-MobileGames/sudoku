@@ -25,7 +25,13 @@
     },
     "scheme": "sudoku",
     "plugins": [
-      "expo-font"
+      "expo-font",
+      ["expo-splash-screen", {
+        "image": "./assets/splash-icon.png",
+        "imageWidth": 280,
+        "resizeMode": "contain",
+        "backgroundColor": "#EDEADE"
+      }]
     ],
     "extra": {
       "eas": {

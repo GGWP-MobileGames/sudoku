@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { useSettings } from "../context/SettingsContext";
 import type { Grid } from "../utils/sudoku";
@@ -19,6 +19,14 @@ function countInGrid(grid: Grid, num: number): number {
 }
 
 const NumberPad = React.memo(function NumberPad({ onInput, onHint, onUndo, canUndo, hintsLeft, notesMode, onToggleNotes, grid }: Props) {
+  // État local optimiste pour un retour visuel instantané
+  const [localNotes, setLocalNotes] = useState(notesMode);
+  useEffect(() => { setLocalNotes(notesMode); }, [notesMode]);
+
+  const handleToggleNotes = () => {
+    setLocalNotes(n => !n);
+    onToggleNotes();
+  };
   const { t, settings, colors } = useSettings();
   const large = settings.largeNumbers;
   const sz = {
@@ -73,15 +81,15 @@ const NumberPad = React.memo(function NumberPad({ onInput, onHint, onUndo, canUn
 
         {/* Notes */}
         <TouchableOpacity
-          onPress={onToggleNotes}
+          onPress={handleToggleNotes}
           style={[
             styles.actionBtn, btnStyle,
-            notesMode && { backgroundColor: colors.bgCellSelected, borderColor: colors.borderBox },
+            localNotes && { backgroundColor: colors.bgCellSelected, borderColor: colors.borderBox },
           ]}
           activeOpacity={0.6}
         >
-          <Text style={[styles.actionIcon, secColor, notesMode && { color: colors.textOnSelected }, { fontSize: sz.actionIcon }]}>✎</Text>
-          <Text style={[styles.actionLabel, secColor, notesMode && { color: colors.textOnSelected }, { fontSize: sz.actionLabel }]}>{t("game.notes")}</Text>
+          <Text style={[styles.actionIcon, secColor, localNotes && { color: colors.textOnSelected }, { fontSize: sz.actionIcon }]}>✎</Text>
+          <Text style={[styles.actionLabel, secColor, localNotes && { color: colors.textOnSelected }, { fontSize: sz.actionLabel }]}>{t("game.notes")}</Text>
         </TouchableOpacity>
 
         {/* Indice */}

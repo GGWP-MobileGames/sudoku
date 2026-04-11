@@ -13,6 +13,10 @@
     "daily_todo": "★  DESAFIO DO DIA",
     "daily_done": "✓  DESAFIO DO DIA",
     "stats_link": "Ver minhas estatísticas",
+    "confirm_title": "Jogo em andamento",
+    "confirm_message": "Você tem um jogo em andamento. Começar um novo apagará seu progresso. Continuar?",
+    "confirm_ok": "Novo jogo",
+    "confirm_cancel": "Cancelar",
     "difficulties": {
       "easy": "Fácil",
       "medium": "Médio",

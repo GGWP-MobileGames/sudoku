@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Animated, Modal } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSettings } from "../context/SettingsContext";
 import type { PedagogicHint } from "../hooks/useGameState";
 
@@ -11,6 +12,7 @@ interface Props {
 
 export default function HintModal({ hint, onApply, onDismiss }: Props) {
   const { t, colors } = useSettings();
+  const insets = useSafeAreaInsets();
   const fadeAnim  = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(40)).current;
 
@@ -36,7 +38,7 @@ export default function HintModal({ hint, onApply, onDismiss }: Props) {
   return (
     <Modal transparent animationType="none" visible={!!hint} onRequestClose={handleDismiss}>
       {/* Carte en bas de l'écran */}
-      <Animated.View style={[styles.card, { backgroundColor: colors.bg, borderTopColor: colors.borderBox, transform: [{ translateY: slideAnim }] }]}>
+      <Animated.View style={[styles.card, { backgroundColor: colors.bg, borderTopColor: colors.borderBox, paddingBottom: Math.max(insets.bottom, 20) + 16, transform: [{ translateY: slideAnim }] }]}>
 
         <View style={styles.header}>
           <Text style={[styles.headerIcon, { color: colors.hintColor }]}>✦</Text>
@@ -62,7 +64,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     paddingTop: 20,
     paddingHorizontal: 24,
-    paddingBottom: 36, // marge pour les téléphones avec barre de navigation
+    paddingBottom: 20, // sera écrasé dynamiquement avec useSafeAreaInsets
     gap: 14,
   },
 

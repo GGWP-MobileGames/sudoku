@@ -13,6 +13,10 @@
     "daily_todo": "★  TAGESAUFGABE",
     "daily_done": "✓  TAGESAUFGABE",
     "stats_link": "Statistiken anzeigen",
+    "confirm_title": "Laufendes Spiel",
+    "confirm_message": "Du hast ein laufendes Spiel. Ein neues Spiel zu starten löscht deinen Fortschritt. Fortfahren?",
+    "confirm_ok": "Neues Spiel",
+    "confirm_cancel": "Abbrechen",
     "difficulties": {
       "easy": "Leicht",
       "medium": "Mittel",

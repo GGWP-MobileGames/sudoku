@@ -151,20 +151,20 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
   useEffect(() => {
     const handleAppState = (nextState: AppStateStatus) => {
       if (nextState === "background" || nextState === "inactive") {
-if (timerRef.current) {
+        // Mettre en pause pour masquer la grille dans l'app switcher
+        if (!completed && grid.length) {
+          setPaused(true);
+        }
+        if (timerRef.current) {
           clearInterval(timerRef.current);
           timerRef.current = null;
-        }
-      } else if (nextState === "active") {
-if (!paused && !completed && grid.length && !timerRef.current) {
-          timerRef.current = setInterval(() => setSeconds(s => s + 1), 1000);
         }
       }
     };
 
     const sub = AppState.addEventListener("change", handleAppState);
     return () => sub.remove();
-  }, [paused, completed, grid.length]);
+  }, [completed, grid.length]);
 
   // ── Sauvegarde auto ──────────────────────────────────────────────────────────
   useEffect(() => {
