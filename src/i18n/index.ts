@@ -20,7 +20,12 @@ const translations: Record<Language, typeof fr> = { fr, en, es, de, pt, ja };
 function detectDeviceLanguage(): Language {
   let locale = "fr";
   try {
-    if (Platform.OS === "android") {
+    if (Platform.OS === "web") {
+      // Web : utiliser navigator.language (disponible dans tous les navigateurs modernes)
+      if (typeof navigator !== "undefined" && navigator.language) {
+        locale = navigator.language;
+      }
+    } else if (Platform.OS === "android") {
       locale = NativeModules.I18nManager?.localeIdentifier ?? "fr";
     } else {
       locale = NativeModules.SettingsManager?.settings?.AppleLocale

@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     alignItems: "center", justifyContent: "center", padding: 32,
   },
   card: {
-    width: "100%", padding: 28,
+    width: "100%", maxWidth: 440, padding: 28,
     alignItems: "center", gap: 20, borderWidth: 2,
   },
   innerBorder: { width: "85%", height: 1 },

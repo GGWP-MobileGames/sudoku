@@ -7,6 +7,7 @@ interface ResponsiveValues {
   height: number;
   isLandscape: boolean;
   isTablet: boolean;
+  isCompact: boolean; // iPad Split View étroit (< 350px)
   deviceType: DeviceType;
   scale: (base: number) => number;
   gridSize: number;
@@ -21,6 +22,7 @@ export function useResponsive(): ResponsiveValues {
   const shortSide = Math.min(width, height);
   const isLandscape = width > height;
   const isTablet = shortSide >= 600;
+  const isCompact = width < 350; // iPad Split View étroit
   const deviceType: DeviceType =
     width >= 1024 ? "desktop" : isTablet ? "tablet" : "phone";
 
@@ -48,6 +50,7 @@ export function useResponsive(): ResponsiveValues {
     height,
     isLandscape,
     isTablet,
+    isCompact,
     deviceType,
     scale,
     gridSize,

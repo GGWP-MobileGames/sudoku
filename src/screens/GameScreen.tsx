@@ -13,6 +13,7 @@ import HintModal from "../components/HintModal";
 import { COLORS, SPACING } from "../utils/theme";
 import { useSettings } from "../context/SettingsContext";
 import { useResponsive } from "../hooks/useResponsive";
+import { useKeyboard } from "../hooks/useKeyboard";
 import { clearOngoing, clearSavedGame, serializeNotes, serializeCellErrors } from "../utils/storage";
 import { saveDailyRecord, getTodayKey, saveDailyGame, clearDailyGame, recordDailyInHistory, recordDailyFailureInHistory } from "../utils/dailyChallenge";
 import type { Difficulty } from "../utils/puzzles";
@@ -37,7 +38,7 @@ interface Props {
 }
 export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, dailyDateKey, onBackToHome }: Props) {
   const { colors, settings, t } = useSettings();
-  const { gridSize, isLandscape } = useResponsive();
+  const { gridSize, isLandscape, isCompact } = useResponsive();
   const hintsPerGame = isDaily ? 3 : (settings?.hintsPerGame ?? 3);
   const effectiveLimitErrors = isDaily ? true : (settings?.limitErrors ?? true);
   const effectiveMaxErrors   = isDaily ? 3   : (settings?.maxErrors   ?? 3);
@@ -77,6 +78,31 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
   const handleInput = React.useCallback((n: number) => {
     inputNumber(n);
   }, [inputNumber]);
+
+  // Navigation au clavier : flèches directionnelles
+  const handleArrow = React.useCallback((dir: "up" | "down" | "left" | "right") => {
+    setSelected(prev => {
+      const [r, c] = prev ?? [0, 0];
+      switch (dir) {
+        case "up":    return [Math.max(0, r - 1), c] as [number, number];
+        case "down":  return [Math.min(8, r + 1), c] as [number, number];
+        case "left":  return [r, Math.max(0, c - 1)] as [number, number];
+        case "right": return [r, Math.min(8, c + 1)] as [number, number];
+      }
+    });
+  }, [setSelected]);
+
+  // Raccourcis clavier (web / clavier externe)
+  useKeyboard({
+    onNumber:      handleInput,
+    onDelete:      () => handleInput(0),
+    onToggleNotes: () => setNotesMode(!notesMode),
+    onUndo:        undo,
+    onHint:        useHint,
+    onEscape:      () => setSelected(null),
+    onArrow:       handleArrow,
+    disabled:      paused || completed || defeatPending,
+  });
 
   React.useEffect(() => {
     if (mistakes > prevMistakesRef.current) {
@@ -234,6 +260,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         hintsLeft={hintsLeft} notesMode={notesMode}
         onToggleNotes={() => setNotesMode(!notesMode)}
         grid={grid}
+        compact={isCompact}
       />
     </TouchableOpacity>
   );

@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS } from "../utils/theme";
 import { loadTodayRecord, getTodayKey } from "../utils/dailyChallenge";
 import { useSettings } from "../context/SettingsContext";
+import { useResponsive } from "../hooks/useResponsive";
 import { Ionicons } from "@expo/vector-icons";
 import { loadGame, clearSavedGame, convertOngoingToAbandoned, clearOngoing, type SavedGame } from "../utils/storage";
 import { getRandomPuzzle } from "../utils/puzzles";
@@ -33,6 +34,7 @@ interface Props {
 
 export default function HomeScreen({ initialDifficulty, onStart, onResume, onStats, onSettings, onDaily, onInfo, onDifficultyChange }: Props) {
   const { colors, settings, t } = useSettings();
+  const { scale, isTablet } = useResponsive();
   const [selected,    setSelected]    = useState<Difficulty>(initialDifficulty);
   const [dailyDone,   setDailyDone]   = useState(false);
   const [savedGame,   setSavedGame]   = useState<SavedGame | null>(null);
@@ -91,7 +93,7 @@ export default function HomeScreen({ initialDifficulty, onStart, onResume, onSta
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.bg }]}>
       <StatusBar barStyle={settings.darkMode ? "light-content" : "dark-content"} backgroundColor={colors.bg} />
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={[styles.scroll, isTablet && styles.scrollTablet]} showsVerticalScrollIndicator={false}>
 
         {/* Titre + engrenage */}
         <View style={{ width: "100%", alignItems: "center" }}>
@@ -222,6 +224,7 @@ export default function HomeScreen({ initialDifficulty, onStart, onResume, onSta
 const styles = StyleSheet.create({
   safe:   { flex: 1 },
   scroll: { flexGrow: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32, paddingVertical: 20, gap: 18 },
+  scrollTablet: { maxWidth: 520, alignSelf: "center", width: "100%" },
 
   gearBtn:  { position: "absolute", top: 0, right: 0, padding: 8 },
   infoBtn:     { position: "absolute", top: 0, left: 0, padding: 8 },

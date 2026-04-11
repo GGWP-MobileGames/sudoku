@@ -12,13 +12,14 @@ interface Props {
   notesMode:     boolean;
   onToggleNotes: () => void;
   grid:          Grid;
+  compact?:      boolean;
 }
 
 function countInGrid(grid: Grid, num: number): number {
   return grid.reduce((acc, row) => acc + row.filter(v => v === num).length, 0);
 }
 
-const NumberPad = React.memo(function NumberPad({ onInput, onHint, onUndo, canUndo, hintsLeft, notesMode, onToggleNotes, grid }: Props) {
+const NumberPad = React.memo(function NumberPad({ onInput, onHint, onUndo, canUndo, hintsLeft, notesMode, onToggleNotes, grid, compact }: Props) {
   // État local optimiste pour un retour visuel instantané
   const [localNotes, setLocalNotes] = useState(notesMode);
   useEffect(() => { setLocalNotes(notesMode); }, [notesMode]);
@@ -41,7 +42,7 @@ const NumberPad = React.memo(function NumberPad({ onInput, onHint, onUndo, canUn
   const primaryColor = { color: colors.textPrimary };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, compact && { paddingHorizontal: 4, gap: 4 }]}>
       {/* Chiffres */}
       <View style={styles.numRow}>
         {[1,2,3,4,5,6,7,8,9].map((n) => {

@@ -143,7 +143,7 @@ export default function DefeatModal({
 
 const styles = StyleSheet.create({
   overlay:     { flex: 1, alignItems: "center", justifyContent: "center", padding: 32 },
-  card:        { width: "100%", padding: 28, alignItems: "center", gap: 20, borderWidth: 2 },
+  card:        { width: "100%", maxWidth: 440, padding: 28, alignItems: "center", gap: 20, borderWidth: 2 },
   innerBorder: { width: "85%", height: 1 },
   title:       { fontSize: 26, fontWeight: "800", letterSpacing: 3, width: "100%", textAlign: "center" },
   ornament:    { width: "100%", flexDirection: "row", alignItems: "center", gap: 10 },

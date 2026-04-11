@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { loadStats, loadHistory, formatTime, formatDate, type AllStats, type HistoryEntry } from "../utils/storage";
 import { useSettings } from "../context/SettingsContext";
 import { COLORS, type ColorTheme } from "../utils/theme";
+import { useResponsive } from "../hooks/useResponsive";
 
 interface Props { onBack: () => void; }
 
@@ -36,6 +37,7 @@ function TableTitle({ label, colors }: { label: string; colors: ColorTheme }) {
 
 export default function StatsScreen({ onBack }: Props) {
   const { colors, settings, t } = useSettings();
+  const { isTablet } = useResponsive();
   const [stats,   setStats]   = useState<AllStats | null>(null);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
 
@@ -71,7 +73,7 @@ export default function StatsScreen({ onBack }: Props) {
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={[styles.scroll, isTablet && { maxWidth: 700, alignSelf: "center" as const, width: "100%" as const }]} showsVerticalScrollIndicator={false}>
 
         {!stats ? <ActivityIndicator color={colors.textSecondary} style={{ marginVertical: 32 }} /> : (<>
 

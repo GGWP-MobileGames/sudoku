@@ -5,6 +5,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSettings } from "../context/SettingsContext";
+import { useResponsive } from "../hooks/useResponsive";
 
 interface Props {
   onClose: () => void;
@@ -28,12 +29,13 @@ function withGGWP(text: string, baseStyle: object, ggwpColor: string) {
 
 export default function GGWPScreen({ onClose }: Props) {
   const { colors, settings, t } = useSettings();
+  const { isTablet } = useResponsive();
 
   return (
     <SafeAreaView style={[s.safe, { backgroundColor: colors.bg }]}>
       <StatusBar barStyle={settings.darkMode ? "light-content" : "dark-content"} backgroundColor={colors.bg} />
 
-      <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={[s.scroll, isTablet && { maxWidth: 520, alignSelf: "center" as const }]} showsVerticalScrollIndicator={false}>
 
         {/* Titre */}
         <View style={s.header}>

@@ -25,6 +25,10 @@
       "supportsTablet": true,
       "requireFullScreen": false
     },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/icon.png"
+    },
     "scheme": "sudoku",
     "plugins": [
       "expo-font",
