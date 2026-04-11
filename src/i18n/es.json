@@ -132,6 +132,8 @@
     "highlight_identical_desc": "Destaca las celdas con el mismo valor",
     "highlight_group": "Resaltar fila, columna y bloque",
     "highlight_group_desc": "Colorea la zona alrededor de la celda seleccionada",
+    "show_cell_errors": "Mostrar errores en las celdas",
+    "show_cell_errors_desc": "Muestra los números incorrectos probados en cada celda",
     "hints_label": "Pistas disponibles",
     "hints_default": "Por defecto: 3",
     "section_errors": "ERRORES POR PARTIDA",

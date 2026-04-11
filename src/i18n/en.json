@@ -132,6 +132,8 @@
     "highlight_identical_desc": "Highlights cells with the same value",
     "highlight_group": "Highlight row, column and box",
     "highlight_group_desc": "Colors the area around the selected cell",
+    "show_cell_errors": "Show errors in cells",
+    "show_cell_errors_desc": "Displays wrong numbers tried in each cell",
     "hints_label": "Available hints",
     "hints_default": "Default: 3",
     "section_errors": "ERRORS PER GAME",

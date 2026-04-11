@@ -9,6 +9,7 @@ export interface AppSettings {
   largeNumbers:       boolean; // chiffres grands dans la grille
   limitErrors:        boolean; // activer la limite d'erreurs
   maxErrors:          number;  // nombre d'erreurs max (0-99)
+  showCellErrors:     boolean; // afficher les erreurs dans les cases
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -20,6 +21,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   largeNumbers:       true,
   limitErrors:        true,
   maxErrors:          3,
+  showCellErrors:     true,
 };
 
 const KEY = "app_settings";

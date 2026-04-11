@@ -133,7 +133,7 @@ export default function HomeScreen({ initialDifficulty, onStart, onResume, onSta
               </View>
               <View style={styles.resumeBtns}>
                 <TouchableOpacity onPress={() => onResume(savedGame)} style={[styles.resumeBtn, { backgroundColor: settings.darkMode ? colors.gold : colors.bgCellSelected, borderColor: settings.darkMode ? colors.gold : colors.borderBox }]} activeOpacity={0.75}>
-                  <Text style={[styles.resumeBtnPrimaryText, { color: settings.darkMode ? '#1A1A1A' : colors.textOnSelected }]}>{t('home.resume_btn')}</Text>
+                  <Text numberOfLines={1} adjustsFontSizeToFit style={[styles.resumeBtnPrimaryText, { color: settings.darkMode ? '#1A1A1A' : colors.textOnSelected }]}>{t('home.resume_btn')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleDiscard} style={[styles.resumeBtn, { backgroundColor: colors.bg, borderColor: colors.borderThin }]} activeOpacity={0.75}>
                   <Text style={[styles.resumeBtnSecondaryText, { color: colors.textSecondary }]}>{t('home.resume_discard')}</Text>
@@ -171,7 +171,7 @@ export default function HomeScreen({ initialDifficulty, onStart, onResume, onSta
                     {selected === key && <View style={[styles.radioDot, { backgroundColor: colors.borderBox }]} />}
                   </View>
                   <View>
-                    <Text style={[styles.diffLabel, { color: selected === key ? colors.textPrimary : colors.textSecondary, fontWeight: selected === key ? "700" : "400" }]}>
+                    <Text numberOfLines={1} adjustsFontSizeToFit style={[styles.diffLabel, { color: selected === key ? colors.textPrimary : colors.textSecondary, fontWeight: selected === key ? "700" : "400" }]}>
                       {t(`home.difficulties.${key}`)}
                     </Text>
                   </View>
@@ -183,7 +183,7 @@ export default function HomeScreen({ initialDifficulty, onStart, onResume, onSta
 
         {/* Bouton Commencer */}
         <TouchableOpacity onPress={handleStart} style={[styles.startBtn, { backgroundColor: settings.darkMode ? colors.gold : colors.bgCellSelected, borderColor: settings.darkMode ? colors.gold : colors.borderBox }]} activeOpacity={0.75}>
-          <Text style={[styles.startText, { color: settings.darkMode ? '#1A1A1A' : colors.textOnSelected }]}>{t('home.start')}</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[styles.startText, { color: settings.darkMode ? '#1A1A1A' : colors.textOnSelected }]}>{t('home.start')}</Text>
         </TouchableOpacity>
 
         {/* Défi du jour */}
@@ -192,7 +192,7 @@ export default function HomeScreen({ initialDifficulty, onStart, onResume, onSta
           style={[styles.dailyBtn, { borderColor: dailyDone ? "#4A7A41" : COLORS.gold }]}
           activeOpacity={0.75}
         >
-          <Text style={[styles.dailyText, { color: dailyDone ? "#4A7A41" : COLORS.gold }]}>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[styles.dailyText, { color: dailyDone ? "#4A7A41" : COLORS.gold }]}>
             {dailyDone ? t("home.daily_done") : t("home.daily_todo")}
           </Text>
         </TouchableOpacity>

@@ -162,10 +162,10 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
               onBackToHome();
             }} style={[styles.backBtn, { borderColor: colors.borderBox }]} activeOpacity={0.7}>
             <Text style={[styles.chevron, { color: colors.textPrimary }]}>‹</Text>
-            <Text style={[styles.backText, { color: colors.textPrimary }]}>{t('game.menu')}</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[styles.backText, { color: colors.textPrimary }]}>{t('game.menu')}</Text>
           </TouchableOpacity>
           <View style={[styles.diffPill, { backgroundColor: isDaily ? COLORS.gold : colors.bgCellSelected }]}>
-            <Text style={[styles.diffText, { color: isDaily ? '#1A1A1A' : colors.textOnSelected }]}>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[styles.diffText, { color: isDaily ? '#1A1A1A' : colors.textOnSelected }]}>
               {isDaily ? t('game.daily_badge') : t(`home.difficulties.${difficulty}`).toUpperCase()}
             </Text>
           </View>
@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
     marginRight: 3,
   },
   backText:  { fontSize: 12, color: COLORS.textPrimary, fontWeight: "700", letterSpacing: 2.5 },
-  diffPill:  { paddingVertical: 8, paddingHorizontal: 14, backgroundColor: COLORS.bgCellSelected },
+  diffPill:  { paddingVertical: 8, paddingHorizontal: 14, backgroundColor: COLORS.bgCellSelected, flexShrink: 1 },
   diffText:  { fontSize: 12, color: COLORS.textOnSelected, fontWeight: "700", letterSpacing: 2 },
 
   // Barre de stats

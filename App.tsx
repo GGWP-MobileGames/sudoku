@@ -1,4 +1,5 @@
 import React from "react";
+import { BackHandler } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { SettingsProvider } from "./src/context/SettingsContext";
 import { useFonts, Cinzel_700Bold } from "@expo-google-fonts/cinzel";
@@ -97,6 +98,21 @@ function AppContent({ onReady }: AppContentProps) {
   const handleBackSettings = () => navigate("home", "down");
   const handleGoDaily      = () => navigate("daily", "right");
   const handleBackDaily    = () => navigate("home", "left");
+
+  // ── Geste retour Android ──────────────────────────────────────────────────
+  React.useEffect(() => {
+    const onBack = () => {
+      if (!screen || screen === "home" || screen === "welcome") return false;
+      if (screen === "game")       { handleBackToHome();   return true; }
+      if (screen === "stats")      { handleBackStats();    return true; }
+      if (screen === "settings")   { handleBackSettings(); return true; }
+      if (screen === "daily")      { handleBackDaily();    return true; }
+      if (screen === "daily-game") { handleBackToHome();   return true; }
+      return false;
+    };
+    const sub = BackHandler.addEventListener("hardwareBackPress", onBack);
+    return () => sub.remove();
+  }, [screen]);
 
   if (!screen) return null;
 

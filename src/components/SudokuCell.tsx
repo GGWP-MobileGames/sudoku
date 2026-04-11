@@ -31,7 +31,7 @@ const SudokuCell = React.memo(function SudokuCell({
   isFixed, isSelected, isHighlighted, isMatchValue, isError, isHintHighlight, isHintTarget,
   onPress, animValue, goldAnim, cellFontSize, noteFontSize,
 }: Props) {
-  const { colors } = useSettings();
+  const { colors, settings } = useSettings();
 
   let bg = colors.bgCellDefault;
   if (isHintTarget)           bg = colors.hintColor;
@@ -47,7 +47,7 @@ const SudokuCell = React.memo(function SudokuCell({
 
   const noteNumbers  = value === 0 ? [...notes].sort((a, b) => a - b) : [];
   const showNotes    = noteNumbers.length > 0;
-  const errorNumbers = value === 0 ? [...errors].sort((a, b) => a - b) : [];
+  const errorNumbers = value === 0 && settings.showCellErrors ? [...errors].sort((a, b) => a - b) : [];
   const showErrors   = errorNumbers.length > 0;
 
   const nfs = noteFontSize ?? 8;

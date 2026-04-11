@@ -132,6 +132,8 @@
     "highlight_identical_desc": "Met en valeur les cases avec la même valeur",
     "highlight_group": "Surligner ligne, colonne et bloc",
     "highlight_group_desc": "Colore la zone autour de la case sélectionnée",
+    "show_cell_errors": "Afficher les erreurs dans la case",
+    "show_cell_errors_desc": "Montre les mauvais chiffres essayés dans chaque case",
     "hints_label": "Nombre d'indices disponibles",
     "hints_default": "Par défaut : 3",
     "section_errors": "ERREURS PAR PARTIE",

@@ -132,6 +132,8 @@
     "highlight_identical_desc": "同じ数字のセルを強調します",
     "highlight_group": "行・列・ブロックを強調",
     "highlight_group_desc": "選択したセルの周囲を色付けします",
+    "show_cell_errors": "セルにエラーを表示",
+    "show_cell_errors_desc": "各セルで試した間違った数字を表示します",
     "hints_label": "使用可能なヒント数",
     "hints_default": "デフォルト: 3",
     "section_errors": "ミスの上限",

@@ -157,7 +157,8 @@ export default function SettingsScreen({ onBack }: Props) {
           </View>
           <Row label={t('settings.large_numbers')} desc={t('settings.large_numbers_desc')} value={settings.largeNumbers} onToggle={() => updateSettings({ largeNumbers: !settings.largeNumbers })} />
           <Row label={t('settings.highlight_identical')} desc={t('settings.highlight_identical_desc')} value={settings.highlightIdentical} onToggle={() => updateSettings({ highlightIdentical: !settings.highlightIdentical })} />
-          <Row label={t('settings.highlight_group')} desc={t('settings.highlight_group_desc')} value={settings.highlightGroup} onToggle={() => updateSettings({ highlightGroup: !settings.highlightGroup })} last />
+          <Row label={t('settings.highlight_group')} desc={t('settings.highlight_group_desc')} value={settings.highlightGroup} onToggle={() => updateSettings({ highlightGroup: !settings.highlightGroup })} />
+          <Row label={t('settings.show_cell_errors')} desc={t('settings.show_cell_errors_desc')} value={settings.showCellErrors} onToggle={() => updateSettings({ showCellErrors: !settings.showCellErrors })} last />
         </View>
 
       </ScrollView>

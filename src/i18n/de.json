@@ -132,6 +132,8 @@
     "highlight_identical_desc": "Hebt Felder mit demselben Wert hervor",
     "highlight_group": "Zeile, Spalte und Block hervorheben",
     "highlight_group_desc": "Färbt den Bereich um das gewählte Feld",
+    "show_cell_errors": "Fehler in Feldern anzeigen",
+    "show_cell_errors_desc": "Zeigt falsche Zahlen in jedem Feld an",
     "hints_label": "Verfügbare Tipps",
     "hints_default": "Standard: 3",
     "section_errors": "FEHLER PRO SPIEL",
