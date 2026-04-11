@@ -1,0 +1,37 @@
+{
+  "expo": {
+    "name": "Sudoku",
+    "slug": "sudoku-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#EDEADE"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundColor": "#EDEADE"
+      },
+      "package": "com.ggwp.sudoku",
+      "versionCode": 1
+    },
+    "ios": {
+      "bundleIdentifier": "com.ggwp.sudoku",
+      "buildNumber": "1"
+    },
+    "scheme": "sudoku",
+    "plugins": [
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "bb908353-f265-4ee4-af08-4ef15f9488eb"
+      }
+    },
+    "owner": "ggwp-mobilegames"
+  }
+}
