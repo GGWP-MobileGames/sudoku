@@ -12,6 +12,7 @@ import DefeatModal from "../components/DefeatModal";
 import HintModal from "../components/HintModal";
 import { COLORS, SPACING } from "../utils/theme";
 import { useSettings } from "../context/SettingsContext";
+import { useResponsive } from "../hooks/useResponsive";
 import { clearOngoing, clearSavedGame, serializeNotes, serializeCellErrors } from "../utils/storage";
 import { saveDailyRecord, getTodayKey, saveDailyGame, clearDailyGame, recordDailyInHistory, recordDailyFailureInHistory } from "../utils/dailyChallenge";
 import type { Difficulty } from "../utils/puzzles";
@@ -36,6 +37,7 @@ interface Props {
 }
 export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, dailyDateKey, onBackToHome }: Props) {
   const { colors, settings, t } = useSettings();
+  const { gridSize, isLandscape } = useResponsive();
   const hintsPerGame = isDaily ? 3 : (settings?.hintsPerGame ?? 3);
   const effectiveLimitErrors = isDaily ? true : (settings?.limitErrors ?? true);
   const effectiveMaxErrors   = isDaily ? 3   : (settings?.maxErrors   ?? 3);
@@ -144,111 +146,128 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
     return () => { if (defeatTimerRef.current) clearTimeout(defeatTimerRef.current); };
   }, [isDefeated]);
 
+  // ── Blocs réutilisés en portrait et paysage ────────────────────────────────
+  const headerBlock = (
+    <View style={styles.header}>
+      <TouchableOpacity onPress={async () => {
+          if (!completed && isDaily) {
+            saveDailyRecord({ dateKey: gameDateKey, seconds: secondsRef.current, mistakes: mistakesRef.current, hints: hintsPerGame - hintsLeftRef.current, completed: false }).catch(() => {});
+          }
+          onBackToHome();
+        }} style={[styles.backBtn, { borderColor: colors.borderBox }]} activeOpacity={0.7}>
+        <Text style={[styles.chevron, { color: colors.textPrimary }]}>‹</Text>
+        <Text numberOfLines={1} adjustsFontSizeToFit style={[styles.backText, { color: colors.textPrimary }]}>{t('game.menu')}</Text>
+      </TouchableOpacity>
+      <View style={[styles.diffPill, { backgroundColor: isDaily ? COLORS.gold : colors.bgCellSelected }]}>
+        <Text numberOfLines={1} adjustsFontSizeToFit style={[styles.diffText, { color: isDaily ? '#1A1A1A' : colors.textOnSelected }]}>
+          {isDaily ? t('game.daily_badge') : t(`home.difficulties.${difficulty}`).toUpperCase()}
+        </Text>
+      </View>
+    </View>
+  );
+
+  const statsBarBlock = (
+    <View style={styles.statsBar}>
+      <TouchableOpacity
+        onPress={() => setPaused(!paused)}
+        style={[styles.pauseBtn, paused && { borderWidth: 1.5, borderColor: colors.borderBox, backgroundColor: colors.bgCellSelected }]}
+        activeOpacity={0.7}
+      >
+        {paused ? (
+          <View style={[styles.playIcon, { borderLeftColor: colors.textOnSelected }]} />
+        ) : (
+          <View style={styles.pauseIconShape}>
+            <View style={styles.pauseBar} />
+            <View style={styles.pauseBar} />
+          </View>
+        )}
+      </TouchableOpacity>
+      <View style={styles.statItem}>
+        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{paused ? t('game.paused') : t('game.time')}</Text>
+        <Text style={[styles.statValue, { color: colors.textPrimary }]}>{formatTime(seconds)}</Text>
+      </View>
+      <View style={[styles.statSep, { backgroundColor: colors.borderThin }]} />
+      <View style={styles.statItem}>
+        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{t('game.errors')}</Text>
+        <Animated.Text style={[styles.statValue, { color: mistakes > 0 ? colors.error : colors.textPrimary, transform: [{ scale: mistakesAnim }] }]}>
+          {effectiveLimitErrors ? `${mistakes}/${effectiveMaxErrors}` : String(mistakes)}
+        </Animated.Text>
+      </View>
+    </View>
+  );
+
+  const gridBlock = (
+    <TouchableOpacity activeOpacity={1} onPress={e => e.stopPropagation()} style={styles.gridWrapper}>
+      <SudokuGrid
+        grid={grid.length > 0 ? grid : EMPTY_GRID}
+        notes={grid.length > 0 ? notes : EMPTY_NOTES}
+        errors={grid.length > 0 ? cellErrors : EMPTY_ERRORS}
+        selected={paused || !!pendingHint ? null : selected}
+        onSelect={(r, c) => { if (!paused) setSelected([r, c]); }}
+        isFixed={isFixed} isError={isError}
+        puzzleKey={puzzleKeyRef.current}
+        gridSize={gridSize}
+        completedGroups={completedGroups}
+        victoryWave={completed && !victoryReady}
+        showCoords={!!pendingHint}
+        hintHighlight={pendingHint?.highlightCells as [number,number][] | undefined}
+        hintTarget={pendingHint?.targetCell ?? null}
+        hintPreviewValue={pendingHint?.value ?? null}
+        highlightIdentical={settings.highlightIdentical}
+        highlightGroup={settings.highlightGroup}
+        largeNumbers={settings.largeNumbers}
+      />
+      {paused && (
+        <View style={[styles.pausedOverlay, { backgroundColor: colors.bg, borderColor: colors.borderBox }]}>
+          <Text style={[styles.pausedText, { color: colors.textPrimary }]}>{t('game.paused_text')}</Text>
+          <Text style={[styles.pausedSub, { color: colors.textSecondary }]}>{t('game.paused_sub')}</Text>
+        </View>
+      )}
+    </TouchableOpacity>
+  );
+
+  const padBlock = (
+    <TouchableOpacity activeOpacity={1} onPress={e => e.stopPropagation()} style={[styles.padWrapper, (paused || defeatPending) && styles.padHidden]} disabled={paused || defeatPending}>
+      <NumberPad
+        onInput={handleInput} onHint={useHint}
+        onUndo={undo} canUndo={undoStack.length > 0}
+        hintsLeft={hintsLeft} notesMode={notesMode}
+        onToggleNotes={() => setNotesMode(!notesMode)}
+        grid={grid}
+      />
+    </TouchableOpacity>
+  );
+
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.bg }]}>
       <StatusBar barStyle={settings.darkMode ? "light-content" : "dark-content"} backgroundColor={colors.bg} />
       <TouchableOpacity
-        style={styles.screen}
+        style={isLandscape ? styles.screenLandscape : styles.screen}
         activeOpacity={1}
         onPress={() => setSelected(null)}
       >
-
-        {/* En-tête */}
-        <View style={styles.header}>
-          <TouchableOpacity onPress={async () => {
-              if (!completed && isDaily) {
-                saveDailyRecord({ dateKey: gameDateKey, seconds: secondsRef.current, mistakes: mistakesRef.current, hints: hintsPerGame - hintsLeftRef.current, completed: false }).catch(() => {});
-              }
-              onBackToHome();
-            }} style={[styles.backBtn, { borderColor: colors.borderBox }]} activeOpacity={0.7}>
-            <Text style={[styles.chevron, { color: colors.textPrimary }]}>‹</Text>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[styles.backText, { color: colors.textPrimary }]}>{t('game.menu')}</Text>
-          </TouchableOpacity>
-          <View style={[styles.diffPill, { backgroundColor: isDaily ? COLORS.gold : colors.bgCellSelected }]}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[styles.diffText, { color: isDaily ? '#1A1A1A' : colors.textOnSelected }]}>
-              {isDaily ? t('game.daily_badge') : t(`home.difficulties.${difficulty}`).toUpperCase()}
-            </Text>
-          </View>
-        </View>
-
-        {/* Barre de stats — toujours le même layout, contenu qui change selon pause */}
-        <View style={styles.statsBar}>
-
-          {/* Bouton pause — à gauche du temps */}
-          <TouchableOpacity
-            onPress={() => setPaused(!paused)}
-            style={[styles.pauseBtn, paused && { borderWidth: 1.5, borderColor: colors.borderBox, backgroundColor: colors.bgCellSelected }]}
-            activeOpacity={0.7}
-          >
-            {paused ? (
-              /* Triangle ▶ dessiné avec borderWidth */
-              <View style={[styles.playIcon, { borderLeftColor: colors.textOnSelected }]} />
-            ) : (
-              /* Deux barres ⏸ dessinées avec des View */
-              <View style={styles.pauseIconShape}>
-                <View style={styles.pauseBar} />
-                <View style={styles.pauseBar} />
-              </View>
-            )}
-          </TouchableOpacity>
-
-          {/* Temps */}
-          <View style={styles.statItem}>
-            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{paused ? t('game.paused') : t('game.time')}</Text>
-            <Text style={[styles.statValue, { color: colors.textPrimary }]}>{formatTime(seconds)}</Text>
-          </View>
-
-          <View style={[styles.statSep, { backgroundColor: colors.borderThin }]} />
-
-          {/* Erreurs */}
-          <View style={styles.statItem}>
-            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{t('game.errors')}</Text>
-            <Animated.Text style={[styles.statValue, { color: mistakes > 0 ? colors.error : colors.textPrimary, transform: [{ scale: mistakesAnim }] }]}>
-              {effectiveLimitErrors ? `${mistakes}/${effectiveMaxErrors}` : String(mistakes)}
-            </Animated.Text>
-          </View>
-
-        </View>
-
-        {/* Zone grille — toujours rendue, overlay EN PAUSE par-dessus si pausé */}
-        <TouchableOpacity activeOpacity={1} onPress={e => e.stopPropagation()} style={styles.gridWrapper}>
-          <SudokuGrid
-            grid={grid.length > 0 ? grid : EMPTY_GRID}
-            notes={grid.length > 0 ? notes : EMPTY_NOTES}
-            errors={grid.length > 0 ? cellErrors : EMPTY_ERRORS}
-            selected={paused || !!pendingHint ? null : selected}
-            onSelect={(r, c) => { if (!paused) setSelected([r, c]); }}
-            isFixed={isFixed} isError={isError}
-            puzzleKey={puzzleKeyRef.current}
-            completedGroups={completedGroups}
-            victoryWave={completed && !victoryReady}
-            showCoords={!!pendingHint}
-            hintHighlight={pendingHint?.highlightCells as [number,number][] | undefined}
-            hintTarget={pendingHint?.targetCell ?? null}
-            hintPreviewValue={pendingHint?.value ?? null}
-            highlightIdentical={settings.highlightIdentical}
-            highlightGroup={settings.highlightGroup}
-            largeNumbers={settings.largeNumbers}
-          />
-          {paused && (
-            <View style={[styles.pausedOverlay, { backgroundColor: colors.bg, borderColor: colors.borderBox }]}>
-              <Text style={[styles.pausedText, { color: colors.textPrimary }]}>{t('game.paused_text')}</Text>
-              <Text style={[styles.pausedSub, { color: colors.textSecondary }]}>{t('game.paused_sub')}</Text>
+        {isLandscape ? (
+          <>
+            {/* Paysage : grille à gauche, contrôles à droite */}
+            <View style={styles.landscapeLeft}>
+              {gridBlock}
             </View>
-          )}
-        </TouchableOpacity>
-
-        {/* Pavé — toujours rendu pour stabiliser le layout, masqué si pausé ou défaite */}
-        <TouchableOpacity activeOpacity={1} onPress={e => e.stopPropagation()} style={[styles.padWrapper, (paused || defeatPending) && styles.padHidden]} disabled={paused || defeatPending}>
-          <NumberPad
-            onInput={handleInput} onHint={useHint}
-            onUndo={undo} canUndo={undoStack.length > 0}
-            hintsLeft={hintsLeft} notesMode={notesMode}
-            onToggleNotes={() => setNotesMode(!notesMode)}
-            grid={grid}
-          />
-        </TouchableOpacity>
-
+            <View style={styles.landscapeRight}>
+              {headerBlock}
+              {statsBarBlock}
+              <View style={{ flex: 1 }} />
+              {padBlock}
+            </View>
+          </>
+        ) : (
+          <>
+            {/* Portrait : layout vertical classique */}
+            {headerBlock}
+            {statsBarBlock}
+            {gridBlock}
+            {padBlock}
+          </>
+        )}
       </TouchableOpacity>
 
       <HintModal
@@ -290,6 +309,9 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
 const styles = StyleSheet.create({
   safe:   { flex: 1, backgroundColor: COLORS.bg },
   screen: { flex: 1, alignItems: "center", justifyContent: "space-evenly", paddingVertical: SPACING.md },
+  screenLandscape: { flex: 1, flexDirection: "row", paddingHorizontal: SPACING.md },
+  landscapeLeft:  { flex: 1, alignItems: "center", justifyContent: "center" },
+  landscapeRight: { flex: 1, justifyContent: "center", paddingVertical: SPACING.sm, gap: 12 },
 
   // En-tête
   header: {

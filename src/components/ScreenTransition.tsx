@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
-import { Animated, Dimensions, StyleSheet, View, Easing } from "react-native";
+import { Animated, useWindowDimensions, StyleSheet, View, Easing } from "react-native";
 import { COLORS } from "../utils/theme";
 import { useSettings } from "../context/SettingsContext";
 
@@ -11,15 +11,15 @@ interface Props {
   direction: TransitionDirection;
 }
 
-const { width, height } = Dimensions.get("window");
-
-const ENTRY: Record<TransitionDirection, { x: number; y: number }> = {
-  right: { x:  width,  y: 0 },
-  left:  { x: -width,  y: 0 },
-  up:    { x: 0,       y: height },
-  down:  { x: 0,       y: -height },
-  fade:  { x: 0,       y: 0 },
-};
+function getEntry(direction: TransitionDirection, w: number, h: number) {
+  switch (direction) {
+    case "right": return { x:  w, y: 0 };
+    case "left":  return { x: -w, y: 0 };
+    case "up":    return { x: 0,  y: h };
+    case "down":  return { x: 0,  y: -h };
+    default:      return { x: 0,  y: 0 };
+  }
+}
 
 // Ombre portée sur le bord d'entrée — renforce l'effet "page qui se tourne"
 const SHADOW_STYLE: Record<TransitionDirection, object> = {
@@ -32,6 +32,7 @@ const SHADOW_STYLE: Record<TransitionDirection, object> = {
 
 export default function ScreenTransition({ children, screenKey, direction }: Props) {
   const { colors } = useSettings();
+  const { width, height } = useWindowDimensions();
   const translateX    = useRef(new Animated.Value(0)).current;
   const translateY    = useRef(new Animated.Value(0)).current;
   const opacity       = useRef(new Animated.Value(1)).current;
@@ -39,7 +40,7 @@ export default function ScreenTransition({ children, screenKey, direction }: Pro
   const [animating, setAnimating] = useState(false);
 
   useLayoutEffect(() => {
-    const { x, y } = ENTRY[direction];
+    const { x, y } = getEntry(direction, width, height);
     translateX.setValue(x);
     translateY.setValue(y);
     shadowOpacity.setValue(1);
