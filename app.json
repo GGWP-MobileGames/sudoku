@@ -3,7 +3,7 @@
     "name": "Sudoku",
     "slug": "sudoku-app",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -21,7 +21,13 @@
     },
     "ios": {
       "bundleIdentifier": "com.ggwp.sudoku",
-      "buildNumber": "1"
+      "buildNumber": "1",
+      "supportsTablet": true,
+      "requireFullScreen": false
+    },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/icon.png"
     },
     "scheme": "sudoku",
     "plugins": [

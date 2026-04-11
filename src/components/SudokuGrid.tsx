@@ -1,13 +1,9 @@
 import React, { useEffect, useRef, useCallback } from "react";
-import { View, Text, StyleSheet, Dimensions, Animated } from "react-native";
+import { View, Text, StyleSheet, Animated } from "react-native";
 import SudokuCell from "./SudokuCell";
 import { COLORS } from "../utils/theme";
 import { useSettings } from "../context/SettingsContext";
 import type { Grid, NotesGrid, ErrorsGrid } from "../hooks/useGameState";
-
-const { width } = Dimensions.get("window");
-const GRID_SIZE = Math.min(width - 32, 380);
-const CELL_SIZE = GRID_SIZE / 9;
 
 interface Props {
   grid:          Grid;
@@ -18,6 +14,7 @@ interface Props {
   isFixed:       (r: number, c: number) => boolean;
   isError:       (r: number, c: number) => boolean;
   puzzleKey:     string;
+  gridSize:      number; // taille dynamique passée par le parent
   completedGroups?: number[][]; // cellules [r,c] à flasher en or
   victoryWave?:    boolean;
   showCoords?:       boolean;
@@ -30,11 +27,12 @@ interface Props {
 }
 
 export default function SudokuGrid({
-  grid, notes, errors, selected, onSelect, isFixed, isError, puzzleKey, completedGroups,
+  grid, notes, errors, selected, onSelect, isFixed, isError, puzzleKey, gridSize, completedGroups,
   victoryWave, showCoords, hintHighlight, hintTarget, hintPreviewValue,
   highlightIdentical = true, highlightGroup = true, largeNumbers = true,
 }: Props) {
   const { colors } = useSettings();
+  const CELL_SIZE = gridSize / 9;
   const cellFontSize = largeNumbers ? Math.floor(CELL_SIZE * 0.76) : 19;
   const noteFontSize = largeNumbers
     ? Math.max(Math.floor(CELL_SIZE / 3 * 0.72), 9)
@@ -164,13 +162,13 @@ const hintHighlightSet = React.useMemo(() => {
   }, [hintHighlight]);
   const isHintHighlight = (r: number, c: number) => hintHighlightSet.has(`${r},${c}`);
 
-  const hLines = [1,2,3,4,5,6,7,8].map(i => ({ top:  i * CELL_SIZE, thick: i === 3 || i === 6 }));
-  const vLines = [1,2,3,4,5,6,7,8].map(i => ({ left: i * CELL_SIZE, thick: i === 3 || i === 6 }));
+  const hLines = React.useMemo(() => [1,2,3,4,5,6,7,8].map(i => ({ top:  i * CELL_SIZE, thick: i === 3 || i === 6 })), [CELL_SIZE]);
+  const vLines = React.useMemo(() => [1,2,3,4,5,6,7,8].map(i => ({ left: i * CELL_SIZE, thick: i === 3 || i === 6 })), [CELL_SIZE]);
 
   const LETTERS = ["A","B","C","D","E","F","G","H","I"];
 
   return (
-    <View style={{ width: GRID_SIZE, height: GRID_SIZE }}>
+    <View style={{ width: gridSize, height: gridSize }}>
 
       {/* Lettres colonnes (A–I) — en absolu au-dessus, dans la marge */}
       {showCoords && (
@@ -233,14 +231,14 @@ const hintHighlightSet = React.useMemo(() => {
       {hLines.map(({ top, thick }, i) => (
         <View key={`h${i}`} pointerEvents="none" style={{
           position: "absolute", top: top - (thick ? 1 : 0.25), left: 0,
-          width: GRID_SIZE, height: thick ? 2 : 0.5,
+          width: gridSize, height: thick ? 2 : 0.5,
           backgroundColor: thick ? colors.borderBox : colors.borderThin,
         }} />
       ))}
       {vLines.map(({ left, thick }, i) => (
         <View key={`v${i}`} pointerEvents="none" style={{
           position: "absolute", left: left - (thick ? 1 : 0.25), top: 0,
-          height: GRID_SIZE, width: thick ? 2 : 0.5,
+          height: gridSize, width: thick ? 2 : 0.5,
           backgroundColor: thick ? colors.borderBox : colors.borderThin,
         }} />
       ))}
@@ -259,11 +257,10 @@ const coord = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
-  cellsContainer: { position: "absolute", top: 0, left: 0, width: GRID_SIZE, height: GRID_SIZE },
+  cellsContainer: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 },
   row:            { flexDirection: "row" },
   outerBorder:    {
-    position: "absolute", top: 0, left: 0,
-    width: GRID_SIZE, height: GRID_SIZE,
+    position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
     borderWidth: 2, borderColor: COLORS.borderBox,
   },
 });

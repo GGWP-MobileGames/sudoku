@@ -6,11 +6,13 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSettings } from "../context/SettingsContext";
 import { SUPPORTED_LANGUAGES, type Language } from "../i18n";
+import { useResponsive } from "../hooks/useResponsive";
 
 interface Props { onBack: () => void; }
 
 export default function SettingsScreen({ onBack }: Props) {
   const { settings, colors, updateSettings, t, language } = useSettings();
+  const { isTablet } = useResponsive();
 
   const Row = ({ label, desc, value, onToggle, last = false }: { label: string; desc?: string; value: boolean; onToggle: () => void; last?: boolean }) => (
     <View style={[s.row, last && s.rowLast, { borderBottomColor: colors.borderThin }]}>
@@ -52,7 +54,7 @@ export default function SettingsScreen({ onBack }: Props) {
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={[s.scroll, isTablet && { maxWidth: 520, alignSelf: "center" as const, width: "100%" as const }]} showsVerticalScrollIndicator={false}>
 
         {/* Langue */}
         <View style={[s.section, { borderColor: colors.borderBox }]}>

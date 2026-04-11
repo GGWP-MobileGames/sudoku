@@ -6,6 +6,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSettings } from "../context/SettingsContext";
 import { COLORS, type ColorTheme } from "../utils/theme";
+import { useResponsive } from "../hooks/useResponsive";
 import {
   getTodayKey, formatDayLabel, loadDailyRecords, loadTodayRecord,
   type DailyRecord,
@@ -87,6 +88,7 @@ const cal = StyleSheet.create({
 
 export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSavedGame }: Props) {
   const { colors, settings, t } = useSettings();
+  const { isTablet } = useResponsive();
   const [todayRecord, setTodayRecord] = useState<DailyRecord | null>(null);
   const [allRecords,  setAllRecords]  = useState<DailyRecord[]>([]);
   const today = getTodayKey();
@@ -151,7 +153,7 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={[s.scroll, isTablet && { maxWidth: 520, alignSelf: "center" as const, width: "100%" as const }]} showsVerticalScrollIndicator={false}>
 
         {/* Date du jour + statut */}
         <View style={[s.dateCard, { borderColor: completed ? COLORS.gold : failed ? '#E05040' : colors.borderBox, backgroundColor: (completed || failed) ? colors.bgCard : colors.bg }]}>
