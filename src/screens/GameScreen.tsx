@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import {
-  View, Text, TouchableOpacity, StyleSheet,
+  View, Text, TouchableOpacity, StyleSheet, Platform,
   StatusBar, Animated,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -54,10 +54,10 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
 
   const flashMistakes = React.useCallback(() => {
     Animated.sequence([
-      Animated.timing(mistakesAnim, { toValue: 1.6, duration: 100, useNativeDriver: true }),
-      Animated.timing(mistakesAnim, { toValue: 1,   duration: 100, useNativeDriver: true }),
-      Animated.timing(mistakesAnim, { toValue: 1.4, duration: 80,  useNativeDriver: true }),
-      Animated.timing(mistakesAnim, { toValue: 1,   duration: 100, useNativeDriver: true }),
+      Animated.timing(mistakesAnim, { toValue: 1.6, duration: 100, useNativeDriver: Platform.OS !== "web" }),
+      Animated.timing(mistakesAnim, { toValue: 1,   duration: 100, useNativeDriver: Platform.OS !== "web" }),
+      Animated.timing(mistakesAnim, { toValue: 1.4, duration: 80,  useNativeDriver: Platform.OS !== "web" }),
+      Animated.timing(mistakesAnim, { toValue: 1,   duration: 100, useNativeDriver: Platform.OS !== "web" }),
     ]).start();
   }, [mistakesAnim]);
 
@@ -76,6 +76,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
   } = useGameState(difficulty, {
     savedGame, prebuilt, hintsPerGame, t,
     limitErrors: effectiveLimitErrors, maxErrors: effectiveMaxErrors,
+    isDaily,
   });
 
   const handleInput = React.useCallback((n: number) => {

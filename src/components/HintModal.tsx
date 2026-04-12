@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Animated, Modal } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Animated, Modal, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSettings } from "../context/SettingsContext";
 import type { PedagogicHint } from "../hooks/useGameState";
@@ -21,8 +21,8 @@ export default function HintModal({ hint, onApply, onDismiss }: Props) {
       fadeAnim.setValue(0);
       slideAnim.setValue(40);
       Animated.parallel([
-        Animated.timing(fadeAnim,  { toValue: 1, duration: 220, useNativeDriver: true }),
-        Animated.spring(slideAnim, { toValue: 0, tension: 120, friction: 12, useNativeDriver: true }),
+        Animated.timing(fadeAnim,  { toValue: 1, duration: 220, useNativeDriver: Platform.OS !== "web" }),
+        Animated.spring(slideAnim, { toValue: 0, tension: 120, friction: 12, useNativeDriver: Platform.OS !== "web" }),
       ]).start();
     }
   }, [hint]);

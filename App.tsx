@@ -1,5 +1,5 @@
 import React from "react";
-import { BackHandler, Platform } from "react-native";
+import { BackHandler, Platform, View, Text } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { SettingsProvider } from "./src/context/SettingsContext";
 import { useFonts, Cinzel_700Bold } from "@expo-google-fonts/cinzel";
@@ -52,7 +52,7 @@ function AppContent({ onReady }: AppContentProps) {
     Promise.all([
       AsyncStorage.getItem("has_seen_welcome"),
       loadDailyGame(),
-      new Promise(resolve => setTimeout(resolve, 2000)),
+      Platform.OS !== "web" ? new Promise(resolve => setTimeout(resolve, 2000)) : Promise.resolve(),
     ]).then(([welcomed, saved]) => {
       const today = getTodayKey();
       if (saved && saved.dateKey !== today) {
@@ -202,12 +202,21 @@ export default function App() {
   const [appReady, setAppReady] = React.useState(false);
 
   React.useEffect(() => {
-    if (fontsLoaded && appReady) {
+    if (fontsLoaded && appReady && Platform.OS !== "web") {
       SplashScreen.hideAsync();
     }
   }, [fontsLoaded, appReady]);
 
-  if (!fontsLoaded) return null;
+  if (!fontsLoaded) {
+    if (Platform.OS === "web") {
+      return (
+        <View style={{ flex: 1, backgroundColor: "#EDEADE", alignItems: "center", justifyContent: "center" }}>
+          <Text style={{ fontSize: 32, fontWeight: "800", letterSpacing: 10, color: "#2C2C2C" }}>SUDOKU</Text>
+        </View>
+      );
+    }
+    return null;
+  }
 
   return (
     <SafeAreaProvider>

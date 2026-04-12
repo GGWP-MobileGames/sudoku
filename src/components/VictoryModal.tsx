@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Modal, Animated } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Modal, Animated, Platform } from "react-native";
 import { useSettings } from "../context/SettingsContext";
 import { clearSavedGame, recordCompletion } from "../utils/storage";
 import type { Difficulty } from "../utils/puzzles";
@@ -38,7 +38,7 @@ export default function VictoryModal({
 
   useEffect(() => {
     if (visible && !saved) {
-      clearSavedGame();
+      if (!isDaily) clearSavedGame();
       if (!isDaily) {
         const hintsUsed = maxHints - hintsLeft;
         recordCompletion(difficulty, seconds, mistakes, hintsUsed);
@@ -57,23 +57,23 @@ export default function VictoryModal({
     // Séquence d'entrée
     Animated.sequence([
       // 1. Fondu du fond
-      Animated.timing(overlayOpacity, { toValue: 1, duration: 220, useNativeDriver: true }),
+      Animated.timing(overlayOpacity, { toValue: 1, duration: 220, useNativeDriver: Platform.OS !== "web" }),
       // 2. Carte qui monte + titre
       Animated.parallel([
-        Animated.spring(cardScale,   { toValue: 1, tension: 90, friction: 11, useNativeDriver: true }),
-        Animated.timing(cardOpacity, { toValue: 1, duration: 180, useNativeDriver: true }),
-        Animated.spring(titleScale,  { toValue: 1, tension: 100, friction: 10, useNativeDriver: true }),
+        Animated.spring(cardScale,   { toValue: 1, tension: 90, friction: 11, useNativeDriver: Platform.OS !== "web" }),
+        Animated.timing(cardOpacity, { toValue: 1, duration: 180, useNativeDriver: Platform.OS !== "web" }),
+        Animated.spring(titleScale,  { toValue: 1, tension: 100, friction: 10, useNativeDriver: Platform.OS !== "web" }),
       ]),
       // 3. Stats en cascade
       Animated.stagger(100, [
-        Animated.timing(stat1Opacity, { toValue: 1, duration: 200, useNativeDriver: true }),
-        Animated.timing(stat2Opacity, { toValue: 1, duration: 200, useNativeDriver: true }),
-        Animated.timing(stat3Opacity, { toValue: 1, duration: 200, useNativeDriver: true }),
+        Animated.timing(stat1Opacity, { toValue: 1, duration: 200, useNativeDriver: Platform.OS !== "web" }),
+        Animated.timing(stat2Opacity, { toValue: 1, duration: 200, useNativeDriver: Platform.OS !== "web" }),
+        Animated.timing(stat3Opacity, { toValue: 1, duration: 200, useNativeDriver: Platform.OS !== "web" }),
       ]),
       // 4. Boutons glissent vers le haut
       Animated.parallel([
-        Animated.timing(btnsOpacity,    { toValue: 1,  duration: 200, useNativeDriver: true }),
-        Animated.spring(btnsTranslate,  { toValue: 0,  tension: 80, friction: 10, useNativeDriver: true }),
+        Animated.timing(btnsOpacity,    { toValue: 1,  duration: 200, useNativeDriver: Platform.OS !== "web" }),
+        Animated.spring(btnsTranslate,  { toValue: 0,  tension: 80, friction: 10, useNativeDriver: Platform.OS !== "web" }),
       ]),
     ]).start();
   }, [visible]);

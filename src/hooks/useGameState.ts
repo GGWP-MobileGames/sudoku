@@ -67,6 +67,7 @@ interface GameInit {
   hintsPerGame?:    number;
   limitErrors?:     boolean;
   maxErrors?:       number;
+  isDaily?:         boolean;
   t?:               (key: string) => string;
 }
 
@@ -171,7 +172,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
   // ── Sauvegarde auto ──────────────────────────────────────────────────────────
   const defeated = !!(init.limitErrors && mistakes >= (init.maxErrors ?? 3));
   useEffect(() => {
-    if (!grid.length || !puzzle.length || completed || defeated) return;
+    if (!grid.length || !puzzle.length || completed || defeated || init.isDaily) return;
     saveGame({
       grid, puzzle, solution, difficulty, mistakes, hintsLeft, seconds,
       notes: serializeNotes(notes),

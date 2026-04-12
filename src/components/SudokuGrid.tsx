@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useCallback } from "react";
-import { View, Text, StyleSheet, Animated } from "react-native";
+import { View, Text, StyleSheet, Animated, Platform } from "react-native";
 import SudokuCell from "./SudokuCell";
 import { COLORS } from "../utils/theme";
 import { useSettings } from "../context/SettingsContext";
@@ -63,11 +63,11 @@ useEffect(() => {
         const idx = r * 9 + c;
         byDiag[r + c].push({
           wave: Animated.timing(cellAnims[idx], {
-            toValue: 1, duration: 380, useNativeDriver: true,
+            toValue: 1, duration: 380, useNativeDriver: Platform.OS !== "web",
           }),
           gold: Animated.sequence([
-            Animated.timing(goldAnims[idx], { toValue: 1, duration: 150, useNativeDriver: true }),
-            Animated.timing(goldAnims[idx], { toValue: 0, duration: 500, useNativeDriver: true }),
+            Animated.timing(goldAnims[idx], { toValue: 1, duration: 150, useNativeDriver: Platform.OS !== "web" }),
+            Animated.timing(goldAnims[idx], { toValue: 0, duration: 500, useNativeDriver: Platform.OS !== "web" }),
           ]),
         });
       }
@@ -100,8 +100,8 @@ const maxDist = Math.sqrt(32); // dist max ≈ 5.66
         const delay = (dist / maxDist) * 400; // 0→400ms selon distance
         return Animated.sequence([
           Animated.delay(delay),
-          Animated.timing(a, { toValue: 1, duration: 150, useNativeDriver: true }),
-          Animated.timing(a, { toValue: 0, duration: 350, useNativeDriver: true }),
+          Animated.timing(a, { toValue: 1, duration: 150, useNativeDriver: Platform.OS !== "web" }),
+          Animated.timing(a, { toValue: 0, duration: 350, useNativeDriver: Platform.OS !== "web" }),
         ]);
       });
       Animated.parallel(anims).start();
@@ -134,8 +134,8 @@ const prevGroupsRef = useRef<string>("");
       const delay = (dist / maxDist) * 200;
       return Animated.sequence([
         Animated.delay(delay),
-        Animated.timing(a, { toValue: 1, duration: 140, useNativeDriver: true }),
-        Animated.timing(a, { toValue: 0, duration: 580, useNativeDriver: true }),
+        Animated.timing(a, { toValue: 1, duration: 140, useNativeDriver: Platform.OS !== "web" }),
+        Animated.timing(a, { toValue: 0, duration: 580, useNativeDriver: Platform.OS !== "web" }),
       ]);
     });
 

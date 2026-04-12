@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
-import { Animated, useWindowDimensions, StyleSheet, View, Easing } from "react-native";
+import { Animated, useWindowDimensions, StyleSheet, View, Easing, Platform } from "react-native";
 import { COLORS } from "../utils/theme";
 import { useSettings } from "../context/SettingsContext";
 
@@ -52,7 +52,7 @@ export default function ScreenTransition({ children, screenKey, direction }: Pro
       Animated.timing(opacity, {
         toValue: 1, duration: DURATION,
         easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== "web",
       }).start(() => setAnimating(false));
     } else {
       opacity.setValue(1);
@@ -60,16 +60,16 @@ export default function ScreenTransition({ children, screenKey, direction }: Pro
         Animated.timing(translateX, {
           toValue: 0, duration: DURATION,
           easing: Easing.out(Easing.cubic),
-          useNativeDriver: true,
+          useNativeDriver: Platform.OS !== "web",
         }),
         Animated.timing(translateY, {
           toValue: 0, duration: DURATION,
           easing: Easing.out(Easing.cubic),
-          useNativeDriver: true,
+          useNativeDriver: Platform.OS !== "web",
         }),
         Animated.timing(shadowOpacity, {
           toValue: 0, duration: DURATION,
-          useNativeDriver: true,
+          useNativeDriver: Platform.OS !== "web",
         }),
       ]).start(() => setAnimating(false));
     }
@@ -82,14 +82,14 @@ export default function ScreenTransition({ children, screenKey, direction }: Pro
         { transform: [{ translateX }, { translateY }], opacity },
       ]}>
         {/* Bloquer les touches pendant l'animation pour éviter les taps ratés */}
-        <View style={styles.fill} pointerEvents={animating ? "none" : "auto"}>
+        <View style={[styles.fill, { pointerEvents: animating ? "none" : "auto" }]}>
           {children}
         </View>
 
         {direction !== "fade" && (
           <Animated.View
-            pointerEvents="none"
             style={[
+              { pointerEvents: "none" as const },
               styles.shadow,
               SHADOW_STYLE[direction],
               { opacity: shadowOpacity },

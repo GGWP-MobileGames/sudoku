@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Modal, Animated } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Modal, Animated, Platform } from "react-native";
 import { useSettings } from "../context/SettingsContext";
 import { clearSavedGame, recordFailure } from "../utils/storage";
 import type { Difficulty } from "../utils/puzzles";
@@ -35,7 +35,7 @@ export default function DefeatModal({
 
   useEffect(() => {
     if (visible && !saved) {
-      clearSavedGame();
+      if (!isDaily) clearSavedGame();
       if (!isDaily) {
         recordFailure(difficulty, seconds, mistakes, hintsUsed);
       }
@@ -50,20 +50,20 @@ export default function DefeatModal({
     btnsTranslate.setValue(20); btnsOpacity.setValue(0);
 
     Animated.sequence([
-      Animated.timing(overlayOpacity, { toValue: 1, duration: 220, useNativeDriver: true }),
+      Animated.timing(overlayOpacity, { toValue: 1, duration: 220, useNativeDriver: Platform.OS !== "web" }),
       Animated.parallel([
-        Animated.spring(cardScale,   { toValue: 1, tension: 90, friction: 11, useNativeDriver: true }),
-        Animated.timing(cardOpacity, { toValue: 1, duration: 180, useNativeDriver: true }),
-        Animated.spring(titleScale,  { toValue: 1, tension: 100, friction: 10, useNativeDriver: true }),
+        Animated.spring(cardScale,   { toValue: 1, tension: 90, friction: 11, useNativeDriver: Platform.OS !== "web" }),
+        Animated.timing(cardOpacity, { toValue: 1, duration: 180, useNativeDriver: Platform.OS !== "web" }),
+        Animated.spring(titleScale,  { toValue: 1, tension: 100, friction: 10, useNativeDriver: Platform.OS !== "web" }),
       ]),
       Animated.stagger(100, [
-        Animated.timing(stat1Opacity, { toValue: 1, duration: 200, useNativeDriver: true }),
-        Animated.timing(stat2Opacity, { toValue: 1, duration: 200, useNativeDriver: true }),
-        Animated.timing(stat3Opacity, { toValue: 1, duration: 200, useNativeDriver: true }),
+        Animated.timing(stat1Opacity, { toValue: 1, duration: 200, useNativeDriver: Platform.OS !== "web" }),
+        Animated.timing(stat2Opacity, { toValue: 1, duration: 200, useNativeDriver: Platform.OS !== "web" }),
+        Animated.timing(stat3Opacity, { toValue: 1, duration: 200, useNativeDriver: Platform.OS !== "web" }),
       ]),
       Animated.parallel([
-        Animated.timing(btnsOpacity,   { toValue: 1, duration: 200, useNativeDriver: true }),
-        Animated.spring(btnsTranslate, { toValue: 0, tension: 80, friction: 10, useNativeDriver: true }),
+        Animated.timing(btnsOpacity,   { toValue: 1, duration: 200, useNativeDriver: Platform.OS !== "web" }),
+        Animated.spring(btnsTranslate, { toValue: 0, tension: 80, friction: 10, useNativeDriver: Platform.OS !== "web" }),
       ]),
     ]).start();
   }, [visible]);

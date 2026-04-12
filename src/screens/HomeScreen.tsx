@@ -58,7 +58,7 @@ export default function HomeScreen({ initialDifficulty, onStart, onResume, onSta
       Animated.timing(cardSlideX, {
         toValue: -500,
         duration: 300,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== "web",
       }),
     ]).start(async () => {
       await clearSavedGame();
