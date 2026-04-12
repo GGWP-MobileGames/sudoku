@@ -200,9 +200,9 @@
   },
   "welcome": {
     "title": "GGWP",
-    "p1": "Este juego móvil te lo ofrece GGWP, y esta breve publicidad será la única que verás durante toda tu experiencia en esta aplicación.",
+    "p1": "Este juego móvil te lo ofrece GGWP, y este breve mensaje promocional será la primera y última interrupción de tu experiencia de juego.",
     "p2": "El objetivo de GGWP es ofrecerte aplicaciones móviles de calidad, gratuitas, sin publicidad y sin recopilar ninguno de tus datos personales. Este Sudoku es el primero de una larga lista. Si estás cansado de las aplicaciones que te bombardean con anuncios, monetizan tus datos o te empujan a pagar, estás en el lugar indicado. Te mantendremos informado cuando haya nuevos juegos disponibles.",
     "p4": "Gracias por tomarte el tiempo de leer esto. ¡Que disfrutes la partida!",
-    "back_btn": "VOLVER AL MENÚ"
+    "back_btn": "MENÚ PRINCIPAL"
   }
 }

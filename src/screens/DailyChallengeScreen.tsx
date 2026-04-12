@@ -331,7 +331,7 @@ const modal = StyleSheet.create({
 
 const s = StyleSheet.create({
   safe:   { flex: 1 },
-  header: { paddingHorizontal: 20, paddingTop: 52, paddingBottom: 12, gap: 12, alignItems: "center" },
+  header: { paddingHorizontal: 20, paddingTop: 52, paddingBottom: 12, gap: 12, alignItems: "center", maxWidth: 520, alignSelf: "center", width: "100%" },
   scroll: { alignItems: "center", paddingHorizontal: 20, paddingTop: 8, paddingBottom: 40, gap: 20 },
 
   titleBlock: { width: "100%", alignItems: "center", gap: 2 },

@@ -38,7 +38,9 @@ interface Props {
 }
 export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, dailyDateKey, onBackToHome }: Props) {
   const { colors, settings, t } = useSettings();
-  const { gridSize, isLandscape, isCompact } = useResponsive();
+  const { gridSize, isLandscape, isCompact, deviceType } = useResponsive();
+  // Sur desktop/web, toujours le layout portrait centré (plus esthétique)
+  const useLandscape = isLandscape && deviceType !== "desktop";
   const hintsPerGame = isDaily ? 3 : (settings?.hintsPerGame ?? 3);
   const effectiveLimitErrors = isDaily ? true : (settings?.limitErrors ?? true);
   const effectiveMaxErrors   = isDaily ? 3   : (settings?.maxErrors   ?? 3);
@@ -73,11 +75,25 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
     secondsRef, mistakesRef, hintsLeftRef,
   } = useGameState(difficulty, {
     savedGame, prebuilt, hintsPerGame, t,
+    limitErrors: effectiveLimitErrors, maxErrors: effectiveMaxErrors,
   });
 
   const handleInput = React.useCallback((n: number) => {
     inputNumber(n);
   }, [inputNumber]);
+
+
+  React.useEffect(() => {
+    if (mistakes > prevMistakesRef.current) {
+      flashMistakes();
+    }
+    prevMistakesRef.current = mistakes;
+  }, [mistakes]);
+
+  const [victoryReady,  setVictoryReady]  = React.useState(false);
+  const [defeatPending, setDefeatPending] = React.useState(false);
+  const [defeatReady,   setDefeatReady]   = React.useState(false);
+  const [defeatStats,   setDefeatStats]   = React.useState<{ seconds: number; mistakes: number; hintsUsed: number } | null>(null);
 
   // Navigation au clavier : flèches directionnelles
   const handleArrow = React.useCallback((dir: "up" | "down" | "left" | "right") => {
@@ -104,17 +120,6 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
     disabled:      paused || completed || defeatPending,
   });
 
-  React.useEffect(() => {
-    if (mistakes > prevMistakesRef.current) {
-      flashMistakes();
-    }
-    prevMistakesRef.current = mistakes;
-  }, [mistakes]);
-
-  const [victoryReady,  setVictoryReady]  = React.useState(false);
-  const [defeatPending, setDefeatPending] = React.useState(false);
-  const [defeatReady,   setDefeatReady]   = React.useState(false);
-  const [defeatStats,   setDefeatStats]   = React.useState<{ seconds: number; mistakes: number; hintsUsed: number } | null>(null);
   const victoryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const defeatTimerRef  = useRef<ReturnType<typeof setTimeout> | null>(null);
   const puzzleKeyRef  = useRef<string>("");
@@ -124,8 +129,10 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
     puzzleKeyRef.current  = puzzle.flat().join("-");
   }
 
+  const isDefeated = effectiveLimitErrors && !completed && mistakes >= effectiveMaxErrors;
+
   React.useEffect(() => {
-    if (!isDaily || !grid.length || completed) return;
+    if (!isDaily || !grid.length || completed || isDefeated) return;
     try {
       saveDailyGame({
         difficulty, grid,
@@ -151,8 +158,6 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
     }
     return () => { if (victoryTimerRef.current) clearTimeout(victoryTimerRef.current); };
   }, [completed]);
-
-  const isDefeated = effectiveLimitErrors && !completed && mistakes >= effectiveMaxErrors;
 
   React.useEffect(() => {
     if (isDefeated && !defeatPending) {
@@ -269,11 +274,11 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.bg }]}>
       <StatusBar barStyle={settings.darkMode ? "light-content" : "dark-content"} backgroundColor={colors.bg} />
       <TouchableOpacity
-        style={isLandscape ? styles.screenLandscape : styles.screen}
+        style={useLandscape ? styles.screenLandscape : styles.screen}
         activeOpacity={1}
         onPress={() => setSelected(null)}
       >
-        {isLandscape ? (
+        {useLandscape ? (
           <>
             {/* Paysage : grille à gauche, contrôles à droite */}
             <View style={styles.landscapeLeft}>
@@ -335,8 +340,8 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
 
 const styles = StyleSheet.create({
   safe:   { flex: 1, backgroundColor: COLORS.bg },
-  screen: { flex: 1, alignItems: "center", justifyContent: "space-evenly", paddingVertical: SPACING.md },
-  screenLandscape: { flex: 1, flexDirection: "row", paddingHorizontal: SPACING.md },
+  screen: { flex: 1, alignItems: "center", justifyContent: "space-evenly", paddingVertical: SPACING.md, maxWidth: 520, alignSelf: "center", width: "100%" },
+  screenLandscape: { flex: 1, flexDirection: "row", paddingHorizontal: SPACING.md, maxWidth: 960, alignSelf: "center", width: "100%" },
   landscapeLeft:  { flex: 1, alignItems: "center", justifyContent: "center" },
   landscapeRight: { flex: 1, justifyContent: "center", paddingVertical: SPACING.sm, gap: 12 },
 
