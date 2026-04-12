@@ -28,7 +28,9 @@
     "web": {
       "bundler": "metro",
       "favicon": "./assets/icon.png",
-      "output": "single",
+      "output": "single"
+    },
+    "experiments": {
       "baseUrl": "/sudoku"
     },
     "scheme": "sudoku",
