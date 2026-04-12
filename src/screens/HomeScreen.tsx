@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import {
   View, Text, TouchableOpacity, StyleSheet,
-  StatusBar, ScrollView, Animated, LayoutAnimation, Platform, Alert,
+  StatusBar, ScrollView, Animated, LayoutAnimation, Platform, Modal,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS } from "../utils/theme";
@@ -39,6 +39,7 @@ export default function HomeScreen({ initialDifficulty, onStart, onResume, onSta
   const [dailyDone,   setDailyDone]   = useState(false);
   const [savedGame,   setSavedGame]   = useState<SavedGame | null>(null);
   const [loadingGame, setLoadingGame] = useState(true);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
     loadGame().then(g => { setSavedGame(g); setLoadingGame(false); });
@@ -75,14 +76,7 @@ export default function HomeScreen({ initialDifficulty, onStart, onResume, onSta
 
   const handleStart = () => {
     if (savedGame) {
-      Alert.alert(
-        t("home.confirm_title"),
-        t("home.confirm_message"),
-        [
-          { text: t("home.confirm_cancel"), style: "cancel" },
-          { text: t("home.confirm_ok"), style: "destructive", onPress: doStart },
-        ]
-      );
+      setShowConfirm(true);
     } else {
       doStart();
     }
@@ -217,17 +211,53 @@ export default function HomeScreen({ initialDifficulty, onStart, onResume, onSta
         </TouchableOpacity>
 
       </ScrollView>
+
+      {/* Modale de confirmation — remplace Alert.alert (non supporté sur web) */}
+      <Modal visible={showConfirm} transparent animationType="fade">
+        <View style={confirmStyles.overlay}>
+          <View style={[confirmStyles.card, { backgroundColor: colors.bg, borderColor: colors.borderBox }]}>
+            <Text style={[confirmStyles.title, { color: colors.textPrimary }]}>{t("home.confirm_title")}</Text>
+            <Text style={[confirmStyles.message, { color: colors.textSecondary }]}>{t("home.confirm_message")}</Text>
+            <View style={confirmStyles.btnRow}>
+              <TouchableOpacity
+                onPress={() => setShowConfirm(false)}
+                style={[confirmStyles.btn, { borderColor: colors.borderThin }]}
+                activeOpacity={0.7}
+              >
+                <Text style={[confirmStyles.btnText, { color: colors.textSecondary }]}>{t("home.confirm_cancel")}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => { setShowConfirm(false); doStart(); }}
+                style={[confirmStyles.btn, { backgroundColor: colors.bgCellSelected, borderColor: colors.borderBox }]}
+                activeOpacity={0.7}
+              >
+                <Text style={[confirmStyles.btnText, { color: colors.textOnSelected }]}>{t("home.confirm_ok")}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
+
+const confirmStyles = StyleSheet.create({
+  overlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.4)", alignItems: "center", justifyContent: "center", padding: 32 },
+  card:    { width: "100%", maxWidth: 400, padding: 24, borderWidth: 1, gap: 16 },
+  title:   { fontSize: 16, fontWeight: "700", letterSpacing: 2, textAlign: "center" },
+  message: { fontSize: 14, lineHeight: 20, textAlign: "center" },
+  btnRow:  { flexDirection: "row", gap: 10 },
+  btn:     { flex: 1, paddingVertical: 14, alignItems: "center", borderWidth: 1.5 },
+  btnText: { fontSize: 13, fontWeight: "700", letterSpacing: 2 },
+});
 
 const styles = StyleSheet.create({
   safe:   { flex: 1 },
   scroll: { flexGrow: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32, paddingVertical: 20, gap: 18 },
   scrollTablet: { maxWidth: 520, alignSelf: "center", width: "100%" },
 
-  gearBtn:  { position: "absolute", top: 0, right: 0, padding: 8 },
-  infoBtn:     { position: "absolute", top: 0, left: 0, padding: 8 },
+  gearBtn:  { position: "absolute", top: 0, right: 0, padding: 8, zIndex: 1 },
+  infoBtn:     { position: "absolute", top: 0, left: 0, padding: 8, zIndex: 1 },
   infoBtnText: { fontSize: 14, fontFamily: "Cinzel_700Bold", letterSpacing: 1.5 },
 
   titleBlock: { width: "100%", alignItems: "center", gap: 2 },

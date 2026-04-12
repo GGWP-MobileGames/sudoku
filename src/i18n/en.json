@@ -200,9 +200,9 @@
   },
   "welcome": {
     "title": "GGWP",
-    "p1": "This mobile game is brought to you by GGWP, and this brief advertisement will be the only one you will ever see during your entire experience on this app.",
+    "p1": "This mobile game is brought to you by GGWP, and this short promotional message will be the first and last disruption to your gaming experience.",
     "p2": "GGWP's mission is to offer quality mobile games — free, ad-free, and without collecting any of your personal data. This Sudoku is the first of many. If you are tired of apps that bombard you with ads, monetise your data, or push you to pay, you are in the right place. We will keep you informed when new games become available.",
     "p4": "Thank you for taking the time to read this. Enjoy the game!",
-    "back_btn": "BACK TO MENU"
+    "back_btn": "MAIN MENU"
   }
 }

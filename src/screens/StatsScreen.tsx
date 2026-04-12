@@ -204,7 +204,7 @@ const pauseIcon = StyleSheet.create({
 
 const styles = StyleSheet.create({
   safe:   { flex: 1 },
-  header: { paddingHorizontal: 20, paddingTop: 52, paddingBottom: 12, gap: 12, alignItems: "center" },
+  header: { paddingHorizontal: 20, paddingTop: 52, paddingBottom: 12, gap: 12, alignItems: "center", maxWidth: 700, alignSelf: "center", width: "100%" },
   scroll: { alignItems: "center", paddingHorizontal: 20, paddingTop: 8, paddingBottom: 40, gap: 16 },
   backBtn:  { alignSelf: "center", paddingVertical: 10, paddingHorizontal: 24, borderWidth: 1 },
   backText: { fontSize: 12, fontWeight: "700", letterSpacing: 2.5 },

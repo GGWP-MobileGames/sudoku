@@ -27,7 +27,8 @@
     },
     "web": {
       "bundler": "metro",
-      "favicon": "./assets/icon.png"
+      "favicon": "./assets/icon.png",
+      "output": "single"
     },
     "scheme": "sudoku",
     "plugins": [

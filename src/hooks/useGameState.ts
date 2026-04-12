@@ -65,6 +65,8 @@ interface GameInit {
   savedGame?:       SavedGame | null;
   prebuilt?:        { puzzle: Grid; solution: Grid };
   hintsPerGame?:    number;
+  limitErrors?:     boolean;
+  maxErrors?:       number;
   t?:               (key: string) => string;
 }
 
@@ -167,8 +169,9 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
   }, [completed, grid.length]);
 
   // ── Sauvegarde auto ──────────────────────────────────────────────────────────
+  const defeated = !!(init.limitErrors && mistakes >= (init.maxErrors ?? 3));
   useEffect(() => {
-    if (!grid.length || !puzzle.length || completed) return;
+    if (!grid.length || !puzzle.length || completed || defeated) return;
     saveGame({
       grid, puzzle, solution, difficulty, mistakes, hintsLeft, seconds,
       notes: serializeNotes(notes),

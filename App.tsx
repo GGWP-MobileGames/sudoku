@@ -1,5 +1,5 @@
 import React from "react";
-import { BackHandler } from "react-native";
+import { BackHandler, Platform } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { SettingsProvider } from "./src/context/SettingsContext";
 import { useFonts, Cinzel_700Bold } from "@expo-google-fonts/cinzel";
@@ -17,8 +17,10 @@ import type { Difficulty } from "./src/utils/puzzles";
 import type { Grid } from "./src/utils/sudoku";
 import type { SavedGame } from "./src/utils/storage";
 
-// Empêche le splash de se masquer automatiquement
-SplashScreen.preventAutoHideAsync();
+// Empêche le splash de se masquer automatiquement (natif uniquement)
+if (Platform.OS !== "web") {
+  SplashScreen.preventAutoHideAsync();
+}
 
 type Screen = "home" | "game" | "stats" | "settings" | "daily" | "daily-game" | "welcome";
 
