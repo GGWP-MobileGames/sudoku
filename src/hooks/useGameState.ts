@@ -188,6 +188,8 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
     const c = forceC !== undefined ? forceC : selected?.[1];
     if (r === undefined || c === undefined) return;
     if (puzzle[r]?.[c] !== 0) return;
+    // Case déjà correctement remplie → verrouillée comme une case initiale
+    if (grid[r]?.[c] !== 0 && grid[r]?.[c] === solution[r]?.[c]) return;
 
     if (notesMode && num !== 0) {
       const snapshot: UndoEntry = {
@@ -218,7 +220,6 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
       return;
     }
 
-    if (grid[r]?.[c] === solution[r]?.[c] && grid[r]?.[c] !== 0) return;
 
     if (solution[r][c] !== num) {
       const alreadyTried = cellErrorsRef.current[r]?.[c]?.has(num) ?? false;
