@@ -26,7 +26,7 @@ interface Props {
   largeNumbers?:       boolean;
 }
 
-export default function SudokuGrid({
+function SudokuGrid({
   grid, notes, errors, selected, onSelect, isFixed, isError, puzzleKey, gridSize, completedGroups,
   victoryWave, showCoords, hintHighlight, hintTarget, hintPreviewValue,
   highlightIdentical = true, highlightGroup = true, largeNumbers = true,
@@ -247,6 +247,8 @@ const hintHighlightSet = React.useMemo(() => {
     </View>
   );
 }
+
+export default React.memo(SudokuGrid);
 
 const coord = StyleSheet.create({
   label: {

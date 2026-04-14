@@ -46,7 +46,9 @@ export type CellNotes  = Set<number>;
 export type CellErrors = Set<number>; // mauvais essais accumulés
 
 interface UndoEntry {
-  notes: NotesGrid;
+  grid:       Grid;
+  notes:      NotesGrid;
+  cellErrors: ErrorsGrid;
 }
 export type NotesGrid  = CellNotes[][];
 export type ErrorsGrid = CellErrors[][];
@@ -169,17 +171,23 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
     return () => sub.remove();
   }, [completed, grid.length]);
 
-  // ── Sauvegarde auto ──────────────────────────────────────────────────────────
+  // ── Sauvegarde auto (debounced, pas à chaque tick du timer) ─────────────────
   const defeated = !!(init.limitErrors && mistakes >= (init.maxErrors ?? 3));
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
     if (!grid.length || !puzzle.length || completed || defeated || init.isDaily) return;
-    saveGame({
-      grid, puzzle, solution, difficulty, mistakes, hintsLeft, seconds,
-      notes: serializeNotes(notes),
-      cellErrors: serializeCellErrors(cellErrors),
-      savedAt: Date.now(),
-    });
-  }, [grid, notes, seconds, mistakes]);
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => {
+      saveGame({
+        grid, puzzle, solution, difficulty,
+        mistakes: mistakesRef.current, hintsLeft: hintsLeftRef.current, seconds: secondsRef.current,
+        notes: serializeNotes(notesRef.current),
+        cellErrors: serializeCellErrors(cellErrorsRef.current),
+        savedAt: Date.now(),
+      });
+    }, 2000);
+    return () => { if (saveTimerRef.current) clearTimeout(saveTimerRef.current); };
+  }, [grid, notes, mistakes]);
 
   // ── Saisie ──────────────────────────────────────────────────────────────────
   const inputNumber = useCallback((num: number, forceR?: number, forceC?: number) => {
@@ -191,10 +199,14 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
     // Case déjà correctement remplie → verrouillée comme une case initiale
     if (grid[r]?.[c] !== 0 && grid[r]?.[c] === solution[r]?.[c]) return;
 
+    // Snapshot avant toute modification
+    const snapshot: UndoEntry = {
+      grid:       deepCopy(gridRef.current),
+      notes:      notesRef.current.map(row => row.map(s => new Set(s))),
+      cellErrors: cellErrorsRef.current.map(row => row.map(s => new Set(s))),
+    };
+
     if (notesMode && num !== 0) {
-      const snapshot: UndoEntry = {
-        notes: notesRef.current.map(row => row.map(s => new Set(s))),
-      };
       setUndoStack(s => [...s.slice(-29), snapshot]);
       setNotes(prev => {
         const next = prev.map(row => row.map(s => new Set(s)));
@@ -205,21 +217,26 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
       return;
     }
 
-    // Effacer : uniquement les notes (les nombres ne s'effacent pas)
+    // Effacer : vide la case (chiffre incorrect ou notes)
     if (num === 0) {
-      if (notes[r]?.[c]?.size === 0) return; // rien à effacer
-      const snapshot: UndoEntry = {
-        notes: notesRef.current.map(row => row.map(s => new Set(s))),
-      };
+      const hasNotes = (notes[r]?.[c]?.size ?? 0) > 0;
+      const hasIncorrectValue = grid[r][c] !== 0 && grid[r][c] !== solution[r][c];
+      if (!hasNotes && !hasIncorrectValue) return; // rien à effacer
       setUndoStack(s => [...s.slice(-29), snapshot]);
-      setNotes(prev => {
-        const next = prev.map(row => row.map(s => new Set(s)));
-        next[r][c].clear();
-        return next;
-      });
+      if (hasIncorrectValue) {
+        const nextGrid = deepCopy(gridRef.current);
+        nextGrid[r][c] = 0;
+        setGrid(nextGrid);
+      }
+      if (hasNotes) {
+        setNotes(prev => {
+          const next = prev.map(row => row.map(s => new Set(s)));
+          next[r][c].clear();
+          return next;
+        });
+      }
       return;
     }
-
 
     if (solution[r][c] !== num) {
       const alreadyTried = cellErrorsRef.current[r]?.[c]?.has(num) ?? false;
@@ -232,56 +249,66 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
       return;
     }
 
+    // Bonne réponse → sauvegarder le snapshot et appliquer
+    setUndoStack(s => [...s.slice(-29), snapshot]);
+
     setCellErrors(prev => {
       const next = prev.map(row => row.map(s => new Set(s)));
       next[r][c].clear();
       return next;
     });
 
-    setGrid(prev => {
-      const next = deepCopy(prev);
-      next[r][c] = num;
-      setNotes(prevN => {
-        const nn = prevN.map(row => row.map(s => new Set(s)));
-        for (let i = 0; i < 9; i++) { nn[r][i].delete(num); nn[i][c].delete(num); }
-        const br = Math.floor(r / 3) * 3;
-        const bc = Math.floor(c / 3) * 3;
-        for (let dr = 0; dr < 3; dr++)
-          for (let dc = 0; dc < 3; dc++)
-            nn[br + dr][bc + dc].delete(num);
-        return nn;
-      });
-      if (isComplete(next, solution)) {
-        setCompleted(true);
-      } else {
-        const prevGroupKeys = new Set(getCompletedGroups(prev).map(groupKey));
-        const newGroups = getCompletedGroups(next).filter(g => !prevGroupKeys.has(groupKey(g)));
-        if (newGroups.length > 0) {
-          const cellSet = new Set<string>();
-          const allCells: number[][] = [];
-          for (const group of newGroups) {
-            for (const cell of group) {
-              const k = `${cell[0]},${cell[1]}`;
-              if (!cellSet.has(k)) { cellSet.add(k); allCells.push(cell); }
-            }
-          }
-          setCompletedGroups(allCells);
-        }
-      }
-      return next;
+    // Calculer le nouvel état de la grille
+    const prevGrid = gridRef.current;
+    const nextGrid = deepCopy(prevGrid);
+    nextGrid[r][c] = num;
+    setGrid(nextGrid);
+
+    // Supprimer les notes liées (ligne, colonne, boîte)
+    setNotes(prevN => {
+      const nn = prevN.map(row => row.map(s => new Set(s)));
+      for (let i = 0; i < 9; i++) { nn[r][i].delete(num); nn[i][c].delete(num); }
+      const br = Math.floor(r / 3) * 3;
+      const bc = Math.floor(c / 3) * 3;
+      for (let dr = 0; dr < 3; dr++)
+        for (let dc = 0; dc < 3; dc++)
+          nn[br + dr][bc + dc].delete(num);
+      return nn;
     });
+
+    // Vérifier complétion
+    if (isComplete(nextGrid, solution)) {
+      setCompleted(true);
+    } else {
+      const prevGroupKeys = new Set(getCompletedGroups(prevGrid).map(groupKey));
+      const newGroups = getCompletedGroups(nextGrid).filter(g => !prevGroupKeys.has(groupKey(g)));
+      if (newGroups.length > 0) {
+        const cellSet = new Set<string>();
+        const allCells: number[][] = [];
+        for (const group of newGroups) {
+          for (const cell of group) {
+            const k = `${cell[0]},${cell[1]}`;
+            if (!cellSet.has(k)) { cellSet.add(k); allCells.push(cell); }
+          }
+        }
+        setCompletedGroups(allCells);
+      }
+    }
   }, [selected, completed, notesMode, puzzle, solution]);
 
   // ── Indice ──────────────────────────────────────────────────────────────────
 
   const useHint = useCallback(() => {
-    if (hintsLeft <= 0 || completed) return;
+    if (hintsLeftRef.current <= 0 || completed) return;
     const hint = analyzeHint(gridRef.current, solution, t);
     if (!hint) return;
-    setHintsLeft(h => h - 1);
+    setHintsLeft(h => {
+      if (h <= 0) return h;
+      return h - 1;
+    });
     setPendingHint(hint);
     setSelected(hint.targetCell);
-  }, [hintsLeft, completed, solution]);
+  }, [completed, solution]);
 
   const dismissHint = useCallback(() => setPendingHint(null), []);
 
@@ -295,7 +322,9 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
   const undo = useCallback(() => {
     if (undoStack.length === 0 || completed) return;
     const prev = undoStack[undoStack.length - 1];
+    setGrid(prev.grid);
     setNotes(prev.notes);
+    setCellErrors(prev.cellErrors);
     setUndoStack(s => s.slice(0, -1));
   }, [undoStack, completed]);
 

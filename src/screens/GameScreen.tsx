@@ -83,6 +83,11 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
     inputNumber(n);
   }, [inputNumber]);
 
+  const pausedRef = React.useRef(paused);
+  pausedRef.current = paused;
+  const handleSelect = React.useCallback((r: number, c: number) => {
+    if (!pausedRef.current) setSelected([r, c]);
+  }, [setSelected]);
 
   React.useEffect(() => {
     if (mistakes > prevMistakesRef.current) {
@@ -113,7 +118,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
   useKeyboard({
     onNumber:      handleInput,
     onDelete:      () => handleInput(0),
-    onToggleNotes: () => setNotesMode(!notesMode),
+    onToggleNotes: () => setNotesMode(prev => !prev),
     onUndo:        undo,
     onHint:        useHint,
     onEscape:      () => setSelected(null),
@@ -132,19 +137,24 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
 
   const isDefeated = effectiveLimitErrors && !completed && mistakes >= effectiveMaxErrors;
 
+  const dailySaveTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   React.useEffect(() => {
     if (!isDaily || !grid.length || completed || isDefeated) return;
-    try {
-      saveDailyGame({
-        difficulty, grid,
-        notes: serializeNotes(notes),
-        cellErrors: serializeCellErrors(cellErrors),
-        puzzle, solution,
-        mistakes, hintsLeft, seconds,
-        dateKey: gameDateKey,
-      });
-    } catch (e) { console.warn("saveDailyGame failed", e); }
-  }, [seconds, mistakes, hintsLeft]);
+    if (dailySaveTimerRef.current) clearTimeout(dailySaveTimerRef.current);
+    dailySaveTimerRef.current = setTimeout(() => {
+      try {
+        saveDailyGame({
+          difficulty, grid,
+          notes: serializeNotes(notes),
+          cellErrors: serializeCellErrors(cellErrors),
+          puzzle, solution,
+          mistakes: mistakesRef.current, hintsLeft: hintsLeftRef.current, seconds: secondsRef.current,
+          dateKey: gameDateKey,
+        });
+      } catch (e) { console.warn("saveDailyGame failed", e); }
+    }, 2000);
+    return () => { if (dailySaveTimerRef.current) clearTimeout(dailySaveTimerRef.current); };
+  }, [grid, notes, mistakes]);
 
   React.useEffect(() => {
     if (completed) {
@@ -235,7 +245,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         notes={grid.length > 0 ? notes : EMPTY_NOTES}
         errors={grid.length > 0 ? cellErrors : EMPTY_ERRORS}
         selected={paused || !!pendingHint ? null : selected}
-        onSelect={(r, c) => { if (!paused) setSelected([r, c]); }}
+        onSelect={handleSelect}
         isFixed={isFixed} isError={isError}
         puzzleKey={puzzleKeyRef.current}
         gridSize={gridSize}
@@ -264,7 +274,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         onInput={handleInput} onHint={useHint}
         onUndo={undo} canUndo={undoStack.length > 0}
         hintsLeft={hintsLeft} notesMode={notesMode}
-        onToggleNotes={() => setNotesMode(!notesMode)}
+        onToggleNotes={() => setNotesMode(prev => !prev)}
         grid={grid}
         compact={isCompact}
       />

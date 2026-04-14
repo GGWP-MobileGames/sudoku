@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from "react";
 import { loadSettings, saveSettings, DEFAULT_SETTINGS, type AppSettings } from "../utils/settings";
 import { getColors, type ColorTheme } from "../utils/theme";
 import { createT, DEVICE_LANGUAGE, type Language, SUPPORTED_LANGUAGES } from "../i18n";
@@ -26,20 +26,24 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     loadSettings().then(setSettings);
   }, []);
 
-  const updateSettings = (patch: Partial<AppSettings>) => {
+  const updateSettings = useCallback((patch: Partial<AppSettings>) => {
     setSettings(prev => {
       const next = { ...prev, ...patch };
       saveSettings(next);
       return next;
     });
-  };
+  }, []);
 
   const language: Language = (settings.language === 'auto' ? DEVICE_LANGUAGE : settings.language as Language);
-  const t = createT(language);
-  const colors = getColors(settings.darkMode);
+  const t = useMemo(() => createT(language), [language]);
+  const colors = useMemo(() => getColors(settings.darkMode), [settings.darkMode]);
+
+  const value = useMemo(() => ({
+    settings, colors, updateSettings, t, language,
+  }), [settings, colors, updateSettings, t, language]);
 
   return (
-    <SettingsContext.Provider value={{ settings, colors, updateSettings, t, language }}>
+    <SettingsContext.Provider value={value}>
       {children}
     </SettingsContext.Provider>
   );
