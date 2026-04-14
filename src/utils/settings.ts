@@ -1,19 +1,21 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export interface AppSettings {
-  darkMode:           boolean;
-  highlightIdentical: boolean; // surligner les chiffres identiques
-  highlightGroup:     boolean; // surligner ligne/colonne/bloc
+  darkMode:           boolean;  // @deprecated — conservé pour migration
+  theme:              string;   // ThemeKey: classic | dark | gruvbox-light | gruvbox-dark | ocean | forest
+  highlightIdentical: boolean;  // surligner les chiffres identiques
+  highlightGroup:     boolean;  // surligner ligne/colonne/bloc
   hintsPerGame:       number;
-  language:           string;  // fr | en | es | de | pt
-  largeNumbers:       boolean; // chiffres grands dans la grille
-  limitErrors:        boolean; // activer la limite d'erreurs
-  maxErrors:          number;  // nombre d'erreurs max (0-99)
-  showCellErrors:     boolean; // afficher les erreurs dans les cases
+  language:           string;   // fr | en | es | de | pt
+  largeNumbers:       boolean;  // chiffres grands dans la grille
+  limitErrors:        boolean;  // activer la limite d'erreurs
+  maxErrors:          number;   // nombre d'erreurs max (0-99)
+  showCellErrors:     boolean;  // afficher les erreurs dans les cases
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
   darkMode:           false,
+  theme:              "classic",
   highlightIdentical: true,
   highlightGroup:     true,
   hintsPerGame:       3,

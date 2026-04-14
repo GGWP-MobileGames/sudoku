@@ -283,7 +283,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.bg }]}>
-      <StatusBar barStyle={settings.darkMode ? "light-content" : "dark-content"} backgroundColor={colors.bg} />
+      <StatusBar barStyle={colors.isDark ? "light-content" : "dark-content"} backgroundColor={colors.bg} />
       <TouchableOpacity
         style={useLandscape ? styles.screenLandscape : styles.screen}
         activeOpacity={1}

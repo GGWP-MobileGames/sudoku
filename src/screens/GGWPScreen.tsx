@@ -33,7 +33,7 @@ export default function GGWPScreen({ onClose }: Props) {
 
   return (
     <SafeAreaView style={[s.safe, { backgroundColor: colors.bg }]}>
-      <StatusBar barStyle={settings.darkMode ? "light-content" : "dark-content"} backgroundColor={colors.bg} />
+      <StatusBar barStyle={colors.isDark ? "light-content" : "dark-content"} backgroundColor={colors.bg} />
 
       <ScrollView contentContainerStyle={[s.scroll, isTablet && { maxWidth: 520, alignSelf: "center" as const }]} showsVerticalScrollIndicator={false}>
 

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from "react";
 import { loadSettings, saveSettings, DEFAULT_SETTINGS, type AppSettings } from "../utils/settings";
-import { getColors, type ColorTheme } from "../utils/theme";
+import { getColors, type ColorTheme, type ThemeKey } from "../utils/theme";
 import { createT, DEVICE_LANGUAGE, type Language, SUPPORTED_LANGUAGES } from "../i18n";
 
 interface SettingsContextValue {
@@ -13,7 +13,7 @@ interface SettingsContextValue {
 
 const SettingsContext = createContext<SettingsContextValue>({
   settings:       DEFAULT_SETTINGS,
-  colors:         getColors(false),
+  colors:         getColors("classic"),
   updateSettings: () => {},
   t:              createT('fr'),
   language:       'fr',
@@ -23,7 +23,16 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
 
   useEffect(() => {
-    loadSettings().then(setSettings);
+    loadSettings().then(loaded => {
+      // Migration : anciens utilisateurs avec darkMode mais sans theme
+      if (!loaded.theme || loaded.theme === "classic") {
+        if (loaded.darkMode) {
+          loaded.theme = "dark";
+          saveSettings(loaded);
+        }
+      }
+      setSettings(loaded);
+    });
   }, []);
 
   const updateSettings = useCallback((patch: Partial<AppSettings>) => {
@@ -36,7 +45,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
   const language: Language = (settings.language === 'auto' ? DEVICE_LANGUAGE : settings.language as Language);
   const t = useMemo(() => createT(language), [language]);
-  const colors = useMemo(() => getColors(settings.darkMode), [settings.darkMode]);
+  const themeKey = (settings.theme || "classic") as ThemeKey;
+  const colors = useMemo(() => getColors(themeKey), [themeKey]);
 
   const value = useMemo(() => ({
     settings, colors, updateSettings, t, language,

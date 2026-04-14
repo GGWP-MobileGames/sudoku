@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useSettings } from "../context/SettingsContext";
 import { SUPPORTED_LANGUAGES, type Language } from "../i18n";
 import { useResponsive } from "../hooks/useResponsive";
+import { THEME_LIST, type ThemeKey } from "../utils/theme";
 
 interface Props { onBack: () => void; }
 
@@ -33,7 +34,7 @@ export default function SettingsScreen({ onBack }: Props) {
 
   return (
     <SafeAreaView style={[s.safe, { backgroundColor: colors.bg }]}>
-      <StatusBar barStyle={settings.darkMode ? "light-content" : "dark-content"} backgroundColor={colors.bg} />
+      <StatusBar barStyle={colors.isDark ? "light-content" : "dark-content"} backgroundColor={colors.bg} />
 
       <View style={s.header}>
         <View style={s.titleBlock}>
@@ -90,7 +91,23 @@ export default function SettingsScreen({ onBack }: Props) {
           <View style={[s.sectionHead, { backgroundColor: colors.bgCard, borderBottomColor: colors.borderThin }]}>
             <Text style={[s.sectionTitle, { color: colors.textSecondary }]}>{t('settings.section_appearance')}</Text>
           </View>
-          <Row label={t('settings.dark_mode')} desc={t('settings.dark_mode_desc')} value={settings.darkMode} onToggle={() => updateSettings({ darkMode: !settings.darkMode })} last />
+          <View style={s.langRow}>
+            {THEME_LIST.map(({ key }) => {
+              const isActive = (settings.theme || "classic") === key;
+              return (
+                <TouchableOpacity
+                  key={key}
+                  style={[s.langBtn, { borderColor: colors.borderThin }, isActive && { borderColor: colors.borderBox, backgroundColor: colors.bgCellSelected }]}
+                  onPress={() => updateSettings({ theme: key })}
+                  activeOpacity={0.7}
+                >
+                  <Text style={[s.langText, { color: colors.textSecondary }, isActive && { color: colors.textOnSelected, fontWeight: "700" as const }]}>
+                    {t(`settings.theme_${key}`)}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
         </View>
 
         {/* Indices */}

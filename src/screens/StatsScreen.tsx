@@ -46,7 +46,7 @@ export default function StatsScreen({ onBack }: Props) {
     loadHistory().then(setHistory);
   }, []);
 
-  const isDark = settings.darkMode;
+  const isDark = colors.isDark;
   const RESULT_LABELS = getResultLabels(t);
 
   return (

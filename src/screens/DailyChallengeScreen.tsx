@@ -131,7 +131,7 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
 
   return (
     <SafeAreaView style={[s.safe, { backgroundColor: colors.bg }]}>
-      <StatusBar barStyle={settings.darkMode ? "light-content" : "dark-content"} backgroundColor={colors.bg} />
+      <StatusBar barStyle={colors.isDark ? "light-content" : "dark-content"} backgroundColor={colors.bg} />
 
       {/* Header fixe */}
       <View style={[s.header, { backgroundColor: colors.bg }]}>
@@ -237,10 +237,10 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
         {!completed && !failed && (
           <TouchableOpacity
             onPress={alreadyPlayed ? onResume : onStart}
-            style={[s.playBtn, { backgroundColor: settings.darkMode ? COLORS.gold : colors.bgCellSelected, borderColor: settings.darkMode ? COLORS.gold : colors.borderBox }]}
+            style={[s.playBtn, { backgroundColor: colors.btnPrimary, borderColor: colors.btnPrimaryBorder }]}
             activeOpacity={0.75}
           >
-            <Text style={[s.playText, { color: settings.darkMode ? '#1A1A1A' : colors.textOnSelected }]}>
+            <Text style={[s.playText, { color: colors.btnPrimaryText }]}>
               {alreadyPlayed ? t("daily.resume") : t("daily.play")}
             </Text>
           </TouchableOpacity>
