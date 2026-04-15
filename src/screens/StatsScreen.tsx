@@ -197,11 +197,6 @@ const tbl = StyleSheet.create({
   cellView: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center" },
 });
 
-const pauseIcon = StyleSheet.create({
-  wrap: { flexDirection: "row", gap: 3, alignItems: "center" },
-  bar:  { width: 3, height: 11, borderRadius: 1 },
-});
-
 const styles = StyleSheet.create({
   safe:   { flex: 1 },
   header: { paddingHorizontal: 20, paddingTop: 52, paddingBottom: 12, gap: 12, alignItems: "center", maxWidth: 700, alignSelf: "center", width: "100%" },

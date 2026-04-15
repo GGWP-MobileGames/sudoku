@@ -35,7 +35,7 @@ function AppContent({ onReady }: AppContentProps) {
   const [difficulty, setDifficulty] = React.useState<Difficulty>("easy");
   const [savedGame,  setSavedGame]  = React.useState<SavedGame | null>(null);
   const [prebuilt,   setPrebuilt]   = React.useState<{ puzzle: Grid; solution: Grid } | undefined>();
-  const dailyGameRef = React.useRef<{ puzzle: Grid; solution: Grid } | null>(null);
+  const dailyGameRef = React.useRef<{ puzzle: Grid; solution: Grid; label: string; dateKey: string } | null>(null);
   const [dailySaved, setDailySaved] = React.useState<DailySavedGame | null>(null);
 
   const navigate = (s: Screen, dir: TransitionDirection) => {

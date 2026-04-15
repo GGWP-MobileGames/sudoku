@@ -3,7 +3,8 @@ import { View, Text, StyleSheet, Animated, Platform } from "react-native";
 import SudokuCell from "./SudokuCell";
 import { COLORS } from "../utils/theme";
 import { useSettings } from "../context/SettingsContext";
-import type { Grid, NotesGrid, ErrorsGrid } from "../hooks/useGameState";
+import type { Grid } from "../utils/sudoku";
+import type { NotesGrid, ErrorsGrid } from "../hooks/useGameState";
 
 interface Props {
   grid:          Grid;
@@ -244,9 +245,9 @@ const hintHighlightSet = React.useMemo(() => {
 
       {/* Cellules */}
       <View style={styles.cellsContainer}>
-        {grid.map((row, r) => (
+        {grid.map((row: number[], r: number) => (
           <View key={r} style={styles.row}>
-            {row.map((_, c) => {
+            {row.map((_: number, c: number) => {
               const idx = r * 9 + c;
               return (
                 <View key={`${r}-${c}`} style={{ width: CELL_SIZE, height: CELL_SIZE }}>
