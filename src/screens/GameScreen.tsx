@@ -271,7 +271,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
   const padBlock = (
     <TouchableOpacity activeOpacity={1} onPress={e => e.stopPropagation()} style={[styles.padWrapper, (paused || defeatPending) && styles.padHidden]} disabled={paused || defeatPending}>
       <NumberPad
-        onInput={handleInput} onHint={useHint}
+        onInput={handleInput} onErase={() => handleInput(0)} onHint={useHint}
         onUndo={undo} canUndo={undoStack.length > 0}
         hintsLeft={hintsLeft} notesMode={notesMode}
         onToggleNotes={() => setNotesMode(prev => !prev)}

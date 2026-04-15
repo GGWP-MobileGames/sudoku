@@ -217,16 +217,24 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
       return;
     }
 
-    // Effacer : vide la case (chiffre incorrect ou notes)
+    // Effacer : vide la case (chiffre incorrect, erreurs ou notes)
     if (num === 0) {
       const hasNotes = (notes[r]?.[c]?.size ?? 0) > 0;
+      const hasErrors = (cellErrorsRef.current[r]?.[c]?.size ?? 0) > 0;
       const hasIncorrectValue = grid[r][c] !== 0 && grid[r][c] !== solution[r][c];
-      if (!hasNotes && !hasIncorrectValue) return; // rien à effacer
+      if (!hasNotes && !hasIncorrectValue && !hasErrors) return; // rien à effacer
       setUndoStack(s => [...s.slice(-29), snapshot]);
       if (hasIncorrectValue) {
         const nextGrid = deepCopy(gridRef.current);
         nextGrid[r][c] = 0;
         setGrid(nextGrid);
+      }
+      if (hasErrors) {
+        setCellErrors(prev => {
+          const next = prev.map(row => row.map(s => new Set(s)));
+          next[r][c].clear();
+          return next;
+        });
       }
       if (hasNotes) {
         setNotes(prev => {
