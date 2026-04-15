@@ -139,6 +139,8 @@
     "highlight_group_desc": "Colore a área ao redor da célula selecionada",
     "show_cell_errors": "Mostrar erros nas células",
     "show_cell_errors_desc": "Exibe os números errados tentados em cada célula",
+    "haptic_feedback": "Resposta háptica",
+    "haptic_feedback_desc": "Vibrações ao colocar um número ou cometer um erro",
     "hints_label": "Dicas disponíveis",
     "hints_default": "Padrão: 3",
     "section_errors": "ERROS POR JOGO",

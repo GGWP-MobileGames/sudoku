@@ -19,6 +19,7 @@ import { saveDailyRecord, getTodayKey, saveDailyGame, clearDailyGame, recordDail
 import type { Difficulty } from "../utils/puzzles";
 import type { Grid } from "../utils/sudoku";
 import type { SavedGame } from "../utils/storage";
+import { lightImpact, mediumImpact, errorNotification, successNotification } from "../utils/haptics";
 
 const EMPTY_GRID: Grid = Array.from({ length: 9 }, () => Array(9).fill(0));
 const EMPTY_NOTES  = Array.from({ length: 9 }, () =>
@@ -67,7 +68,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
     mistakes, hintsLeft,
     seconds, formatTime,
     paused, setPaused,
-    completed, completedGroups,
+    completed, completedGroups, bounceCell, shakeCell,
     inputNumber, useHint,
     pendingHint, dismissHint, applyHint,
     newGame,
@@ -125,6 +126,19 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
     onArrow:       handleArrow,
     disabled:      paused || completed || defeatPending,
   });
+
+  // ── Haptics (conditionné par le paramètre) ──────────────────────────────────
+  const haptic = settings.hapticFeedback;
+  React.useEffect(() => { if (bounceCell && haptic) lightImpact(); }, [bounceCell]);
+  React.useEffect(() => { if (shakeCell && haptic) errorNotification(); }, [shakeCell]);
+  const prevCompletedGroupsRef = React.useRef<number>(0);
+  React.useEffect(() => {
+    if (haptic && completedGroups.length > 0 && completedGroups.length !== prevCompletedGroupsRef.current) {
+      mediumImpact();
+    }
+    prevCompletedGroupsRef.current = completedGroups.length;
+  }, [completedGroups]);
+  React.useEffect(() => { if (completed && haptic) successNotification(); }, [completed]);
 
   const victoryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const defeatTimerRef  = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -250,6 +264,8 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         puzzleKey={puzzleKeyRef.current}
         gridSize={gridSize}
         completedGroups={completedGroups}
+        bounceCell={bounceCell}
+        shakeCell={shakeCell}
         victoryWave={completed && !victoryReady}
         showCoords={!!pendingHint}
         hintHighlight={pendingHint?.highlightCells as [number,number][] | undefined}

@@ -103,6 +103,8 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
   const [paused,    setPaused]    = useState(false);
   const [completed,       setCompleted]       = useState(false);
   const [completedGroups, setCompletedGroups] = useState<number[][]>([]);
+  const [bounceCell, setBounceCell] = useState<{ r: number; c: number; tick: number } | null>(null);
+  const [shakeCell,  setShakeCell]  = useState<{ r: number; c: number; tick: number } | null>(null);
   const [pendingHint,  setPendingHint]  = useState<PedagogicHint | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -127,6 +129,8 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
     setGrid(deepCopy(p));
     setNotes(emptyNotes());
     setCellErrors(emptyErrors());
+    setBounceCell(null);
+    setShakeCell(null);
     setSelected(null);
     setMistakes(0);
     setHintsLeft(maxHints);
@@ -238,6 +242,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
         next[r][c].add(num);
         return next;
       });
+      setShakeCell({ r, c, tick: Date.now() });
       return;
     }
 
@@ -253,6 +258,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
     const nextGrid = deepCopy(prevGrid);
     nextGrid[r][c] = num;
     setGrid(nextGrid);
+    setBounceCell({ r, c, tick: Date.now() });
 
     // Supprimer les notes liées (ligne, colonne, boîte)
     setNotes(prevN => {
@@ -325,7 +331,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
     mistakes, hintsLeft,
     seconds, formatTime,
     paused, setPaused,
-    completed, completedGroups,
+    completed, completedGroups, bounceCell, shakeCell,
     inputNumber, useHint,
     pendingHint, dismissHint, applyHint,
     newGame,

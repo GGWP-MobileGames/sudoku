@@ -16,6 +16,8 @@ interface Props {
   puzzleKey:     string;
   gridSize:      number; // taille dynamique passée par le parent
   completedGroups?: number[][]; // cellules [r,c] à flasher en or
+  bounceCell?:     { r: number; c: number; tick: number } | null;
+  shakeCell?:      { r: number; c: number; tick: number } | null;
   victoryWave?:    boolean;
   showCoords?:       boolean;
   hintHighlight?:      [number, number][];
@@ -28,7 +30,7 @@ interface Props {
 
 function SudokuGrid({
   grid, notes, errors, selected, onSelect, isFixed, isError, puzzleKey, gridSize, completedGroups,
-  victoryWave, showCoords, hintHighlight, hintTarget, hintPreviewValue,
+  bounceCell, shakeCell, victoryWave, showCoords, hintHighlight, hintTarget, hintPreviewValue,
   highlightIdentical = true, highlightGroup = true, largeNumbers = true,
 }: Props) {
   const { colors } = useSettings();
@@ -45,6 +47,14 @@ const goldAnims = useRef(
     Array.from({ length: 81 }, () => new Animated.Value(0))
   ).current;
 
+const scaleAnims = useRef(
+    Array.from({ length: 81 }, () => new Animated.Value(1))
+  ).current;
+
+const shakeAnims = useRef(
+    Array.from({ length: 81 }, () => new Animated.Value(0))
+  ).current;
+
   const puzzleId = useRef<string>("");
 
 useEffect(() => {
@@ -53,6 +63,8 @@ useEffect(() => {
 
     cellAnims.forEach(a => a.setValue(0));
     goldAnims.forEach(a => a.setValue(0));
+    scaleAnims.forEach(a => a.setValue(1));
+    shakeAnims.forEach(a => a.setValue(0));
 
     // Grouper par diagonale (r + c) pour la vague
     const byDiag: { wave: Animated.CompositeAnimation; gold: Animated.CompositeAnimation }[][] =
@@ -139,8 +151,48 @@ const prevGroupsRef = useRef<string>("");
       ]);
     });
 
-    Animated.parallel(anims).start();
+    // Scale pulse sur les cellules complétées
+    const scaleAn = completedGroups.map(([r, c]) => {
+      const a = scaleAnims[r * 9 + c];
+      const dist  = Math.abs(r - centerR) + Math.abs(c - centerC);
+      const delay = (dist / maxDist) * 200;
+      return Animated.sequence([
+        Animated.delay(delay + 50),
+        Animated.timing(a, { toValue: 1.06, duration: 120, useNativeDriver: Platform.OS !== "web" }),
+        Animated.timing(a, { toValue: 1,    duration: 150, useNativeDriver: Platform.OS !== "web" }),
+      ]);
+    });
+
+    Animated.parallel([...anims, ...scaleAn]).start();
   }, [completedGroups]);
+
+  // ── Bounce sur placement correct ────────────────────────────────────────────
+  useEffect(() => {
+    if (!bounceCell) return;
+    const { r, c } = bounceCell;
+    const idx = r * 9 + c;
+    const anim = scaleAnims[idx];
+    anim.setValue(0.85);
+    Animated.sequence([
+      Animated.timing(anim, { toValue: 1.08, duration: 120, useNativeDriver: Platform.OS !== "web" }),
+      Animated.timing(anim, { toValue: 1,    duration: 100, useNativeDriver: Platform.OS !== "web" }),
+    ]).start();
+  }, [bounceCell]);
+
+  // ── Shake sur erreur ────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!shakeCell) return;
+    const { r, c } = shakeCell;
+    const idx = r * 9 + c;
+    const anim = shakeAnims[idx];
+    Animated.sequence([
+      Animated.timing(anim, { toValue:  4, duration: 50, useNativeDriver: Platform.OS !== "web" }),
+      Animated.timing(anim, { toValue: -4, duration: 50, useNativeDriver: Platform.OS !== "web" }),
+      Animated.timing(anim, { toValue:  3, duration: 50, useNativeDriver: Platform.OS !== "web" }),
+      Animated.timing(anim, { toValue: -3, duration: 50, useNativeDriver: Platform.OS !== "web" }),
+      Animated.timing(anim, { toValue:  0, duration: 50, useNativeDriver: Platform.OS !== "web" }),
+    ]).start();
+  }, [shakeCell]);
 
   const selectedValue = selected ? grid[selected[0]]?.[selected[1]] : 0;
   const isSelected    = (r: number, c: number) => selected?.[0] === r && selected?.[1] === c;
@@ -198,6 +250,7 @@ const hintHighlightSet = React.useMemo(() => {
               const idx = r * 9 + c;
               return (
                 <View key={`${r}-${c}`} style={{ width: CELL_SIZE, height: CELL_SIZE }}>
+                  <Animated.View style={{ flex: 1, transform: [{ scale: scaleAnims[idx] }, { translateX: shakeAnims[idx] }] }}>
                   <SudokuCell
                     value={
                       hintTarget && hintTarget[0] === r && hintTarget[1] === c && hintPreviewValue
@@ -220,6 +273,7 @@ const hintHighlightSet = React.useMemo(() => {
                     cellFontSize={cellFontSize}
                     noteFontSize={noteFontSize}
                   />
+                  </Animated.View>
                 </View>
               );
             })}

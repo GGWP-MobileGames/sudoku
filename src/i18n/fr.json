@@ -139,6 +139,8 @@
     "highlight_group_desc": "Colore la zone autour de la case sélectionnée",
     "show_cell_errors": "Afficher les erreurs dans la case",
     "show_cell_errors_desc": "Montre les mauvais chiffres essayés dans chaque case",
+    "haptic_feedback": "Retour haptique",
+    "haptic_feedback_desc": "Vibrations lors du placement d'un chiffre ou d'une erreur",
     "hints_label": "Nombre d'indices disponibles",
     "hints_default": "Par défaut : 3",
     "section_errors": "ERREURS PAR PARTIE",

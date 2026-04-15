@@ -139,6 +139,8 @@
     "highlight_group_desc": "Färbt den Bereich um das gewählte Feld",
     "show_cell_errors": "Fehler in Feldern anzeigen",
     "show_cell_errors_desc": "Zeigt falsche Zahlen in jedem Feld an",
+    "haptic_feedback": "Haptisches Feedback",
+    "haptic_feedback_desc": "Vibrationen beim Platzieren einer Zahl oder bei einem Fehler",
     "hints_label": "Verfügbare Tipps",
     "hints_default": "Standard: 3",
     "section_errors": "FEHLER PRO SPIEL",

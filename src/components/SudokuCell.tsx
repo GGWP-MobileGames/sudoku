@@ -162,6 +162,6 @@ const styles = StyleSheet.create({
   goldOverlay: {
     position: "absolute",
     top: 0, left: 0, right: 0, bottom: 0,
-    backgroundColor: "rgba(201,150,58,0.38)",
+    backgroundColor: "rgba(201,150,58,0.50)",
   },
 });

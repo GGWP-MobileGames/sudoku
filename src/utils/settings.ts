@@ -11,6 +11,7 @@ export interface AppSettings {
   limitErrors:        boolean;  // activer la limite d'erreurs
   maxErrors:          number;   // nombre d'erreurs max (0-99)
   showCellErrors:     boolean;  // afficher les erreurs dans les cases
+  hapticFeedback:     boolean;  // retour haptique (vibration)
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -24,6 +25,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   limitErrors:        true,
   maxErrors:          3,
   showCellErrors:     true,
+  hapticFeedback:     true,
 };
 
 const KEY = "app_settings";
