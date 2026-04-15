@@ -68,7 +68,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
     seconds, formatTime,
     paused, setPaused,
     completed, completedGroups,
-    inputNumber, useHint, undo, undoStack,
+    inputNumber, useHint,
     pendingHint, dismissHint, applyHint,
     newGame,
     isFixed, isError,
@@ -119,7 +119,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
     onNumber:      handleInput,
     onDelete:      () => handleInput(0),
     onToggleNotes: () => setNotesMode(prev => !prev),
-    onUndo:        undo,
+
     onHint:        useHint,
     onEscape:      () => setSelected(null),
     onArrow:       handleArrow,
@@ -272,7 +272,6 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
     <TouchableOpacity activeOpacity={1} onPress={e => e.stopPropagation()} style={[styles.padWrapper, (paused || defeatPending) && styles.padHidden]} disabled={paused || defeatPending}>
       <NumberPad
         onInput={handleInput} onErase={() => handleInput(0)} onHint={useHint}
-        onUndo={undo} canUndo={undoStack.length > 0}
         hintsLeft={hintsLeft} notesMode={notesMode}
         onToggleNotes={() => setNotesMode(prev => !prev)}
         grid={grid}

@@ -9,7 +9,6 @@ interface KeyboardActions {
   onNumber:      (n: number) => void;
   onDelete:      () => void;
   onToggleNotes: () => void;
-  onUndo:        () => void;
   onHint:        () => void;
   onEscape:      () => void;
   onArrow?:      (dir: "up" | "down" | "left" | "right") => void;
@@ -17,7 +16,7 @@ interface KeyboardActions {
 }
 
 export function useKeyboard({
-  onNumber, onDelete, onToggleNotes, onUndo, onHint, onEscape, onArrow, disabled,
+  onNumber, onDelete, onToggleNotes, onHint, onEscape, onArrow, disabled,
 }: KeyboardActions) {
   useEffect(() => {
     if (Platform.OS !== "web" || disabled) return;
@@ -50,13 +49,6 @@ export function useKeyboard({
         return;
       }
 
-      // Undo (Ctrl+Z / Cmd+Z)
-      if (key === "z" && (e.ctrlKey || e.metaKey)) {
-        e.preventDefault();
-        onUndo();
-        return;
-      }
-
       // Hint (H)
       if (key === "h" || key === "H") {
         e.preventDefault();
@@ -86,5 +78,5 @@ export function useKeyboard({
 
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
-  }, [onNumber, onDelete, onToggleNotes, onUndo, onHint, onEscape, onArrow, disabled]);
+  }, [onNumber, onDelete, onToggleNotes, onHint, onEscape, onArrow, disabled]);
 }

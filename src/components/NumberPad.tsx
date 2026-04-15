@@ -7,8 +7,6 @@ interface Props {
   onInput:       (n: number) => void;
   onErase:       () => void;
   onHint:        () => void;
-  onUndo:        () => void;
-  canUndo:       boolean;
   hintsLeft:     number;
   notesMode:     boolean;
   onToggleNotes: () => void;
@@ -20,7 +18,7 @@ function countInGrid(grid: Grid, num: number): number {
   return grid.reduce((acc, row) => acc + row.filter(v => v === num).length, 0);
 }
 
-const NumberPad = React.memo(function NumberPad({ onInput, onErase, onHint, onUndo, canUndo, hintsLeft, notesMode, onToggleNotes, grid, compact }: Props) {
+const NumberPad = React.memo(function NumberPad({ onInput, onErase, onHint, hintsLeft, notesMode, onToggleNotes, grid, compact }: Props) {
   // État local optimiste pour un retour visuel instantané
   const [localNotes, setLocalNotes] = useState(notesMode);
   useEffect(() => { setLocalNotes(notesMode); }, [notesMode]);
@@ -69,17 +67,6 @@ const NumberPad = React.memo(function NumberPad({ onInput, onErase, onHint, onUn
 
       {/* Actions */}
       <View style={styles.actionRow}>
-
-        {/* Annuler */}
-        <TouchableOpacity
-          onPress={onUndo}
-          disabled={!canUndo}
-          style={[styles.actionBtn, btnStyle, { borderColor: colors.textSecondary }]}
-          activeOpacity={canUndo ? 0.6 : 1}
-        >
-          <Text style={[styles.actionIcon, secColor, { opacity: canUndo ? 1 : 0.35, fontSize: sz.actionIcon }]}>↩</Text>
-          <Text style={[styles.actionLabel, secColor, { opacity: canUndo ? 1 : 0.35, fontSize: sz.actionLabel }]}>{t("game.undo")}</Text>
-        </TouchableOpacity>
 
         {/* Effacer */}
         <TouchableOpacity

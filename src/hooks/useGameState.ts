@@ -45,11 +45,6 @@ function groupKey(cells: number[][]): string {
 export type CellNotes  = Set<number>;
 export type CellErrors = Set<number>; // mauvais essais accumulés
 
-interface UndoEntry {
-  grid:       Grid;
-  notes:      NotesGrid;
-  cellErrors: ErrorsGrid;
-}
 export type NotesGrid  = CellNotes[][];
 export type ErrorsGrid = CellErrors[][];
 
@@ -108,7 +103,6 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
   const [paused,    setPaused]    = useState(false);
   const [completed,       setCompleted]       = useState(false);
   const [completedGroups, setCompletedGroups] = useState<number[][]>([]);
-  const [undoStack,    setUndoStack]    = useState<UndoEntry[]>([]);
   const [pendingHint,  setPendingHint]  = useState<PedagogicHint | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -133,7 +127,6 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
     setGrid(deepCopy(p));
     setNotes(emptyNotes());
     setCellErrors(emptyErrors());
-    setUndoStack([]);
     setSelected(null);
     setMistakes(0);
     setHintsLeft(maxHints);
@@ -199,15 +192,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
     // Case déjà correctement remplie → verrouillée comme une case initiale
     if (grid[r]?.[c] !== 0 && grid[r]?.[c] === solution[r]?.[c]) return;
 
-    // Snapshot avant toute modification
-    const snapshot: UndoEntry = {
-      grid:       deepCopy(gridRef.current),
-      notes:      notesRef.current.map(row => row.map(s => new Set(s))),
-      cellErrors: cellErrorsRef.current.map(row => row.map(s => new Set(s))),
-    };
-
     if (notesMode && num !== 0) {
-      setUndoStack(s => [...s.slice(-29), snapshot]);
       setNotes(prev => {
         const next = prev.map(row => row.map(s => new Set(s)));
         const cell = next[r][c];
@@ -223,7 +208,6 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
       const hasErrors = (cellErrorsRef.current[r]?.[c]?.size ?? 0) > 0;
       const hasIncorrectValue = grid[r][c] !== 0 && grid[r][c] !== solution[r][c];
       if (!hasNotes && !hasIncorrectValue && !hasErrors) return; // rien à effacer
-      setUndoStack(s => [...s.slice(-29), snapshot]);
       if (hasIncorrectValue) {
         const nextGrid = deepCopy(gridRef.current);
         nextGrid[r][c] = 0;
@@ -257,9 +241,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
       return;
     }
 
-    // Bonne réponse → sauvegarder le snapshot et appliquer
-    setUndoStack(s => [...s.slice(-29), snapshot]);
-
+    // Bonne réponse
     setCellErrors(prev => {
       const next = prev.map(row => row.map(s => new Set(s)));
       next[r][c].clear();
@@ -327,15 +309,6 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
     setPendingHint(null);
   }, [pendingHint, inputNumber]);
 
-  const undo = useCallback(() => {
-    if (undoStack.length === 0 || completed) return;
-    const prev = undoStack[undoStack.length - 1];
-    setGrid(prev.grid);
-    setNotes(prev.notes);
-    setCellErrors(prev.cellErrors);
-    setUndoStack(s => s.slice(0, -1));
-  }, [undoStack, completed]);
-
   const isFixed = (r: number, c: number) => puzzle[r]?.[c] !== 0;
   const isError = (r: number, c: number) => (cellErrors[r]?.[c]?.size ?? 0) > 0;
 
@@ -353,7 +326,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
     seconds, formatTime,
     paused, setPaused,
     completed, completedGroups,
-    inputNumber, useHint, undo, undoStack,
+    inputNumber, useHint,
     pendingHint, dismissHint, applyHint,
     newGame,
     isFixed, isError,
