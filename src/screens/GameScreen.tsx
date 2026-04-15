@@ -71,7 +71,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
     completed, completedGroups, bounceCell, shakeCell,
     inputNumber, useHint,
     pendingHint, dismissHint, applyHint,
-    newGame,
+    newGame, flushSave,
     isFixed, isError,
     secondsRef, mistakesRef, hintsLeftRef,
   } = useGameState(difficulty, {
@@ -209,6 +209,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
           if (!completed && isDaily) {
             saveDailyRecord({ dateKey: gameDateKey, seconds: secondsRef.current, mistakes: mistakesRef.current, hints: hintsPerGame - hintsLeftRef.current, completed: false }).catch(() => {});
           }
+          flushSave();
           onBackToHome();
         }} style={[styles.backBtn, { borderColor: colors.borderBox }]} activeOpacity={0.7}>
         <Text style={[styles.chevron, { color: colors.textPrimary }]}>‹</Text>
@@ -276,10 +277,14 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         largeNumbers={settings.largeNumbers}
       />
       {paused && (
-        <View style={[styles.pausedOverlay, { backgroundColor: colors.bg, borderColor: colors.borderBox }]}>
+        <TouchableOpacity
+          activeOpacity={0.9}
+          onPress={() => setPaused(false)}
+          style={[styles.pausedOverlay, { backgroundColor: colors.bg, borderColor: colors.borderBox }]}
+        >
           <Text style={[styles.pausedText, { color: colors.textPrimary }]}>{t('game.paused_text')}</Text>
           <Text style={[styles.pausedSub, { color: colors.textSecondary }]}>{t('game.paused_sub')}</Text>
-        </View>
+        </TouchableOpacity>
       )}
     </TouchableOpacity>
   );

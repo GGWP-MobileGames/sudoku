@@ -281,19 +281,33 @@ const hintHighlightSet = React.useMemo(() => {
         ))}
       </View>
 
-      {/* Lignes de séparation */}
-      {hLines.map(({ top, thick }, i) => (
-        <View key={`h${i}`} pointerEvents="none" style={{
-          position: "absolute", top: top - (thick ? 1 : 0.25), left: 0,
-          width: gridSize, height: thick ? 2 : 0.5,
-          backgroundColor: thick ? colors.borderBox : colors.borderThin,
+      {/* Lignes de séparation — fines d'abord, épaisses par-dessus */}
+      {hLines.filter(l => !l.thick).map(({ top }, i) => (
+        <View key={`ht${i}`} pointerEvents="none" style={{
+          position: "absolute", top: top - 0.25, left: 0,
+          width: gridSize, height: 0.5,
+          backgroundColor: colors.borderThin,
         }} />
       ))}
-      {vLines.map(({ left, thick }, i) => (
-        <View key={`v${i}`} pointerEvents="none" style={{
-          position: "absolute", left: left - (thick ? 1 : 0.25), top: 0,
-          height: gridSize, width: thick ? 2 : 0.5,
-          backgroundColor: thick ? colors.borderBox : colors.borderThin,
+      {vLines.filter(l => !l.thick).map(({ left }, i) => (
+        <View key={`vt${i}`} pointerEvents="none" style={{
+          position: "absolute", left: left - 0.25, top: 0,
+          height: gridSize, width: 0.5,
+          backgroundColor: colors.borderThin,
+        }} />
+      ))}
+      {hLines.filter(l => l.thick).map(({ top }, i) => (
+        <View key={`hT${i}`} pointerEvents="none" style={{
+          position: "absolute", top: top - 1, left: 0,
+          width: gridSize, height: 2,
+          backgroundColor: colors.borderBox,
+        }} />
+      ))}
+      {vLines.filter(l => l.thick).map(({ left }, i) => (
+        <View key={`vT${i}`} pointerEvents="none" style={{
+          position: "absolute", left: left - 1, top: 0,
+          height: gridSize, width: 2,
+          backgroundColor: colors.borderBox,
         }} />
       ))}
       <View pointerEvents="none" style={[styles.outerBorder, { borderColor: colors.borderBox }]} />

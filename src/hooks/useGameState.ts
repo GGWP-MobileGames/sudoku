@@ -149,11 +149,11 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, [paused, completed, grid.length]);
 
-  // ── Pause automatique en arrière-plan ────────────────────────────────────────
+  // ── Pause automatique en arrière-plan + flush save ───────────────────────────
+  const flushSaveRef = useRef<(() => void) | null>(null);
   useEffect(() => {
     const handleAppState = (nextState: AppStateStatus) => {
       if (nextState === "background" || nextState === "inactive") {
-        // Mettre en pause pour masquer la grille dans l'app switcher
         if (!completed && grid.length) {
           setPaused(true);
         }
@@ -161,6 +161,8 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
           clearInterval(timerRef.current);
           timerRef.current = null;
         }
+        // Sauvegarder immédiatement avant passage en arrière-plan
+        flushSaveRef.current?.();
       }
     };
 
@@ -185,6 +187,20 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
     }, 2000);
     return () => { if (saveTimerRef.current) clearTimeout(saveTimerRef.current); };
   }, [grid, notes, mistakes]);
+
+  // ── Sauvegarde immédiate (appelée à la fermeture / passage en arrière-plan) ─
+  const flushSave = useCallback(() => {
+    if (!gridRef.current.length || !puzzle.length || completed || defeated || init.isDaily) return;
+    if (saveTimerRef.current) { clearTimeout(saveTimerRef.current); saveTimerRef.current = null; }
+    saveGame({
+      grid: gridRef.current, puzzle, solution, difficulty,
+      mistakes: mistakesRef.current, hintsLeft: hintsLeftRef.current, seconds: secondsRef.current,
+      notes: serializeNotes(notesRef.current),
+      cellErrors: serializeCellErrors(cellErrorsRef.current),
+      savedAt: Date.now(),
+    });
+  }, [puzzle, solution, difficulty, completed, defeated]);
+  flushSaveRef.current = flushSave;
 
   // ── Saisie ──────────────────────────────────────────────────────────────────
   const inputNumber = useCallback((num: number, forceR?: number, forceC?: number) => {
@@ -334,7 +350,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
     completed, completedGroups, bounceCell, shakeCell,
     inputNumber, useHint,
     pendingHint, dismissHint, applyHint,
-    newGame,
+    newGame, flushSave,
     isFixed, isError,
     secondsRef, mistakesRef, hintsLeftRef,
   };
