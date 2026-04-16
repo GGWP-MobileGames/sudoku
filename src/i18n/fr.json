@@ -13,6 +13,10 @@
     "daily_todo": "★  DÉFI DU JOUR",
     "daily_done": "✓  DÉFI DU JOUR",
     "stats_link": "Voir mes statistiques",
+    "discard_title": "Abandonner la partie ?",
+    "discard_message": "Votre progression sera définitivement perdue. Êtes-vous sûr ?",
+    "discard_ok": "Oui, abandonner",
+    "discard_cancel": "Non",
     "confirm_title": "Partie en cours",
     "confirm_message": "Vous avez une partie en cours. Commencer une nouvelle partie effacera votre progression. Continuer ?",
     "confirm_ok": "Nouvelle partie",
@@ -39,7 +43,8 @@
   },
   "hint": {
     "title": "INDICE",
-    "understood": "J'AI COMPRIS !"
+    "understood": "JE CHERCHE",
+    "reveal": "RÉVÉLER LA SOLUTION"
   },
   "victory": {
     "title": "FÉLICITATIONS !",
@@ -166,17 +171,6 @@
     "11": "Décembre"
   },
   "hints": {
-    "col_letter": [
-      "A",
-      "B",
-      "C",
-      "D",
-      "E",
-      "F",
-      "G",
-      "H",
-      "I"
-    ],
     "row": "ligne {{n}}",
     "col": "colonne {{letter}}",
     "box": {
@@ -190,14 +184,26 @@
       "2,1": "bloc bas centre",
       "2,2": "bloc bas droite"
     },
-    "naked_single": "Case {{cell}} — toutes les valeurs de 1 à 9 sont éliminées par la {{row}}, la {{col}} et le {{box}}… sauf le {{n}}. C'est la seule possibilité pour cette case.",
-    "hidden_single_row": "Regardez la {{row}} : le chiffre {{n}} ne peut aller que dans la case {{cell}}. Toutes les autres cases de cette ligne sont soit occupées, soit incompatibles avec le {{n}}.",
-    "hidden_single_col": "Regardez la {{col}} : le chiffre {{n}} ne peut aller que dans la case {{cell}}. Toutes les autres cases de cette colonne sont soit occupées, soit incompatibles avec le {{n}}.",
-    "hidden_single_box": "Dans le {{box}} : le chiffre {{n}} ne peut aller que dans la case {{cell}}. Les autres cases du bloc sont incompatibles avec le {{n}}.",
-    "pointing_pair_row": "Dans le {{box}}, tous les emplacements possibles du {{n}} sont sur la {{row}}. Le {{n}} ne peut donc pas apparaître ailleurs sur cette ligne, en dehors du bloc. Cherchez où cela force le {{n}} sur le reste de la {{row}}.",
-    "pointing_pair_col": "Dans le {{box}}, tous les emplacements possibles du {{n}} sont sur la {{col}}. Le {{n}} ne peut donc pas apparaître ailleurs sur cette colonne, en dehors du bloc. Cherchez où cela force le {{n}} sur le reste de la {{col}}.",
-    "fallback_two": "La case {{cell}} n'a plus que deux possibilités : {{a}} ou {{b}}. Analysez la {{row}}, la {{col}} et le {{box}} pour déterminer lequel est correct.",
-    "fallback": "La case {{cell}} est l'une des plus contraintes de la grille ({{n}} possibilités). Concentrez-vous sur la {{row}}, la {{col}} et le {{box}}."
+    "technique": {
+      "naked_single":  "SINGLETON NU",
+      "hidden_single": "SINGLETON CACHÉ",
+      "naked_pair":    "PAIRE NUE",
+      "hidden_pair":   "PAIRE CACHÉE",
+      "pointing_pair": "PAIRE POINTANTE",
+      "naked_triple":  "TRIPLET NU",
+      "fallback":      "ANALYSE REQUISE"
+    },
+    "naked_single": "La case {{cell}} n'a qu'un seul candidat possible. Regardez ce que sa {{row}}, sa {{col}} et son {{box}} ont déjà placé : ensemble, ils éliminent tous les chiffres sauf un. Trouvez lequel.",
+    "hidden_single_row": "Parcourez la {{row}} case par case : un seul chiffre manquant ne peut se placer que dans la case {{cell}}. Pour chaque chiffre absent de la ligne, comptez combien de cases peuvent encore l'accueillir — l'un d'eux n'en a qu'une seule.",
+    "hidden_single_col": "Parcourez la {{col}} case par case : un seul chiffre manquant ne peut se placer que dans la case {{cell}}. Pour chaque chiffre absent de la colonne, comptez combien de cases peuvent encore l'accueillir — l'un d'eux n'en a qu'une seule.",
+    "hidden_single_box": "Dans le {{box}}, un seul chiffre manquant ne peut aller que dans la case {{cell}}. Passez en revue les chiffres absents du bloc et trouvez celui qu'une ligne ou colonne élimine partout… sauf à cet emplacement.",
+    "naked_pair": "Dans {{group}}, les cases {{cell1}} et {{cell2}} ne contiennent exactement que les candidats {{a}} et {{b}}. Ces deux chiffres leur sont réservés — éliminez {{a}} et {{b}} des autres cases du groupe. Une case devrait alors se retrouver avec un seul candidat.",
+    "hidden_pair": "Dans {{group}}, les chiffres {{a}} et {{b}} n'apparaissent comme candidats que dans les cases {{cell1}} et {{cell2}}. Ces deux chiffres leur sont donc réservés — supprimez tous les autres candidats de ces deux cases. Une case du groupe devrait alors se clarifier.",
+    "pointing_pair_row": "Dans le {{box}}, toutes les cases candidates pour le {{n}} sont sur la {{row}}. Puisque le {{n}} sera forcément dans ce bloc sur cette ligne, il ne peut pas apparaître ailleurs sur la {{row}} hors du bloc. Cherchez quelle case de la {{row}} (hors du bloc) se retrouve alors sans autre option.",
+    "pointing_pair_col": "Dans le {{box}}, toutes les cases candidates pour le {{n}} sont sur la {{col}}. Puisque le {{n}} sera forcément dans ce bloc sur cette colonne, il ne peut pas apparaître ailleurs sur la {{col}} hors du bloc. Cherchez quelle case de la {{col}} (hors du bloc) se retrouve alors sans autre option.",
+    "naked_triple": "Dans {{group}}, les cases {{cell1}}, {{cell2}} et {{cell3}} ne contiennent ensemble que les chiffres {{a}}, {{b}} et {{c}}. Ces chiffres leur sont réservés — éliminez {{a}}, {{b}} et {{c}} des autres cases du groupe. De nouvelles possibilités devraient se libérer.",
+    "fallback_two": "La case {{cell}} n'a plus que deux candidats. Pour déterminer lequel est correct, examinez si l'un d'eux est déjà forcé ailleurs dans {{row}}, {{col}} ou {{box}} — l'autre serait alors votre réponse.",
+    "fallback": "Aucune technique directe ne s'applique immédiatement. La case {{cell}} est la plus contrainte de la grille avec {{n}} candidats. Concentrez-vous sur {{row}}, {{col}} et {{box}} : cherchez si l'un des candidats peut être éliminé par une contrainte externe."
   },
   "welcome": {
     "title": "GGWP",

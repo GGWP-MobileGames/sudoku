@@ -13,6 +13,10 @@
     "daily_todo": "★  DAILY CHALLENGE",
     "daily_done": "✓  DAILY CHALLENGE",
     "stats_link": "View my statistics",
+    "discard_title": "Abandon this game?",
+    "discard_message": "Your progress will be permanently lost. Are you sure?",
+    "discard_ok": "Yes, abandon",
+    "discard_cancel": "No",
     "confirm_title": "Game in progress",
     "confirm_message": "You have a game in progress. Starting a new game will erase your progress. Continue?",
     "confirm_ok": "New game",
@@ -39,7 +43,8 @@
   },
   "hint": {
     "title": "HINT",
-    "understood": "GOT IT!"
+    "understood": "I'LL LOOK",
+    "reveal": "REVEAL THE SOLUTION"
   },
   "victory": {
     "title": "CONGRATULATIONS!",
@@ -166,17 +171,6 @@
     "11": "December"
   },
   "hints": {
-    "col_letter": [
-      "A",
-      "B",
-      "C",
-      "D",
-      "E",
-      "F",
-      "G",
-      "H",
-      "I"
-    ],
     "row": "row {{n}}",
     "col": "column {{letter}}",
     "box": {
@@ -190,14 +184,26 @@
       "2,1": "bottom-center box",
       "2,2": "bottom-right box"
     },
-    "naked_single": "Cell {{cell}} — all values from 1 to 9 are eliminated by {{row}}, {{col}} and the {{box}}… except {{n}}. It's the only possibility for this cell.",
-    "hidden_single_row": "Look at {{row}}: digit {{n}} can only go in cell {{cell}}. All other cells in this row are either filled or incompatible with {{n}}.",
-    "hidden_single_col": "Look at {{col}}: digit {{n}} can only go in cell {{cell}}. All other cells in this column are either filled or incompatible with {{n}}.",
-    "hidden_single_box": "In the {{box}}: digit {{n}} can only go in cell {{cell}}. The other cells in this box are incompatible with {{n}}.",
-    "pointing_pair_row": "In the {{box}}, all possible positions for {{n}} are on {{row}}. So {{n}} cannot appear elsewhere on this row, outside the box. Find where this forces {{n}} on the rest of {{row}}.",
-    "pointing_pair_col": "In the {{box}}, all possible positions for {{n}} are on {{col}}. So {{n}} cannot appear elsewhere in this column, outside the box. Find where this forces {{n}} on the rest of {{col}}.",
-    "fallback_two": "Cell {{cell}} has only two possibilities: {{a}} or {{b}}. Analyze {{row}}, {{col}} and the {{box}} to determine which is correct.",
-    "fallback": "Cell {{cell}} is one of the most constrained in the grid ({{n}} possibilities). Focus on {{row}}, {{col}} and the {{box}}."
+    "technique": {
+      "naked_single":  "NAKED SINGLE",
+      "hidden_single": "HIDDEN SINGLE",
+      "naked_pair":    "NAKED PAIR",
+      "hidden_pair":   "HIDDEN PAIR",
+      "pointing_pair": "POINTING PAIR",
+      "naked_triple":  "NAKED TRIPLE",
+      "fallback":      "ANALYSIS NEEDED"
+    },
+    "naked_single": "Cell {{cell}} has only one possible candidate. Look at what its {{row}}, {{col}} and {{box}} have already placed: together, they eliminate every digit except one. Find which one.",
+    "hidden_single_row": "Scan {{row}} cell by cell: only one missing digit can go in cell {{cell}}. For each digit not yet in the row, count how many cells can still hold it — one of them has only one option left.",
+    "hidden_single_col": "Scan {{col}} cell by cell: only one missing digit can go in cell {{cell}}. For each digit not yet in the column, count how many cells can still hold it — one of them has only one option left.",
+    "hidden_single_box": "In the {{box}}, only one missing digit can go in cell {{cell}}. Check each digit absent from the box and find the one that a row or column eliminates from everywhere… except this spot.",
+    "naked_pair": "In {{group}}, cells {{cell1}} and {{cell2}} contain exactly the same two candidates: {{a}} and {{b}}. These digits are reserved for them — remove {{a}} and {{b}} from all other cells in the group. One cell should then be left with a single candidate.",
+    "hidden_pair": "In {{group}}, digits {{a}} and {{b}} only appear as candidates in cells {{cell1}} and {{cell2}}. These digits belong only to those two cells — remove all other candidates from them. Another cell in the group should then become clear.",
+    "pointing_pair_row": "In the {{box}}, all candidate positions for {{n}} lie on {{row}}. Since {{n}} must go somewhere in this box on this row, it cannot appear anywhere else on {{row}} outside the box. Find which cell on {{row}} (outside the box) is then left with no other option.",
+    "pointing_pair_col": "In the {{box}}, all candidate positions for {{n}} lie on {{col}}. Since {{n}} must go somewhere in this box on this column, it cannot appear anywhere else on {{col}} outside the box. Find which cell on {{col}} (outside the box) is then left with no other option.",
+    "naked_triple": "In {{group}}, cells {{cell1}}, {{cell2}} and {{cell3}} together contain only the digits {{a}}, {{b}} and {{c}}. These digits are reserved for those cells — remove {{a}}, {{b}} and {{c}} from the other cells in the group. New possibilities should open up.",
+    "fallback_two": "Cell {{cell}} has only two candidates left. To find which is correct, check whether either digit is already forced elsewhere in {{row}}, {{col}} or {{box}} — the other would then be your answer.",
+    "fallback": "No direct technique applies immediately. Cell {{cell}} is the most constrained in the grid with {{n}} candidates. Focus on {{row}}, {{col}} and {{box}}: look for a candidate that can be eliminated by an external constraint."
   },
   "welcome": {
     "title": "GGWP",

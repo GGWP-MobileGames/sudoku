@@ -13,6 +13,10 @@
     "daily_todo": "★  DESAFIO DO DIA",
     "daily_done": "✓  DESAFIO DO DIA",
     "stats_link": "Ver minhas estatísticas",
+    "discard_title": "Abandonar o jogo?",
+    "discard_message": "O seu progresso será perdido definitivamente. Tem certeza?",
+    "discard_ok": "Sim, abandonar",
+    "discard_cancel": "Não",
     "confirm_title": "Jogo em andamento",
     "confirm_message": "Você tem um jogo em andamento. Começar um novo apagará seu progresso. Continuar?",
     "confirm_ok": "Novo jogo",
@@ -39,7 +43,8 @@
   },
   "hint": {
     "title": "DICA",
-    "understood": "ENTENDI!"
+    "understood": "VOU PROCURAR",
+    "reveal": "REVELAR A SOLUÇÃO"
   },
   "victory": {
     "title": "PARABÉNS!",
@@ -166,17 +171,6 @@
     "11": "Dezembro"
   },
   "hints": {
-    "col_letter": [
-      "A",
-      "B",
-      "C",
-      "D",
-      "E",
-      "F",
-      "G",
-      "H",
-      "I"
-    ],
     "row": "linha {{n}}",
     "col": "coluna {{letter}}",
     "box": {
@@ -190,14 +184,26 @@
       "2,1": "bloco inferior central",
       "2,2": "bloco inferior direito"
     },
-    "naked_single": "Célula {{cell}} — todos os valores de 1 a 9 são eliminados pela {{row}}, {{col}} e pelo {{box}}… exceto o {{n}}. É a única possibilidade para esta célula.",
-    "hidden_single_row": "Olhe para a {{row}}: o dígito {{n}} só pode ir para a célula {{cell}}. Todas as outras células desta linha estão ocupadas ou são incompatíveis com {{n}}.",
-    "hidden_single_col": "Olhe para a {{col}}: o dígito {{n}} só pode ir para a célula {{cell}}. Todas as outras células desta coluna estão ocupadas ou são incompatíveis com {{n}}.",
-    "hidden_single_box": "No {{box}}: o dígito {{n}} só pode ir para a célula {{cell}}. As outras células do bloco são incompatíveis com {{n}}.",
-    "pointing_pair_row": "No {{box}}, todas as posições possíveis para {{n}} estão na {{row}}. Portanto {{n}} não pode aparecer em outro lugar nesta linha, fora do bloco. Encontre onde isso força o {{n}} no resto da {{row}}.",
-    "pointing_pair_col": "No {{box}}, todas as posições possíveis para {{n}} estão na {{col}}. Portanto {{n}} não pode aparecer em outro lugar nesta coluna, fora do bloco. Encontre onde isso força o {{n}} no resto da {{col}}.",
-    "fallback_two": "A célula {{cell}} tem apenas duas possibilidades: {{a}} ou {{b}}. Analise a {{row}}, a {{col}} e o {{box}} para determinar qual é a correta.",
-    "fallback": "A célula {{cell}} é uma das mais restritas da grade ({{n}} possibilidades). Concentre-se na {{row}}, na {{col}} e no {{box}}."
+    "technique": {
+      "naked_single":  "ÚNICO SIMPLES",
+      "hidden_single": "ÚNICO OCULTO",
+      "naked_pair":    "PAR SIMPLES",
+      "hidden_pair":   "PAR OCULTO",
+      "pointing_pair": "PAR APONTADOR",
+      "naked_triple":  "TRIO SIMPLES",
+      "fallback":      "ANÁLISE NECESSÁRIA"
+    },
+    "naked_single": "A célula {{cell}} tem apenas um candidato possível. Veja o que sua {{row}}, sua {{col}} e seu {{box}} já têm colocado: juntos, eliminam todos os dígitos exceto um. Descubra qual.",
+    "hidden_single_row": "Percorra a {{row}} célula por célula: apenas um dígito ausente pode ir para a célula {{cell}}. Para cada dígito não presente na linha, conte quantas células ainda podem recebê-lo — um deles tem apenas uma opção.",
+    "hidden_single_col": "Percorra a {{col}} célula por célula: apenas um dígito ausente pode ir para a célula {{cell}}. Para cada dígito não presente na coluna, conte quantas células ainda podem recebê-lo — um deles tem apenas uma opção.",
+    "hidden_single_box": "No {{box}}, apenas um dígito ausente pode ir para a célula {{cell}}. Verifique cada dígito ausente do bloco e encontre aquele que uma linha ou coluna elimina de todos os lugares… exceto neste ponto.",
+    "naked_pair": "Em {{group}}, as células {{cell1}} e {{cell2}} contêm exatamente os mesmos dois candidatos: {{a}} e {{b}}. Esses dígitos estão reservados para elas — remova {{a}} e {{b}} das outras células do grupo. Uma célula deverá ficar com apenas um candidato.",
+    "hidden_pair": "Em {{group}}, os dígitos {{a}} e {{b}} aparecem como candidatos apenas nas células {{cell1}} e {{cell2}}. Esses dígitos pertencem apenas a essas células — remova todos os outros candidatos delas. Outra célula do grupo deverá então ficar clara.",
+    "pointing_pair_row": "No {{box}}, todas as posições candidatas para {{n}} estão na {{row}}. Como {{n}} irá forçosamente neste bloco nesta linha, não pode aparecer em nenhum outro lugar na {{row}} fora do bloco. Encontre qual célula na {{row}} (fora do bloco) fica sem outra opção.",
+    "pointing_pair_col": "No {{box}}, todas as posições candidatas para {{n}} estão na {{col}}. Como {{n}} irá forçosamente neste bloco nesta coluna, não pode aparecer em nenhum outro lugar na {{col}} fora do bloco. Encontre qual célula na {{col}} (fora do bloco) fica sem outra opção.",
+    "naked_triple": "Em {{group}}, as células {{cell1}}, {{cell2}} e {{cell3}} contêm juntas apenas os dígitos {{a}}, {{b}} e {{c}}. Esses dígitos estão reservados para elas — remova {{a}}, {{b}} e {{c}} das outras células do grupo. Novas possibilidades deverão surgir.",
+    "fallback_two": "A célula {{cell}} tem apenas dois candidatos. Para determinar qual está correto, verifique se algum já está forçado em outro lugar em {{row}}, {{col}} ou {{box}} — o outro seria então sua resposta.",
+    "fallback": "Nenhuma técnica direta se aplica imediatamente. A célula {{cell}} é a mais restrita da grade com {{n}} candidatos. Concentre-se em {{row}}, {{col}} e {{box}}: procure um candidato que possa ser eliminado por uma restrição externa."
   },
   "welcome": {
     "title": "GGWP",

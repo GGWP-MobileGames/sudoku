@@ -104,7 +104,7 @@ const SudokuCell = React.memo(function SudokuCell({
 
   return (
     <TouchableOpacity
-      onPress={onPress}
+      onPressIn={onPress}
       activeOpacity={0.75}
       style={[styles.cell, { backgroundColor: bg }]}
     >

@@ -349,7 +349,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         difficulty={difficulty}
         diffLabel={t(`home.difficulties.${difficulty}`)}
         isDaily={isDaily}
-        onReplay={newGame}
+        onReplay={() => { setVictoryReady(false); newGame(); }}
         onHome={onBackToHome}
       />
 

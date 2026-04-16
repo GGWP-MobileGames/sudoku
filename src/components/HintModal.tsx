@@ -12,7 +12,7 @@ interface Props {
 
 export default function HintModal({ hint, onApply, onDismiss }: Props) {
   const { t, colors } = useSettings();
-  const insets = useSafeAreaInsets();
+  const insets    = useSafeAreaInsets();
   const fadeAnim  = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(40)).current;
 
@@ -29,27 +29,63 @@ export default function HintModal({ hint, onApply, onDismiss }: Props) {
 
   if (!hint) return null;
 
-  // Appliquer l'indice ET fermer
+  const handleReveal = () => {
+    onApply();   // remplit la case ET ferme (applyHint appelle déjà setPendingHint(null))
+  };
+
   const handleDismiss = () => {
-    onApply();
-    onDismiss();
+    onDismiss(); // ferme sans remplir — la case reste sélectionnée
   };
 
   return (
     <Modal transparent animationType="none" visible={!!hint} onRequestClose={handleDismiss}>
-      {/* Carte en bas de l'écran */}
-      <Animated.View style={[styles.card, { backgroundColor: colors.bg, borderTopColor: colors.borderBox, paddingBottom: Math.max(insets.bottom, 20) + 16, transform: [{ translateY: slideAnim }] }]}>
+      <Animated.View style={[
+        styles.card,
+        {
+          backgroundColor:  colors.bg,
+          borderTopColor:   colors.borderBox,
+          paddingBottom:    Math.max(insets.bottom, 20) + 16,
+          transform:        [{ translateY: slideAnim }],
+        },
+      ]}>
 
+        {/* En-tête : icône + nom de la technique */}
         <View style={styles.header}>
           <Text style={[styles.headerIcon, { color: colors.hintColor }]}>✦</Text>
-          <Text style={[styles.headerTitle, { color: colors.hintColor }]}>{t('hint.title')}</Text>
+          <Text style={[styles.headerTitle, { color: colors.hintColor }]}>
+            {hint.techniqueTitle}
+          </Text>
         </View>
 
-        <Text style={[styles.message, { color: colors.textPrimary }]}>{hint.message}</Text>
+        {/* Message pédagogique */}
+        <Text style={[styles.message, { color: colors.textPrimary }]}>
+          {hint.message}
+        </Text>
 
-        <TouchableOpacity onPress={handleDismiss} style={[styles.btn, { borderColor: colors.borderBox }]} activeOpacity={0.7}>
-          <Text style={[styles.btnText, { color: colors.textPrimary }]}>{t('hint.understood')}</Text>
-        </TouchableOpacity>
+        {/* Boutons */}
+        <View style={styles.btnRow}>
+          {/* Bouton secondaire : fermer sans révéler */}
+          <TouchableOpacity
+            onPress={handleDismiss}
+            style={[styles.btnSecondary, { borderColor: colors.borderBox }]}
+            activeOpacity={0.7}
+          >
+            <Text style={[styles.btnSecondaryText, { color: colors.textSecondary }]}>
+              {t('hint.understood')}
+            </Text>
+          </TouchableOpacity>
+
+          {/* Bouton principal : révéler la solution */}
+          <TouchableOpacity
+            onPress={handleReveal}
+            style={[styles.btnPrimary, { backgroundColor: colors.hintColor }]}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.btnPrimaryText}>
+              {t('hint.reveal')}
+            </Text>
+          </TouchableOpacity>
+        </View>
 
       </Animated.View>
     </Modal>
@@ -57,42 +93,60 @@ export default function HintModal({ hint, onApply, onDismiss }: Props) {
 }
 
 const styles = StyleSheet.create({
-  // Carte ancrée tout en bas
   card: {
-    position: "absolute",
+    position:         "absolute",
     bottom: 0, left: 0, right: 0,
-    borderTopWidth: 1,
-    paddingTop: 20,
+    borderTopWidth:   1,
+    paddingTop:       20,
     paddingHorizontal: 24,
-    paddingBottom: 20, // sera écrasé dynamiquement avec useSafeAreaInsets
-    gap: 14,
+    paddingBottom:    20,
+    gap:              16,
   },
 
   header: {
     flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
+    alignItems:    "center",
+    gap:           8,
   },
   headerIcon:  { fontSize: 14 },
-  headerTitle: {
-    fontSize: 12, fontWeight: "800",
-    letterSpacing: 3,
-  },
+  headerTitle: { fontSize: 11, fontWeight: "800", letterSpacing: 3 },
 
   message: {
-    fontSize: 14,
+    fontSize:   14,
     lineHeight: 22,
-    fontStyle: "italic",
+    fontStyle:  "italic",
   },
 
-  btn: {
-    paddingVertical: 13,
-    borderWidth: 1,
-    alignItems: "center",
-    marginTop: 4,
+  btnRow: {
+    flexDirection: "row",
+    gap:           10,
   },
-  btnText: {
-    fontSize: 13, fontWeight: "700",
-    letterSpacing: 2.5,
+
+  // Bouton secondaire : discret, bord fin
+  btnSecondary: {
+    flex:            1,
+    paddingVertical: 12,
+    borderWidth:     1,
+    alignItems:      "center",
+    justifyContent:  "center",
+  },
+  btnSecondaryText: {
+    fontSize:      11,
+    fontWeight:    "600",
+    letterSpacing: 1.5,
+  },
+
+  // Bouton principal : plein, coloré
+  btnPrimary: {
+    flex:            1,
+    paddingVertical: 13,
+    alignItems:      "center",
+    justifyContent:  "center",
+  },
+  btnPrimaryText: {
+    fontSize:      12,
+    fontWeight:    "800",
+    letterSpacing: 2,
+    color:         "#1A1A1A",
   },
 });

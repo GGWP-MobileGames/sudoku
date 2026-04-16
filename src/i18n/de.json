@@ -13,6 +13,10 @@
     "daily_todo": "★  TAGESAUFGABE",
     "daily_done": "✓  TAGESAUFGABE",
     "stats_link": "Statistiken anzeigen",
+    "discard_title": "Spiel aufgeben?",
+    "discard_message": "Dein Fortschritt geht unwiderruflich verloren. Bist du sicher?",
+    "discard_ok": "Ja, aufgeben",
+    "discard_cancel": "Nein",
     "confirm_title": "Laufendes Spiel",
     "confirm_message": "Du hast ein laufendes Spiel. Ein neues Spiel zu starten löscht deinen Fortschritt. Fortfahren?",
     "confirm_ok": "Neues Spiel",
@@ -39,7 +43,8 @@
   },
   "hint": {
     "title": "TIPP",
-    "understood": "VERSTANDEN!"
+    "understood": "ICH SUCHE",
+    "reveal": "LÖSUNG ANZEIGEN"
   },
   "victory": {
     "title": "GLÜCKWUNSCH!",
@@ -166,17 +171,6 @@
     "11": "Dezember"
   },
   "hints": {
-    "col_letter": [
-      "A",
-      "B",
-      "C",
-      "D",
-      "E",
-      "F",
-      "G",
-      "H",
-      "I"
-    ],
     "row": "Zeile {{n}}",
     "col": "Spalte {{letter}}",
     "box": {
@@ -190,14 +184,26 @@
       "2,1": "Block unten Mitte",
       "2,2": "Block unten rechts"
     },
-    "naked_single": "Feld {{cell}} — alle Werte von 1 bis 9 werden durch {{row}}, {{col}} und den {{box}} eliminiert… außer der {{n}}. Das ist die einzige Möglichkeit für dieses Feld.",
-    "hidden_single_row": "Schau dir {{row}} an: Die Ziffer {{n}} kann nur in Feld {{cell}} stehen. Alle anderen Felder dieser Zeile sind entweder belegt oder mit {{n}} unvereinbar.",
-    "hidden_single_col": "Schau dir {{col}} an: Die Ziffer {{n}} kann nur in Feld {{cell}} stehen. Alle anderen Felder dieser Spalte sind entweder belegt oder mit {{n}} unvereinbar.",
-    "hidden_single_box": "Im {{box}}: Die Ziffer {{n}} kann nur in Feld {{cell}} stehen. Die anderen Felder des Blocks sind mit {{n}} unvereinbar.",
-    "pointing_pair_row": "Im {{box}} liegen alle möglichen Positionen für {{n}} in {{row}}. Also kann {{n}} nicht woanders in dieser Zeile außerhalb des Blocks stehen. Finde, wo das {{n}} im Rest von {{row}} erzwingt.",
-    "pointing_pair_col": "Im {{box}} liegen alle möglichen Positionen für {{n}} in {{col}}. Also kann {{n}} nicht woanders in dieser Spalte außerhalb des Blocks stehen. Finde, wo das {{n}} im Rest von {{col}} erzwingt.",
-    "fallback_two": "Feld {{cell}} hat nur noch zwei Möglichkeiten: {{a}} oder {{b}}. Analysiere {{row}}, {{col}} und den {{box}}, um die richtige zu bestimmen.",
-    "fallback": "Feld {{cell}} ist eines der am stärksten eingeschränkten Felder im Raster ({{n}} Möglichkeiten). Konzentriere dich auf {{row}}, {{col}} und den {{box}}."
+    "technique": {
+      "naked_single":  "NACKTES SINGLE",
+      "hidden_single": "VERSTECKTES SINGLE",
+      "naked_pair":    "NACKTES PAAR",
+      "hidden_pair":   "VERSTECKTES PAAR",
+      "pointing_pair": "ZEIGENDES PAAR",
+      "naked_triple":  "NACKTES TRIPLE",
+      "fallback":      "ANALYSE NÖTIG"
+    },
+    "naked_single": "Feld {{cell}} hat nur einen möglichen Kandidaten. Schau, was {{row}}, {{col}} und {{box}} bereits gesetzt haben: Zusammen eliminieren sie alle Ziffern bis auf eine. Finde welche.",
+    "hidden_single_row": "Geh {{row}} Feld für Feld durch: Nur eine fehlende Ziffer kann in Feld {{cell}}. Zähle für jede fehlende Ziffer der Zeile, wie viele Felder sie noch aufnehmen können — eine hat nur noch eine Option.",
+    "hidden_single_col": "Geh {{col}} Feld für Feld durch: Nur eine fehlende Ziffer kann in Feld {{cell}}. Zähle für jede fehlende Ziffer der Spalte, wie viele Felder sie noch aufnehmen können — eine hat nur noch eine Option.",
+    "hidden_single_box": "Im {{box}} kann nur eine fehlende Ziffer in Feld {{cell}}. Prüfe jede fehlende Ziffer des Blocks und finde die, die eine Zeile oder Spalte überall eliminiert… außer an dieser Stelle.",
+    "naked_pair": "In {{group}} enthalten die Felder {{cell1}} und {{cell2}} genau dieselben zwei Kandidaten: {{a}} und {{b}}. Diese Ziffern sind für sie reserviert — entferne {{a}} und {{b}} aus allen anderen Feldern der Gruppe. Ein Feld sollte dann nur noch einen Kandidaten haben.",
+    "hidden_pair": "In {{group}} erscheinen die Ziffern {{a}} und {{b}} nur als Kandidaten in den Feldern {{cell1}} und {{cell2}}. Diese Ziffern gehören nur diesen Feldern — entferne alle anderen Kandidaten aus ihnen. Ein anderes Feld der Gruppe sollte dann klar werden.",
+    "pointing_pair_row": "Im {{box}} liegen alle Kandidatenpositionen für {{n}} in {{row}}. Da {{n}} zwingend in diesem Block in dieser Zeile steht, kann es nicht woanders in {{row}} außerhalb des Blocks stehen. Finde, welches Feld in {{row}} (außerhalb des Blocks) keine andere Option mehr hat.",
+    "pointing_pair_col": "Im {{box}} liegen alle Kandidatenpositionen für {{n}} in {{col}}. Da {{n}} zwingend in diesem Block in dieser Spalte steht, kann es nicht woanders in {{col}} außerhalb des Blocks stehen. Finde, welches Feld in {{col}} (außerhalb des Blocks) keine andere Option mehr hat.",
+    "naked_triple": "In {{group}} enthalten die Felder {{cell1}}, {{cell2}} und {{cell3}} zusammen nur die Ziffern {{a}}, {{b}} und {{c}}. Diese Ziffern sind für sie reserviert — entferne {{a}}, {{b}} und {{c}} aus den anderen Feldern der Gruppe. Neue Möglichkeiten sollten sich öffnen.",
+    "fallback_two": "Feld {{cell}} hat nur noch zwei Kandidaten. Um die richtige zu finden, prüfe, ob eine davon bereits in {{row}}, {{col}} oder {{box}} erzwungen wird — die andere wäre dann deine Antwort.",
+    "fallback": "Keine direkte Technik ist sofort anwendbar. Feld {{cell}} ist das am stärksten eingeschränkte im Raster mit {{n}} Kandidaten. Konzentriere dich auf {{row}}, {{col}} und {{box}}: Suche einen Kandidaten, der durch eine externe Einschränkung eliminiert werden kann."
   },
   "welcome": {
     "title": "GGWP",

@@ -39,7 +39,8 @@ export default function HomeScreen({ initialDifficulty, onStart, onResume, onSta
   const [dailyDone,   setDailyDone]   = useState(false);
   const [savedGame,   setSavedGame]   = useState<SavedGame | null>(null);
   const [loadingGame, setLoadingGame] = useState(true);
-  const [showConfirm, setShowConfirm] = useState(false);
+  const [showConfirm,        setShowConfirm]        = useState(false);
+  const [showDiscardConfirm, setShowDiscardConfirm] = useState(false);
 
   useEffect(() => {
     loadGame().then(g => { setSavedGame(g); setLoadingGame(false); });
@@ -53,18 +54,20 @@ export default function HomeScreen({ initialDifficulty, onStart, onResume, onSta
     if (savedGame) cardSlideX.setValue(0);
   }, [savedGame]);
 
-  const handleDiscard = () => {
-    Animated.parallel([
-      Animated.timing(cardSlideX, {
-        toValue: -500,
-        duration: 300,
-        useNativeDriver: Platform.OS !== "web",
-      }),
-    ]).start(async () => {
+  const doDiscard = () => {
+    Animated.timing(cardSlideX, {
+      toValue: -500,
+      duration: 300,
+      useNativeDriver: Platform.OS !== "web",
+    }).start(async () => {
       await clearSavedGame();
       await clearOngoing();
       setSavedGame(null);
     });
+  };
+
+  const handleDiscard = () => {
+    setShowDiscardConfirm(true);
   };
 
   const doStart = () => {
@@ -211,6 +214,32 @@ export default function HomeScreen({ initialDifficulty, onStart, onResume, onSta
         </TouchableOpacity>
 
       </ScrollView>
+
+      {/* Modale d'abandon de partie */}
+      <Modal visible={showDiscardConfirm} transparent animationType="fade">
+        <View style={confirmStyles.overlay}>
+          <View style={[confirmStyles.card, { backgroundColor: colors.bg, borderColor: colors.borderBox }]}>
+            <Text style={[confirmStyles.title, { color: colors.textPrimary }]}>{t("home.discard_title")}</Text>
+            <Text style={[confirmStyles.message, { color: colors.textSecondary }]}>{t("home.discard_message")}</Text>
+            <View style={confirmStyles.btnRow}>
+              <TouchableOpacity
+                onPress={() => setShowDiscardConfirm(false)}
+                style={[confirmStyles.btn, { borderColor: colors.borderThin }]}
+                activeOpacity={0.7}
+              >
+                <Text style={[confirmStyles.btnText, { color: colors.textSecondary }]}>{t("home.discard_cancel")}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => { setShowDiscardConfirm(false); doDiscard(); }}
+                style={[confirmStyles.btn, { backgroundColor: colors.bgCellSelected, borderColor: colors.borderBox }]}
+                activeOpacity={0.7}
+              >
+                <Text style={[confirmStyles.btnText, { color: colors.textOnSelected }]}>{t("home.discard_ok")}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       {/* Modale de confirmation — remplace Alert.alert (non supporté sur web) */}
       <Modal visible={showConfirm} transparent animationType="fade">

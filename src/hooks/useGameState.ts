@@ -210,7 +210,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
     if (r === undefined || c === undefined) return;
     if (puzzle[r]?.[c] !== 0) return;
     // Case déjà correctement remplie → verrouillée comme une case initiale
-    if (grid[r]?.[c] !== 0 && grid[r]?.[c] === solution[r]?.[c]) return;
+    if (gridRef.current[r]?.[c] !== 0 && gridRef.current[r]?.[c] === solution[r]?.[c]) return;
 
     if (notesMode && num !== 0) {
       setNotes(prev => {
