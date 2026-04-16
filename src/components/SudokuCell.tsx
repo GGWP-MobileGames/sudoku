@@ -17,6 +17,7 @@ interface Props {
   isError:       boolean;
   isHintHighlight?: boolean;
   isHintTarget?:    boolean; // case cible de l'indice actif
+  highlightNoteValue?: number; // chiffre sélectionné → surligne les notes correspondantes
   onPress:       () => void;
   animValue?:    Animated.Value;
   goldAnim?:     Animated.Value;
@@ -29,6 +30,7 @@ const ROWS_3x3 = [[1,2,3],[4,5,6],[7,8,9]] as const;
 const SudokuCell = React.memo(function SudokuCell({
   value, notes, errors,
   isFixed, isSelected, isHighlighted, isMatchValue, isError, isHintHighlight, isHintTarget,
+  highlightNoteValue,
   onPress, animValue, goldAnim, cellFontSize, noteFontSize,
 }: Props) {
   const { colors, settings } = useSettings();
@@ -72,15 +74,17 @@ const SudokuCell = React.memo(function SudokuCell({
           {ROWS_3x3.map((row, ri) => (
             <View key={ri} style={styles.notesRow}>
               {row.map(n => {
-                const isNote = noteNumbers.includes(n);
-                const isErr  = errorNumbers.includes(n);
+                const isNote     = noteNumbers.includes(n);
+                const isErr      = errorNumbers.includes(n);
+                const isNoteHit  = isNote && !!highlightNoteValue && n === highlightNoteValue;
                 return (
                   <View key={n} style={styles.noteCell}>
                     {(isNote || isErr) && (
                       <Text style={[
                         isErr ? styles.errorDigit : styles.noteDigit,
-                        { fontSize: nfs, color: isErr ? colors.error : colors.textSecondary },
+                        { fontSize: nfs, color: isErr ? colors.error : isNoteHit ? colors.hintColor : colors.textSecondary },
                         onDark && (isErr ? styles.errorsOnDark : styles.notesOnDark),
+                        isNoteHit && styles.noteHit,
                       ]}>
                         {n}
                       </Text>
@@ -155,6 +159,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   noteDigit:    { fontWeight: "600" },
+  noteHit:      { fontWeight: "800" },
   notesOnDark:  { color: "#1A1A1A" },
   errorDigit:   { fontWeight: "700" },
   errorsOnDark: { color: "#FFD0CC" },

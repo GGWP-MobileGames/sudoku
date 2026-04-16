@@ -138,6 +138,8 @@
     "highlight_group_desc": "Colors the area around the selected cell",
     "show_cell_errors": "Show errors in cells",
     "show_cell_errors_desc": "Displays wrong numbers tried in each cell",
+    "highlight_notes": "Highlight matching notes",
+    "highlight_notes_desc": "Highlights note candidates that match the selected digit",
     "haptic_feedback": "Haptic feedback",
     "haptic_feedback_desc": "Vibrations when placing a number or making an error",
     "hints_label": "Available hints",

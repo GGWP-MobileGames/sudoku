@@ -275,6 +275,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         highlightIdentical={settings.highlightIdentical}
         highlightGroup={settings.highlightGroup}
         largeNumbers={settings.largeNumbers}
+        highlightNotes={settings.highlightNotes}
       />
       {paused && (
         <TouchableOpacity

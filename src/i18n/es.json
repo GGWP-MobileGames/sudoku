@@ -138,6 +138,8 @@
     "highlight_group_desc": "Colorea la zona alrededor de la celda seleccionada",
     "show_cell_errors": "Mostrar errores en las celdas",
     "show_cell_errors_desc": "Muestra los números incorrectos probados en cada celda",
+    "highlight_notes": "Resaltar notas coincidentes",
+    "highlight_notes_desc": "Resalta los candidatos en las notas que coinciden con el dígito seleccionado",
     "haptic_feedback": "Respuesta háptica",
     "haptic_feedback_desc": "Vibraciones al colocar un número o cometer un error",
     "hints_label": "Pistas disponibles",

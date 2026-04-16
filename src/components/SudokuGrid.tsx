@@ -27,12 +27,13 @@ interface Props {
   highlightIdentical?: boolean;
   highlightGroup?:     boolean;
   largeNumbers?:       boolean;
+  highlightNotes?:     boolean;
 }
 
 function SudokuGrid({
   grid, notes, errors, selected, onSelect, isFixed, isError, puzzleKey, gridSize, completedGroups,
   bounceCell, shakeCell, victoryWave, showCoords, hintHighlight, hintTarget, hintPreviewValue,
-  highlightIdentical = true, highlightGroup = true, largeNumbers = true,
+  highlightIdentical = true, highlightGroup = true, largeNumbers = true, highlightNotes = true,
 }: Props) {
   const { colors } = useSettings();
   const CELL_SIZE = gridSize / 9;
@@ -268,6 +269,7 @@ const hintHighlightSet = React.useMemo(() => {
                     isHintTarget={!!(hintTarget && hintTarget[0] === r && hintTarget[1] === c)}
                     isMatchValue={isMatchValue(r, c)}
                     isError={isError(r, c)}
+                    highlightNoteValue={highlightNotes && selectedValue !== 0 ? selectedValue : 0}
                     onPress={() => onSelect(r, c)}
                     animValue={cellAnims[idx]}
                     goldAnim={goldAnims[idx]}

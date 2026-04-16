@@ -138,6 +138,8 @@
     "highlight_group_desc": "選択したセルの周囲を色付けします",
     "show_cell_errors": "セルにエラーを表示",
     "show_cell_errors_desc": "各セルで試した間違った数字を表示します",
+    "highlight_notes": "一致するメモを強調表示",
+    "highlight_notes_desc": "選択した数字と一致するメモ候補を強調します",
     "haptic_feedback": "触覚フィードバック",
     "haptic_feedback_desc": "数字の配置やエラー時に振動します",
     "hints_label": "使用可能なヒント数",

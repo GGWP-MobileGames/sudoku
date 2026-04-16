@@ -12,6 +12,7 @@ export interface AppSettings {
   maxErrors:          number;   // nombre d'erreurs max (0-99)
   showCellErrors:     boolean;  // afficher les erreurs dans les cases
   hapticFeedback:     boolean;  // retour haptique (vibration)
+  highlightNotes:     boolean;  // surligner les notes correspondant au chiffre sélectionné
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -26,6 +27,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   maxErrors:          3,
   showCellErrors:     true,
   hapticFeedback:     true,
+  highlightNotes:     true,
 };
 
 const KEY = "app_settings";
