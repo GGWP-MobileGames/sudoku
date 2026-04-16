@@ -2,7 +2,7 @@
   "expo": {
     "name": "Sudoku",
     "slug": "sudoku-app",
-    "version": "1.1.4",
+    "version": "1.2.0",
     "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -17,7 +17,7 @@
         "backgroundColor": "#EDEADE"
       },
       "package": "com.ggwp.sudoku",
-      "versionCode": 6
+      "versionCode": 7
     },
     "ios": {
       "bundleIdentifier": "com.ggwp.sudoku",
