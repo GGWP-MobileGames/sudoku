@@ -140,6 +140,8 @@
     "show_cell_errors_desc": "Montre les mauvais chiffres essayés dans chaque case",
     "highlight_notes": "Surligner les notes correspondantes",
     "highlight_notes_desc": "Met en évidence les candidats en notes qui correspondent au chiffre sélectionné",
+    "blitz_mode": "Mode Blitz",
+    "blitz_mode_desc": "Sélectionnez d'abord un chiffre, puis tapez les cases pour le placer",
     "haptic_feedback": "Retour haptique",
     "haptic_feedback_desc": "Vibrations lors du placement d'un chiffre ou d'une erreur",
     "hints_label": "Nombre d'indices disponibles",

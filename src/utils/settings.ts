@@ -13,6 +13,7 @@ export interface AppSettings {
   showCellErrors:     boolean;  // afficher les erreurs dans les cases
   hapticFeedback:     boolean;  // retour haptique (vibration)
   highlightNotes:     boolean;  // surligner les notes correspondant au chiffre sélectionné
+  blitzMode:          boolean;  // mode blitz : sélectionner le chiffre d'abord, puis la case
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -28,6 +29,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   showCellErrors:     true,
   hapticFeedback:     true,
   highlightNotes:     true,
+  blitzMode:          false,
 };
 
 const KEY = "app_settings";

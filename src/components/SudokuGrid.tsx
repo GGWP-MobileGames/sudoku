@@ -24,16 +24,18 @@ interface Props {
   hintHighlight?:      [number, number][];
   hintTarget?:         [number, number] | null;
   hintPreviewValue?:   number | null; // valeur à pré-afficher dans la case cible
-  highlightIdentical?: boolean;
-  highlightGroup?:     boolean;
-  largeNumbers?:       boolean;
-  highlightNotes?:     boolean;
+  highlightIdentical?:     boolean;
+  highlightGroup?:         boolean;
+  largeNumbers?:           boolean;
+  highlightNotes?:         boolean;
+  selectedValueOverride?:  number; // mode blitz : force la valeur pour les highlights (match + notes)
 }
 
 function SudokuGrid({
   grid, notes, errors, selected, onSelect, isFixed, isError, puzzleKey, gridSize, completedGroups,
   bounceCell, shakeCell, victoryWave, showCoords, hintHighlight, hintTarget, hintPreviewValue,
   highlightIdentical = true, highlightGroup = true, largeNumbers = true, highlightNotes = true,
+  selectedValueOverride,
 }: Props) {
   const { colors } = useSettings();
   const CELL_SIZE = gridSize / 9;
@@ -196,7 +198,10 @@ const prevGroupsRef = useRef<string>("");
     ]).start();
   }, [shakeCell]);
 
-  const selectedValue = selected ? grid[selected[0]]?.[selected[1]] : 0;
+  const selectedValue  = selected ? grid[selected[0]]?.[selected[1]] : 0;
+  // En mode blitz, on peut forcer la valeur utilisée pour les highlights
+  const effectiveValue = selectedValueOverride !== undefined ? selectedValueOverride : selectedValue;
+
   const isSelected    = (r: number, c: number) => selected?.[0] === r && selected?.[1] === c;
   const isHighlighted = (r: number, c: number) => {
     if (!selected || !highlightGroup) return false;
@@ -205,8 +210,13 @@ const prevGroupsRef = useRef<string>("");
       (Math.floor(r/3) === Math.floor(sr/3) && Math.floor(c/3) === Math.floor(sc/3));
   };
   const isMatchValue = (r: number, c: number) => {
-    if (!selected || selectedValue === 0 || !highlightIdentical) return false;
-    return !isSelected(r, c) && grid[r][c] === selectedValue;
+    if (effectiveValue === 0 || !highlightIdentical) return false;
+    if (selectedValueOverride !== undefined) {
+      // Mode blitz : comparer sans tenir compte de la sélection de case
+      return grid[r][c] === effectiveValue;
+    }
+    if (!selected) return false;
+    return !isSelected(r, c) && grid[r][c] === effectiveValue;
   };
 
 const hintHighlightSet = React.useMemo(() => {
@@ -269,7 +279,7 @@ const hintHighlightSet = React.useMemo(() => {
                     isHintTarget={!!(hintTarget && hintTarget[0] === r && hintTarget[1] === c)}
                     isMatchValue={isMatchValue(r, c)}
                     isError={isError(r, c)}
-                    highlightNoteValue={highlightNotes && selectedValue !== 0 ? selectedValue : 0}
+                    highlightNoteValue={highlightNotes && effectiveValue !== 0 ? effectiveValue : 0}
                     onPress={() => onSelect(r, c)}
                     animValue={cellAnims[idx]}
                     goldAnim={goldAnims[idx]}

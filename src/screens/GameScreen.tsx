@@ -84,11 +84,33 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
     inputNumber(n);
   }, [inputNumber]);
 
+  // ── Mode Blitz ──────────────────────────────────────────────────────────────
+  const [blitzNumber, setBlitzNumber] = React.useState<number | null>(null);
+  const blitzNumberRef = React.useRef<number | null>(null);
+  blitzNumberRef.current = blitzNumber;
+  const blitzModeRef = React.useRef(false);
+  blitzModeRef.current = settings.blitzMode ?? false;
+
+  // Réinitialiser le chiffre blitz quand on quitte le mode
+  React.useEffect(() => {
+    if (!settings.blitzMode) setBlitzNumber(null);
+  }, [settings.blitzMode]);
+
   const pausedRef = React.useRef(paused);
   pausedRef.current = paused;
   const handleSelect = React.useCallback((r: number, c: number) => {
-    if (!pausedRef.current) setSelected([r, c]);
-  }, [setSelected]);
+    if (pausedRef.current) return;
+    if (blitzModeRef.current) {
+      // En mode blitz : placer directement si un chiffre est sélectionné
+      const bn = blitzNumberRef.current;
+      if (bn !== null) {
+        inputNumber(bn, r, c);
+      }
+      // Sinon ne rien faire (pas de sélection de case)
+      return;
+    }
+    setSelected([r, c]);
+  }, [setSelected, inputNumber]);
 
   React.useEffect(() => {
     if (mistakes > prevMistakesRef.current) {
@@ -276,6 +298,11 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         highlightGroup={settings.highlightGroup}
         largeNumbers={settings.largeNumbers}
         highlightNotes={settings.highlightNotes}
+        selectedValueOverride={
+          settings.blitzMode && blitzNumber !== null && blitzNumber > 0
+            ? blitzNumber
+            : undefined
+        }
       />
       {paused && (
         <TouchableOpacity
@@ -298,6 +325,9 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         onToggleNotes={() => setNotesMode(prev => !prev)}
         grid={grid}
         compact={isCompact}
+        blitzMode={settings.blitzMode}
+        blitzNumber={blitzNumber}
+        onSelectBlitzNumber={setBlitzNumber}
       />
     </TouchableOpacity>
   );
@@ -350,7 +380,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         difficulty={difficulty}
         diffLabel={t(`home.difficulties.${difficulty}`)}
         isDaily={isDaily}
-        onReplay={() => { setVictoryReady(false); newGame(); }}
+        onReplay={() => { setVictoryReady(false); setBlitzNumber(null); newGame(); }}
         onHome={onBackToHome}
       />
 
@@ -363,7 +393,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         hintsUsed={defeatStats?.hintsUsed ?? 0}
         difficulty={difficulty}
         isDaily={isDaily}
-        onReplay={() => { setDefeatPending(false); setDefeatReady(false); setDefeatStats(null); newGame(); }}
+        onReplay={() => { setDefeatPending(false); setDefeatReady(false); setDefeatStats(null); setBlitzNumber(null); newGame(); }}
         onHome={onBackToHome}
       />
     </SafeAreaView>

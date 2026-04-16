@@ -4,21 +4,28 @@ import { useSettings } from "../context/SettingsContext";
 import type { Grid } from "../utils/sudoku";
 
 interface Props {
-  onInput:       (n: number) => void;
-  onErase:       () => void;
-  onHint:        () => void;
-  hintsLeft:     number;
-  notesMode:     boolean;
-  onToggleNotes: () => void;
-  grid:          Grid;
-  compact?:      boolean;
+  onInput:              (n: number) => void;
+  onErase:              () => void;
+  onHint:               () => void;
+  hintsLeft:            number;
+  notesMode:            boolean;
+  onToggleNotes:        () => void;
+  grid:                 Grid;
+  compact?:             boolean;
+  // Mode Blitz
+  blitzMode?:           boolean;
+  blitzNumber?:         number | null; // null = rien, 0 = effacement, 1-9 = chiffre
+  onSelectBlitzNumber?: (n: number) => void;
 }
 
 function countInGrid(grid: Grid, num: number): number {
   return grid.reduce((acc, row) => acc + row.filter(v => v === num).length, 0);
 }
 
-const NumberPad = React.memo(function NumberPad({ onInput, onErase, onHint, hintsLeft, notesMode, onToggleNotes, grid, compact }: Props) {
+const NumberPad = React.memo(function NumberPad({
+  onInput, onErase, onHint, hintsLeft, notesMode, onToggleNotes, grid, compact,
+  blitzMode, blitzNumber, onSelectBlitzNumber,
+}: Props) {
   // État local optimiste pour un retour visuel instantané
   const [localNotes, setLocalNotes] = useState(notesMode);
   useEffect(() => { setLocalNotes(notesMode); }, [notesMode]);
@@ -40,6 +47,22 @@ const NumberPad = React.memo(function NumberPad({ onInput, onErase, onHint, hint
   const secColor    = { color: colors.textSecondary };
   const primaryColor = { color: colors.textPrimary };
 
+  const handleNumPress = (n: number) => {
+    if (blitzMode && onSelectBlitzNumber) {
+      onSelectBlitzNumber(n);
+    } else {
+      onInput(n);
+    }
+  };
+
+  const handleErasePress = () => {
+    if (blitzMode && onSelectBlitzNumber) {
+      onSelectBlitzNumber(0);
+    } else {
+      onErase();
+    }
+  };
+
   return (
     <View style={[styles.container, compact && { paddingHorizontal: 4, gap: 4 }]}>
       {/* Chiffres */}
@@ -48,16 +71,33 @@ const NumberPad = React.memo(function NumberPad({ onInput, onErase, onHint, hint
           const placed    = countInGrid(grid, n);
           const remaining = 9 - placed;
           const done      = remaining === 0;
+          const isBlitzSelected = blitzMode && blitzNumber === n;
           return (
             <TouchableOpacity
               key={n}
-              onPress={() => onInput(n)}
+              onPress={() => handleNumPress(n)}
               disabled={done}
-              style={[styles.numBtn, btnStyle, done && styles.numBtnDone]}
+              style={[
+                styles.numBtn, btnStyle,
+                done && styles.numBtnDone,
+                isBlitzSelected && { backgroundColor: colors.bgCellSelected, borderColor: colors.borderBox },
+              ]}
               activeOpacity={0.6}
             >
-              <Text style={[styles.numText, primaryColor, done && secColor, { fontSize: sz.numText }]}>{n}</Text>
-              <Text style={[styles.remaining, secColor, done && { color: colors.hintColor }, { fontSize: sz.remaining }]}>
+              <Text style={[
+                styles.numText, primaryColor,
+                done && secColor,
+                isBlitzSelected && { color: colors.textOnSelected },
+                { fontSize: sz.numText },
+              ]}>
+                {n}
+              </Text>
+              <Text style={[
+                styles.remaining, secColor,
+                done && { color: colors.hintColor },
+                isBlitzSelected && { color: colors.textOnSelected },
+                { fontSize: sz.remaining },
+              ]}>
                 {done ? "✓" : remaining}
               </Text>
             </TouchableOpacity>
@@ -70,12 +110,23 @@ const NumberPad = React.memo(function NumberPad({ onInput, onErase, onHint, hint
 
         {/* Effacer */}
         <TouchableOpacity
-          onPress={onErase}
-          style={[styles.actionBtn, btnStyle, { borderColor: colors.textSecondary }]}
+          onPress={handleErasePress}
+          style={[
+            styles.actionBtn, btnStyle, { borderColor: colors.textSecondary },
+            blitzMode && blitzNumber === 0 && { backgroundColor: colors.bgCellSelected, borderColor: colors.borderBox },
+          ]}
           activeOpacity={0.6}
         >
-          <Text style={[styles.actionIcon, secColor, { fontSize: sz.actionIcon }]}>✕</Text>
-          <Text style={[styles.actionLabel, secColor, { fontSize: sz.actionLabel }]}>{t("game.erase")}</Text>
+          <Text style={[
+            styles.actionIcon, secColor,
+            blitzMode && blitzNumber === 0 && { color: colors.textOnSelected },
+            { fontSize: sz.actionIcon },
+          ]}>✕</Text>
+          <Text style={[
+            styles.actionLabel, secColor,
+            blitzMode && blitzNumber === 0 && { color: colors.textOnSelected },
+            { fontSize: sz.actionLabel },
+          ]}>{t("game.erase")}</Text>
         </TouchableOpacity>
 
         {/* Notes */}

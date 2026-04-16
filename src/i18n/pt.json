@@ -140,6 +140,8 @@
     "show_cell_errors_desc": "Exibe os números errados tentados em cada célula",
     "highlight_notes": "Destacar notas correspondentes",
     "highlight_notes_desc": "Destaca os candidatos nas notas que correspondem ao dígito selecionado",
+    "blitz_mode": "Modo Blitz",
+    "blitz_mode_desc": "Selecione primeiro um dígito, depois toque nas células para colocá-lo",
     "haptic_feedback": "Resposta háptica",
     "haptic_feedback_desc": "Vibrações ao colocar um número ou cometer um erro",
     "hints_label": "Dicas disponíveis",

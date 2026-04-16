@@ -140,6 +140,8 @@
     "show_cell_errors_desc": "Zeigt falsche Zahlen in jedem Feld an",
     "highlight_notes": "Passende Notizen hervorheben",
     "highlight_notes_desc": "Hebt Notiz-Kandidaten hervor, die mit der gewählten Ziffer übereinstimmen",
+    "blitz_mode": "Blitz-Modus",
+    "blitz_mode_desc": "Wähle zuerst eine Ziffer, dann tippe auf Felder, um sie zu platzieren",
     "haptic_feedback": "Haptisches Feedback",
     "haptic_feedback_desc": "Vibrationen beim Platzieren einer Zahl oder bei einem Fehler",
     "hints_label": "Verfügbare Tipps",
