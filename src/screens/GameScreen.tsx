@@ -293,7 +293,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         showCoords={!!pendingHint}
         hintHighlight={pendingHint?.highlightCells as [number,number][] | undefined}
         hintTarget={pendingHint?.targetCell ?? null}
-        hintPreviewValue={pendingHint?.value ?? null}
+        hintPreviewValue={null}
         highlightIdentical={settings.highlightIdentical}
         highlightGroup={settings.highlightGroup}
         largeNumbers={settings.largeNumbers}

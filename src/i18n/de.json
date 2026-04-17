@@ -189,13 +189,13 @@
       "2,2": "Block unten rechts"
     },
     "technique": {
-      "naked_single":  "NACKTES SINGLE",
-      "hidden_single": "VERSTECKTES SINGLE",
-      "naked_pair":    "NACKTES PAAR",
-      "hidden_pair":   "VERSTECKTES PAAR",
-      "pointing_pair": "ZEIGENDES PAAR",
-      "naked_triple":  "NACKTES TRIPLE",
-      "fallback":      "ANALYSE NÖTIG"
+      "naked_single":  "NAKED SINGLE",
+      "hidden_single": "HIDDEN SINGLE",
+      "naked_pair":    "NAKED PAIR",
+      "hidden_pair":   "HIDDEN PAIR",
+      "pointing_pair": "POINTING PAIR",
+      "naked_triple":  "NAKED TRIPLE",
+      "fallback":      "ANALYSIS NEEDED"
     },
     "naked_single": "Feld {{cell}} hat nur einen möglichen Kandidaten. Schau, was {{row}}, {{col}} und {{box}} bereits gesetzt haben: Zusammen eliminieren sie alle Ziffern bis auf eine. Finde welche.",
     "hidden_single_row": "Geh {{row}} Feld für Feld durch: Nur eine fehlende Ziffer kann in Feld {{cell}}. Zähle für jede fehlende Ziffer der Zeile, wie viele Felder sie noch aufnehmen können — eine hat nur noch eine Option.",

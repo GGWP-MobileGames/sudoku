@@ -189,13 +189,13 @@
       "2,2": "bloco inferior direito"
     },
     "technique": {
-      "naked_single":  "ÚNICO SIMPLES",
-      "hidden_single": "ÚNICO OCULTO",
-      "naked_pair":    "PAR SIMPLES",
-      "hidden_pair":   "PAR OCULTO",
-      "pointing_pair": "PAR APONTADOR",
-      "naked_triple":  "TRIO SIMPLES",
-      "fallback":      "ANÁLISE NECESSÁRIA"
+      "naked_single":  "NAKED SINGLE",
+      "hidden_single": "HIDDEN SINGLE",
+      "naked_pair":    "NAKED PAIR",
+      "hidden_pair":   "HIDDEN PAIR",
+      "pointing_pair": "POINTING PAIR",
+      "naked_triple":  "NAKED TRIPLE",
+      "fallback":      "ANALYSIS NEEDED"
     },
     "naked_single": "A célula {{cell}} tem apenas um candidato possível. Veja o que sua {{row}}, sua {{col}} e seu {{box}} já têm colocado: juntos, eliminam todos os dígitos exceto um. Descubra qual.",
     "hidden_single_row": "Percorra a {{row}} célula por célula: apenas um dígito ausente pode ir para a célula {{cell}}. Para cada dígito não presente na linha, conte quantas células ainda podem recebê-lo — um deles tem apenas uma opção.",

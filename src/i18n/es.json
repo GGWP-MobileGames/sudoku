@@ -189,13 +189,13 @@
       "2,2": "bloque inferior derecho"
     },
     "technique": {
-      "naked_single":  "ÚNICO DESNUDO",
-      "hidden_single": "ÚNICO OCULTO",
-      "naked_pair":    "PAR DESNUDO",
-      "hidden_pair":   "PAR OCULTO",
-      "pointing_pair": "PAR SEÑALADOR",
-      "naked_triple":  "TRÍO DESNUDO",
-      "fallback":      "ANÁLISIS NECESARIO"
+      "naked_single":  "NAKED SINGLE",
+      "hidden_single": "HIDDEN SINGLE",
+      "naked_pair":    "NAKED PAIR",
+      "hidden_pair":   "HIDDEN PAIR",
+      "pointing_pair": "POINTING PAIR",
+      "naked_triple":  "NAKED TRIPLE",
+      "fallback":      "ANALYSIS NEEDED"
     },
     "naked_single": "La celda {{cell}} solo tiene un candidato posible. Mira lo que su {{row}}, su {{col}} y su {{box}} ya tienen colocado: juntos eliminan todos los dígitos menos uno. Encuentra cuál.",
     "hidden_single_row": "Recorre la {{row}} celda por celda: solo un dígito faltante puede ir en la celda {{cell}}. Para cada dígito ausente de la fila, cuenta cuántas celdas aún pueden contenerlo — uno de ellos solo tiene una opción.",

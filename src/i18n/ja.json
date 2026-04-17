@@ -189,13 +189,13 @@
       "2,2": "右下のブロック"
     },
     "technique": {
-      "naked_single":  "ネイキッドシングル",
-      "hidden_single": "ヒドゥンシングル",
-      "naked_pair":    "ネイキッドペア",
-      "hidden_pair":   "ヒドゥンペア",
-      "pointing_pair": "ポインティングペア",
-      "naked_triple":  "ネイキッドトリプル",
-      "fallback":      "さらなる分析が必要"
+      "naked_single":  "NAKED SINGLE",
+      "hidden_single": "HIDDEN SINGLE",
+      "naked_pair":    "NAKED PAIR",
+      "hidden_pair":   "HIDDEN PAIR",
+      "pointing_pair": "POINTING PAIR",
+      "naked_triple":  "NAKED TRIPLE",
+      "fallback":      "ANALYSIS NEEDED"
     },
     "naked_single": "マス{{cell}}には候補が1つしかありません。{{row}}、{{col}}、{{box}}がすでに置いた数字を見てください：それらを合わせると、1つを除いてすべての数字が除外されます。どれか探してみましょう。",
     "hidden_single_row": "{{row}}をマスごとに確認してください：マス{{cell}}にしか入れない数字が1つあります。行に不足している各数字について、まだ入れるマスがいくつあるか数えてみましょう — 1つだけしか選択肢がないものがあるはずです。",

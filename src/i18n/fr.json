@@ -189,13 +189,13 @@
       "2,2": "bloc bas droite"
     },
     "technique": {
-      "naked_single":  "SINGLETON NU",
-      "hidden_single": "SINGLETON CACHÉ",
-      "naked_pair":    "PAIRE NUE",
-      "hidden_pair":   "PAIRE CACHÉE",
-      "pointing_pair": "PAIRE POINTANTE",
-      "naked_triple":  "TRIPLET NU",
-      "fallback":      "ANALYSE REQUISE"
+      "naked_single":  "NAKED SINGLE",
+      "hidden_single": "HIDDEN SINGLE",
+      "naked_pair":    "NAKED PAIR",
+      "hidden_pair":   "HIDDEN PAIR",
+      "pointing_pair": "POINTING PAIR",
+      "naked_triple":  "NAKED TRIPLE",
+      "fallback":      "ANALYSIS NEEDED"
     },
     "naked_single": "La case {{cell}} n'a qu'un seul candidat possible. Regardez ce que sa {{row}}, sa {{col}} et son {{box}} ont déjà placé : ensemble, ils éliminent tous les chiffres sauf un. Trouvez lequel.",
     "hidden_single_row": "Parcourez la {{row}} case par case : un seul chiffre manquant ne peut se placer que dans la case {{cell}}. Pour chaque chiffre absent de la ligne, comptez combien de cases peuvent encore l'accueillir — l'un d'eux n'en a qu'une seule.",
