@@ -365,7 +365,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
       </TouchableOpacity>
 
       <HintModal
-        hint={pendingHint}
+        hint={paused ? null : pendingHint}
         onApply={applyHint}
         onDismiss={dismissHint}
       />
