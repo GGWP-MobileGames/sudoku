@@ -124,12 +124,14 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
   const [freePlayErrors, setFreePlayErrors] = useState<[number, number][] | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const gridRef       = useRef<Grid>(grid);
-  const notesRef      = useRef<NotesGrid>(notes);
-  const cellErrorsRef = useRef<ErrorsGrid>(cellErrors);
-  const secondsRef    = useRef<number>(seconds);
-  const mistakesRef   = useRef<number>(mistakes);
-  const hintsLeftRef  = useRef<number>(hintsLeft);
+  const gridRef        = useRef<Grid>(grid);
+  const notesRef       = useRef<NotesGrid>(notes);
+  const cellErrorsRef  = useRef<ErrorsGrid>(cellErrors);
+  const secondsRef     = useRef<number>(seconds);
+  const mistakesRef    = useRef<number>(mistakes);
+  const hintsLeftRef   = useRef<number>(hintsLeft);
+  // Clés "r-c-n" des notes ajoutées automatiquement (appui long Notes)
+  const autoNotesSetRef = useRef<Set<string>>(new Set());
 
   gridRef.current       = grid;
   notesRef.current      = notes;
@@ -154,6 +156,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
     setPaused(false);
     setCompleted(false);
     setFreePlayErrors(null);
+    autoNotesSetRef.current = new Set();
   }, [difficulty]);
 
   // ── Timer ───────────────────────────────────────────────────────────────────
@@ -230,6 +233,8 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
     if (gridRef.current[r]?.[c] !== 0 && gridRef.current[r]?.[c] === solution[r]?.[c]) return;
 
     if (notesMode && num !== 0) {
+      // La note est modifiée manuellement → elle n'est plus "auto"
+      autoNotesSetRef.current.delete(`${r}-${c}-${num}`);
       setNotes(prev => {
         const next = prev.map(row => row.map(s => new Set(s)));
         const cell = next[r][c];
@@ -253,6 +258,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
           setFreePlayErrors(null); // réinitialiser l'overlay si on corrige
         }
         if (hasNotes) {
+          for (let n = 1; n <= 9; n++) autoNotesSetRef.current.delete(`${r}-${c}-${n}`);
           setNotes(prev => {
             const next = prev.map(row => row.map(s => new Set(s)));
             next[r][c].clear();
@@ -269,14 +275,21 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
       setGrid(nextGrid);
       setBounceCell({ r, c, tick: Date.now() });
 
+      const _fp_br = Math.floor(r / 3) * 3;
+      const _fp_bc = Math.floor(c / 3) * 3;
+      for (let i = 0; i < 9; i++) {
+        autoNotesSetRef.current.delete(`${r}-${i}-${num}`);
+        autoNotesSetRef.current.delete(`${i}-${c}-${num}`);
+      }
+      for (let dr = 0; dr < 3; dr++)
+        for (let dc = 0; dc < 3; dc++)
+          autoNotesSetRef.current.delete(`${_fp_br + dr}-${_fp_bc + dc}-${num}`);
       setNotes(prevN => {
         const nn = prevN.map(row => row.map(s => new Set(s)));
         for (let i = 0; i < 9; i++) { nn[r][i].delete(num); nn[i][c].delete(num); }
-        const br = Math.floor(r / 3) * 3;
-        const bc = Math.floor(c / 3) * 3;
         for (let dr = 0; dr < 3; dr++)
           for (let dc = 0; dc < 3; dc++)
-            nn[br + dr][bc + dc].delete(num);
+            nn[_fp_br + dr][_fp_bc + dc].delete(num);
         return nn;
       });
 
@@ -320,6 +333,8 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
         });
       }
       if (hasNotes) {
+        // Retirer toutes les notes auto de cette case du suivi
+        for (let n = 1; n <= 9; n++) autoNotesSetRef.current.delete(`${r}-${c}-${n}`);
         setNotes(prev => {
           const next = prev.map(row => row.map(s => new Set(s)));
           next[r][c].clear();
@@ -355,15 +370,22 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
     setGrid(nextGrid);
     setBounceCell({ r, c, tick: Date.now() });
 
-    // Supprimer les notes liées (ligne, colonne, boîte)
+    // Supprimer les notes liées (ligne, colonne, boîte) + suivi auto
+    const _br = Math.floor(r / 3) * 3;
+    const _bc = Math.floor(c / 3) * 3;
+    for (let i = 0; i < 9; i++) {
+      autoNotesSetRef.current.delete(`${r}-${i}-${num}`);
+      autoNotesSetRef.current.delete(`${i}-${c}-${num}`);
+    }
+    for (let dr = 0; dr < 3; dr++)
+      for (let dc = 0; dc < 3; dc++)
+        autoNotesSetRef.current.delete(`${_br + dr}-${_bc + dc}-${num}`);
     setNotes(prevN => {
       const nn = prevN.map(row => row.map(s => new Set(s)));
       for (let i = 0; i < 9; i++) { nn[r][i].delete(num); nn[i][c].delete(num); }
-      const br = Math.floor(r / 3) * 3;
-      const bc = Math.floor(c / 3) * 3;
       for (let dr = 0; dr < 3; dr++)
         for (let dc = 0; dc < 3; dc++)
-          nn[br + dr][bc + dc].delete(num);
+          nn[_br + dr][_bc + dc].delete(num);
       return nn;
     });
 
@@ -411,24 +433,44 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
   }, [pendingHint, inputNumber]);
 
   // ── Notes automatiques (appui long sur le bouton Notes) ─────────────────────
+  // - 1er appui long : remplit tous les candidats valides non déjà présents → taggés comme "auto"
+  // - 2e appui long : efface uniquement les notes auto-taguées ; les notes manuelles survivent
   const autoFillNotes = useCallback(() => {
     if (completed) return;
-    const hasNotes = notesRef.current.some(row => row.some(s => s.size > 0));
-    if (hasNotes) {
-      setNotes(emptyNotes());
+    if (autoNotesSetRef.current.size > 0) {
+      // Retirer uniquement les notes auto-taguées
+      const toRemove = new Set(autoNotesSetRef.current);
+      autoNotesSetRef.current = new Set();
+      setNotes(prev => {
+        const next = prev.map(row => row.map(s => new Set(s)));
+        for (const key of toRemove) {
+          const parts = key.split("-");
+          const nr = Number(parts[0]), nc = Number(parts[1]), n = Number(parts[2]);
+          next[nr][nc].delete(n);
+        }
+        return next;
+      });
     } else {
-      const newNotes = emptyNotes();
-      for (let nr = 0; nr < 9; nr++) {
-        for (let nc = 0; nc < 9; nc++) {
-          if (gridRef.current[nr][nc] !== 0) continue; // case déjà remplie
-          for (let n = 1; n <= 9; n++) {
-            if (canPlaceNote(gridRef.current, nr, nc, n)) {
-              newNotes[nr][nc].add(n);
+      // Remplir les candidats valides absents → les tagger comme auto
+      const currentGrid = gridRef.current;
+      const currentNotes = notesRef.current;
+      const newAutoKeys = new Set<string>();
+      setNotes(prev => {
+        const next = prev.map(row => row.map(s => new Set(s)));
+        for (let nr = 0; nr < 9; nr++) {
+          for (let nc = 0; nc < 9; nc++) {
+            if (currentGrid[nr][nc] !== 0) continue;
+            for (let n = 1; n <= 9; n++) {
+              if (canPlaceNote(currentGrid, nr, nc, n) && !currentNotes[nr][nc].has(n)) {
+                next[nr][nc].add(n);
+                newAutoKeys.add(`${nr}-${nc}-${n}`);
+              }
             }
           }
         }
-      }
-      setNotes(newNotes);
+        return next;
+      });
+      autoNotesSetRef.current = newAutoKeys;
     }
   }, [completed]);
 
