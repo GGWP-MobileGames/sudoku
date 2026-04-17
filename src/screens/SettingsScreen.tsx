@@ -30,8 +30,6 @@ export default function SettingsScreen({ onBack }: Props) {
     </View>
   );
 
-  const currentLang = settings.language === 'auto' ? language : settings.language;
-
   return (
     <SafeAreaView style={[s.safe, { backgroundColor: colors.bg }]}>
       <StatusBar barStyle={colors.isDark ? "light-content" : "dark-content"} backgroundColor={colors.bg} />
@@ -63,14 +61,6 @@ export default function SettingsScreen({ onBack }: Props) {
             <Text style={[s.sectionTitle, { color: colors.textSecondary }]}>{t('settings.section_language')}</Text>
           </View>
           <View style={s.langRow}>
-            {/* Auto = langue du système */}
-            <TouchableOpacity
-              style={[s.langBtn, { borderColor: colors.borderThin }, currentLang === language && settings.language === 'auto' && { borderColor: colors.borderBox, backgroundColor: colors.bgCellSelected }]}
-              onPress={() => updateSettings({ language: 'auto' })}
-              activeOpacity={0.7}
-            >
-              <Text style={[s.langText, { color: colors.textSecondary }, settings.language === 'auto' && { color: colors.textOnSelected, fontWeight: "700" as const }]}>Auto</Text>
-            </TouchableOpacity>
             {SUPPORTED_LANGUAGES.map((lang: Language) => (
               <TouchableOpacity
                 key={lang}

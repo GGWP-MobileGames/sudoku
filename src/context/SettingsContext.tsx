@@ -28,9 +28,13 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       if (!loaded.theme || loaded.theme === "classic") {
         if (loaded.darkMode) {
           loaded.theme = "dark";
-          saveSettings(loaded);
         }
       }
+      // Migration : remplacer 'auto' par la langue détectée du système
+      if (!loaded.language || loaded.language === 'auto') {
+        loaded.language = DEVICE_LANGUAGE;
+      }
+      saveSettings(loaded);
       setSettings(loaded);
     });
   }, []);
@@ -43,7 +47,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  const language: Language = (settings.language === 'auto' ? DEVICE_LANGUAGE : settings.language as Language);
+  const language: Language = settings.language as Language;
   const t = useMemo(() => createT(language), [language]);
   const themeKey = (settings.theme || "classic") as ThemeKey;
   const colors = useMemo(() => getColors(themeKey), [themeKey]);

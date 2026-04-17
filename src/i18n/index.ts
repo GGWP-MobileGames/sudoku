@@ -34,7 +34,7 @@ function detectDeviceLanguage(): Language {
     }
   } catch {}
   const code = locale.slice(0, 2).toLowerCase() as Language;
-  return SUPPORTED_LANGUAGES.includes(code) ? code : "fr";
+  return SUPPORTED_LANGUAGES.includes(code) ? code : "en";
 }
 
 export const DEVICE_LANGUAGE = detectDeviceLanguage();

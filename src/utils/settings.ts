@@ -22,7 +22,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   highlightIdentical: true,
   highlightGroup:     true,
   hintsPerGame:       3,
-  language:           'auto', // auto = langue de l'appareil
+  language:           'en',   // remplacé au premier chargement par la langue du système
   largeNumbers:       true,
   limitErrors:        true,
   maxErrors:          3,
