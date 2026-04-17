@@ -16,6 +16,8 @@ interface Props {
   blitzMode?:           boolean;
   blitzNumber?:         number | null; // null = rien, -1 = effacement, 1-9 = chiffre
   onSelectBlitzNumber?: (n: number | null) => void;
+  // Auto-notes
+  onLongPressNotes?:    () => void; // appui long → remplir/vider les candidats
 }
 
 function countInGrid(grid: Grid, num: number): number {
@@ -25,6 +27,7 @@ function countInGrid(grid: Grid, num: number): number {
 const NumberPad = React.memo(function NumberPad({
   onInput, onErase, onHint, hintsLeft, notesMode, onToggleNotes, grid, compact,
   blitzMode, blitzNumber, onSelectBlitzNumber,
+  onLongPressNotes,
 }: Props) {
   // États locaux optimistes pour un retour visuel instantané
   const [localNotes, setLocalNotes] = useState(notesMode);
@@ -153,6 +156,8 @@ const NumberPad = React.memo(function NumberPad({
         {/* Notes */}
         <TouchableOpacity
           onPress={handleToggleNotes}
+          onLongPress={onLongPressNotes}
+          delayLongPress={400}
           style={[
             styles.actionBtn, btnStyle,
             localNotes && { backgroundColor: colors.bgCellSelected, borderColor: colors.borderBox },

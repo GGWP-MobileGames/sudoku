@@ -45,6 +45,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
   const hintsPerGame = isDaily ? 3 : (settings?.hintsPerGame ?? 3);
   const effectiveLimitErrors = isDaily ? true : (settings?.limitErrors ?? true);
   const effectiveMaxErrors   = isDaily ? 3   : (settings?.maxErrors   ?? 3);
+  const effectiveFreePlay    = isDaily ? false : (settings?.freePlayMode ?? false);
 
   // Capturer le dateKey au montage — ne jamais utiliser getTodayKey() dynamiquement
   // pour éviter le bug minuit (partie commencée hier, quittée après minuit)
@@ -74,10 +75,12 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
     newGame, flushSave,
     isFixed, isError,
     secondsRef, mistakesRef, hintsLeftRef,
+    autoFillNotes,
+    freePlayErrors, clearFreePlayErrors,
   } = useGameState(difficulty, {
     savedGame, prebuilt, hintsPerGame, t,
     limitErrors: effectiveLimitErrors, maxErrors: effectiveMaxErrors,
-    isDaily,
+    isDaily, freePlayMode: effectiveFreePlay,
   });
 
   const handleInput = React.useCallback((n: number) => {
@@ -288,8 +291,8 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
       <View style={[styles.statSep, { backgroundColor: colors.borderThin }]} />
       <View style={styles.statItem}>
         <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{t('game.errors')}</Text>
-        <Animated.Text style={[styles.statValue, { color: mistakes > 0 ? colors.error : colors.textPrimary, transform: [{ scale: mistakesAnim }] }]}>
-          {effectiveLimitErrors ? `${mistakes}/${effectiveMaxErrors}` : String(mistakes)}
+        <Animated.Text style={[styles.statValue, { color: mistakes > 0 && !effectiveFreePlay ? colors.error : colors.textPrimary, transform: [{ scale: mistakesAnim }] }]}>
+          {effectiveFreePlay ? "—" : effectiveLimitErrors ? `${mistakes}/${effectiveMaxErrors}` : String(mistakes)}
         </Animated.Text>
       </View>
     </View>
@@ -323,6 +326,11 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
             ? blitzNumber
             : undefined
         }
+        freePlayErrorCells={
+          freePlayErrors
+            ? new Set(freePlayErrors.map(([r, c]) => `${r},${c}`))
+            : undefined
+        }
       />
       {paused && (
         <TouchableOpacity
@@ -343,6 +351,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         onInput={handleInput} onErase={() => handleInput(0)} onHint={useHint}
         hintsLeft={hintsLeft} notesMode={notesMode}
         onToggleNotes={() => setNotesMode(prev => !prev)}
+        onLongPressNotes={settings.autoNotesEnabled ? autoFillNotes : undefined}
         grid={grid}
         compact={isCompact}
         blitzMode={settings.blitzMode}
@@ -416,6 +425,31 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         onReplay={() => { setDefeatPending(false); setDefeatReady(false); setDefeatStats(null); setBlitzNumber(null); newGame(); }}
         onHome={onBackToHome}
       />
+
+      {/* Overlay jeu libre : grille remplie mais cases erronées */}
+      {!!freePlayErrors && freePlayErrors.length > 0 && (
+        <View style={[styles.freePlayOverlayWrap, { backgroundColor: colors.bg + "CC" }]}>
+          <View style={[styles.freePlayCard, { backgroundColor: colors.bgCard, borderColor: colors.borderBox }]}>
+            <Text style={[styles.freePlayTitle, { color: colors.textPrimary }]}>
+              {t('game.free_play_title')}
+            </Text>
+            <Text style={[styles.freePlayMsg, { color: colors.textSecondary }]}>
+              {freePlayErrors.length === 1
+                ? t('game.free_play_msg_one')
+                : t('game.free_play_msg_many').replace('{{n}}', String(freePlayErrors.length))}
+            </Text>
+            <TouchableOpacity
+              onPress={clearFreePlayErrors}
+              style={[styles.freePlayBtn, { borderColor: colors.borderBox }]}
+              activeOpacity={0.7}
+            >
+              <Text style={[styles.freePlayBtnText, { color: colors.textPrimary }]}>
+                {t('game.free_play_continue')}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -509,4 +543,30 @@ const styles = StyleSheet.create({
   // Pavé masqué (mais toujours dans le layout)
   padWrapper: { width: "100%" },
   padHidden:  { opacity: 0 },
+
+  // Overlay jeu libre
+  freePlayOverlayWrap: {
+    position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
+    alignItems: "center", justifyContent: "center",
+    zIndex: 100,
+  },
+  freePlayCard: {
+    width: "80%", maxWidth: 320,
+    padding: 24, gap: 16,
+    borderWidth: 1,
+    alignItems: "center",
+  },
+  freePlayTitle: {
+    fontSize: 18, fontWeight: "800", letterSpacing: 4, textAlign: "center",
+  },
+  freePlayMsg: {
+    fontSize: 14, textAlign: "center", lineHeight: 22,
+  },
+  freePlayBtn: {
+    paddingVertical: 12, paddingHorizontal: 32,
+    borderWidth: 1, marginTop: 4,
+  },
+  freePlayBtnText: {
+    fontSize: 12, fontWeight: "700", letterSpacing: 2.5,
+  },
 });

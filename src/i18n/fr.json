@@ -39,7 +39,11 @@
     "notes": "Notes",
     "hint": "Indice",
     "daily_badge": "DÉFI DU JOUR",
-    "hints_plural": "Indices"
+    "hints_plural": "Indices",
+    "free_play_title": "GRILLE COMPLÈTE",
+    "free_play_msg_one": "1 case contient une erreur. Les cases incorrectes sont surlignées en rouge.",
+    "free_play_msg_many": "{{n}} cases contiennent des erreurs. Les cases incorrectes sont surlignées en rouge.",
+    "free_play_continue": "CONTINUER"
   },
   "hint": {
     "title": "INDICE",
@@ -144,11 +148,15 @@
     "blitz_mode_desc": "Sélectionnez d'abord un chiffre, puis tapez les cases pour le placer",
     "blitz_auto_select": "Sélection automatique",
     "blitz_auto_select_desc": "Taper une case déjà remplie sélectionne son chiffre",
+    "auto_notes": "Notes automatiques",
+    "auto_notes_desc": "Appui long sur Notes pour remplir ou effacer automatiquement tous les candidats valides",
     "haptic_feedback": "Retour haptique",
     "haptic_feedback_desc": "Vibrations lors du placement d'un chiffre ou d'une erreur",
     "hints_label": "Nombre d'indices disponibles",
     "hints_default": "Par défaut : 3",
     "section_errors": "ERREURS PAR PARTIE",
+    "free_play": "Jeu libre",
+    "free_play_desc": "Les erreurs ne sont pas comptées pendant la partie. Elles sont révélées lorsque la grille est complète.",
     "limit_errors": "Limiter les erreurs",
     "limit_errors_desc": "Annule la partie si le nombre d'erreurs maximum est atteint",
     "max_errors_label": "Nombre d'erreurs autorisées",

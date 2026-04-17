@@ -58,6 +58,20 @@ function emptyNotes(): NotesGrid {
   );
 }
 
+// Vérifie si le chiffre n peut être placé en (r,c) selon les règles (ligne/col/bloc)
+function canPlaceNote(grid: Grid, r: number, c: number, n: number): boolean {
+  for (let i = 0; i < 9; i++) {
+    if (grid[r][i] === n) return false;
+    if (grid[i][c] === n) return false;
+  }
+  const br = Math.floor(r / 3) * 3;
+  const bc = Math.floor(c / 3) * 3;
+  for (let dr = 0; dr < 3; dr++)
+    for (let dc = 0; dc < 3; dc++)
+      if (grid[br + dr][bc + dc] === n) return false;
+  return true;
+}
+
 interface GameInit {
   savedGame?:       SavedGame | null;
   prebuilt?:        { puzzle: Grid; solution: Grid };
@@ -66,6 +80,7 @@ interface GameInit {
   maxErrors?:       number;
   isDaily?:         boolean;
   t?:               (key: string) => string;
+  freePlayMode?:    boolean;
 }
 
 export type { PedagogicHint };
@@ -105,7 +120,8 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
   const [completedGroups, setCompletedGroups] = useState<number[][]>([]);
   const [bounceCell, setBounceCell] = useState<{ r: number; c: number; tick: number } | null>(null);
   const [shakeCell,  setShakeCell]  = useState<{ r: number; c: number; tick: number } | null>(null);
-  const [pendingHint,  setPendingHint]  = useState<PedagogicHint | null>(null);
+  const [pendingHint,   setPendingHint]   = useState<PedagogicHint | null>(null);
+  const [freePlayErrors, setFreePlayErrors] = useState<[number, number][] | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const gridRef       = useRef<Grid>(grid);
@@ -137,6 +153,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
     setSeconds(0);
     setPaused(false);
     setCompleted(false);
+    setFreePlayErrors(null);
   }, [difficulty]);
 
   // ── Timer ───────────────────────────────────────────────────────────────────
@@ -171,7 +188,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
   }, [completed, grid.length]);
 
   // ── Sauvegarde auto (debounced, pas à chaque tick du timer) ─────────────────
-  const defeated = !!(init.limitErrors && mistakes >= (init.maxErrors ?? 3));
+  const defeated = !!(init.limitErrors && !init.freePlayMode && mistakes >= (init.maxErrors ?? 3));
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
     if (!grid.length || !puzzle.length || completed || defeated || init.isDaily) return;
@@ -221,6 +238,68 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
       });
       return;
     }
+
+    // ── Mode jeu libre : placement direct sans vérification ─────────────────
+    if (init.freePlayMode) {
+      if (num === 0) {
+        // Effacer
+        const hasNotes   = (notesRef.current[r]?.[c]?.size ?? 0) > 0;
+        const hasValue   = gridRef.current[r][c] !== 0;
+        if (!hasNotes && !hasValue) return;
+        if (hasValue) {
+          const nextGrid = deepCopy(gridRef.current);
+          nextGrid[r][c] = 0;
+          setGrid(nextGrid);
+          setFreePlayErrors(null); // réinitialiser l'overlay si on corrige
+        }
+        if (hasNotes) {
+          setNotes(prev => {
+            const next = prev.map(row => row.map(s => new Set(s)));
+            next[r][c].clear();
+            return next;
+          });
+        }
+        return;
+      }
+
+      // Placer directement (bon ou mauvais)
+      const prevGrid = gridRef.current;
+      const nextGrid = deepCopy(prevGrid);
+      nextGrid[r][c] = num;
+      setGrid(nextGrid);
+      setBounceCell({ r, c, tick: Date.now() });
+
+      setNotes(prevN => {
+        const nn = prevN.map(row => row.map(s => new Set(s)));
+        for (let i = 0; i < 9; i++) { nn[r][i].delete(num); nn[i][c].delete(num); }
+        const br = Math.floor(r / 3) * 3;
+        const bc = Math.floor(c / 3) * 3;
+        for (let dr = 0; dr < 3; dr++)
+          for (let dc = 0; dc < 3; dc++)
+            nn[br + dr][bc + dc].delete(num);
+        return nn;
+      });
+
+      if (isComplete(nextGrid, solution)) {
+        setCompleted(true);
+      } else {
+        // Détecter si la grille est entièrement remplie (toutes les cases vides du puzzle)
+        const allFilled = nextGrid.every((row, ri) =>
+          row.every((v, ci) => puzzle[ri]?.[ci] !== 0 || v !== 0)
+        );
+        if (allFilled) {
+          const errors: [number, number][] = [];
+          for (let er = 0; er < 9; er++)
+            for (let ec = 0; ec < 9; ec++)
+              if (puzzle[er][ec] === 0 && nextGrid[er][ec] !== solution[er][ec])
+                errors.push([er, ec]);
+          if (errors.length > 0) setFreePlayErrors(errors);
+        }
+      }
+      return;
+    }
+
+    // ── Mode normal ──────────────────────────────────────────────────────────
 
     // Effacer : vide la case (chiffre incorrect, erreurs ou notes)
     if (num === 0) {
@@ -331,6 +410,30 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
     setPendingHint(null);
   }, [pendingHint, inputNumber]);
 
+  // ── Notes automatiques (appui long sur le bouton Notes) ─────────────────────
+  const autoFillNotes = useCallback(() => {
+    if (completed) return;
+    const hasNotes = notesRef.current.some(row => row.some(s => s.size > 0));
+    if (hasNotes) {
+      setNotes(emptyNotes());
+    } else {
+      const newNotes = emptyNotes();
+      for (let nr = 0; nr < 9; nr++) {
+        for (let nc = 0; nc < 9; nc++) {
+          if (gridRef.current[nr][nc] !== 0) continue; // case déjà remplie
+          for (let n = 1; n <= 9; n++) {
+            if (canPlaceNote(gridRef.current, nr, nc, n)) {
+              newNotes[nr][nc].add(n);
+            }
+          }
+        }
+      }
+      setNotes(newNotes);
+    }
+  }, [completed]);
+
+  const clearFreePlayErrors = useCallback(() => setFreePlayErrors(null), []);
+
   const isFixed = (r: number, c: number) => puzzle[r]?.[c] !== 0;
   const isError = (r: number, c: number) => (cellErrors[r]?.[c]?.size ?? 0) > 0;
 
@@ -353,5 +456,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
     newGame, flushSave,
     isFixed, isError,
     secondsRef, mistakesRef, hintsLeftRef,
+    autoFillNotes,
+    freePlayErrors, clearFreePlayErrors,
   };
 }

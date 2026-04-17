@@ -39,7 +39,11 @@
     "notes": "Notas",
     "hint": "Pista",
     "daily_badge": "DESAFÍO DEL DÍA",
-    "hints_plural": "Pistas"
+    "hints_plural": "Pistas",
+    "free_play_title": "CUADRÍCULA COMPLETA",
+    "free_play_msg_one": "1 celda contiene un error. Las celdas incorrectas están resaltadas en rojo.",
+    "free_play_msg_many": "{{n}} celdas contienen errores. Las celdas incorrectas están resaltadas en rojo.",
+    "free_play_continue": "CONTINUAR"
   },
   "hint": {
     "title": "PISTA",
@@ -144,11 +148,15 @@
     "blitz_mode_desc": "Selecciona primero un dígito, luego toca las celdas para colocarlo",
     "blitz_auto_select": "Selección automática",
     "blitz_auto_select_desc": "Tocar una celda rellena selecciona su dígito",
+    "auto_notes": "Notas automáticas",
+    "auto_notes_desc": "Mantén pulsado Notas para rellenar o borrar automáticamente todos los candidatos válidos",
     "haptic_feedback": "Respuesta háptica",
     "haptic_feedback_desc": "Vibraciones al colocar un número o cometer un error",
     "hints_label": "Pistas disponibles",
     "hints_default": "Por defecto: 3",
     "section_errors": "ERRORES POR PARTIDA",
+    "free_play": "Juego libre",
+    "free_play_desc": "Los errores no se cuentan durante la partida. Se revelan cuando la cuadrícula está completa.",
     "limit_errors": "Limitar errores",
     "limit_errors_desc": "Termina la partida si se alcanza el número máximo de errores",
     "max_errors_label": "Número máximo de errores",

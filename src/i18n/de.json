@@ -39,7 +39,11 @@
     "notes": "Notizen",
     "hint": "Tipp",
     "daily_badge": "TAGESAUFGABE",
-    "hints_plural": "Tipps"
+    "hints_plural": "Tipps",
+    "free_play_title": "GITTER VOLLSTÄNDIG",
+    "free_play_msg_one": "1 Feld enthält einen Fehler. Falsche Felder sind rot hervorgehoben.",
+    "free_play_msg_many": "{{n}} Felder enthalten Fehler. Falsche Felder sind rot hervorgehoben.",
+    "free_play_continue": "WEITER"
   },
   "hint": {
     "title": "TIPP",
@@ -144,11 +148,15 @@
     "blitz_mode_desc": "Wähle zuerst eine Ziffer, dann tippe auf Felder, um sie zu platzieren",
     "blitz_auto_select": "Automatische Auswahl",
     "blitz_auto_select_desc": "Auf ein ausgefülltes Feld tippen wählt seine Ziffer aus",
+    "auto_notes": "Auto-Notizen",
+    "auto_notes_desc": "Noten-Taste lang drücken, um alle gültigen Kandidaten automatisch auszufüllen oder zu löschen",
     "haptic_feedback": "Haptisches Feedback",
     "haptic_feedback_desc": "Vibrationen beim Platzieren einer Zahl oder bei einem Fehler",
     "hints_label": "Verfügbare Tipps",
     "hints_default": "Standard: 3",
     "section_errors": "FEHLER PRO SPIEL",
+    "free_play": "Freies Spiel",
+    "free_play_desc": "Fehler werden während des Spiels nicht gezählt. Sie werden enthüllt, wenn das Gitter vollständig ist.",
     "limit_errors": "Fehler begrenzen",
     "limit_errors_desc": "Beendet das Spiel, wenn die maximale Fehleranzahl erreicht wird",
     "max_errors_label": "Maximale Fehleranzahl",

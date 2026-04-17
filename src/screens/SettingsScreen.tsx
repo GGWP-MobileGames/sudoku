@@ -131,6 +131,12 @@ export default function SettingsScreen({ onBack }: Props) {
             <Text style={[s.sectionTitle, { color: colors.textSecondary }]}>{t('settings.section_errors')}</Text>
           </View>
           <Row
+            label={t('settings.free_play')}
+            desc={t('settings.free_play_desc')}
+            value={settings.freePlayMode ?? false}
+            onToggle={() => updateSettings({ freePlayMode: !(settings.freePlayMode ?? false) })}
+          />
+          <Row
             label={t('settings.limit_errors')}
             desc={t('settings.limit_errors_desc')}
             value={settings.limitErrors}
@@ -173,6 +179,7 @@ export default function SettingsScreen({ onBack }: Props) {
           {settings.blitzMode && (
             <Row label={t('settings.blitz_auto_select')} desc={t('settings.blitz_auto_select_desc')} value={settings.blitzAutoSelect ?? true} onToggle={() => updateSettings({ blitzAutoSelect: !(settings.blitzAutoSelect ?? true) })} />
           )}
+          <Row label={t('settings.auto_notes')} desc={t('settings.auto_notes_desc')} value={settings.autoNotesEnabled ?? false} onToggle={() => updateSettings({ autoNotesEnabled: !(settings.autoNotesEnabled ?? false) })} />
           <Row label={t('settings.haptic_feedback')} desc={t('settings.haptic_feedback_desc')} value={settings.hapticFeedback} onToggle={() => updateSettings({ hapticFeedback: !settings.hapticFeedback })} last />
         </View>
 

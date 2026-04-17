@@ -39,7 +39,11 @@
     "notes": "メモ",
     "hint": "ヒント",
     "hints_plural": "ヒント",
-    "daily_badge": "今日の挑戦"
+    "daily_badge": "今日の挑戦",
+    "free_play_title": "グリッド完成",
+    "free_play_msg_one": "1つのマスにエラーがあります。間違ったマスが赤く表示されています。",
+    "free_play_msg_many": "{{n}}つのマスにエラーがあります。間違ったマスが赤く表示されています。",
+    "free_play_continue": "続ける"
   },
   "hint": {
     "title": "ヒント",
@@ -144,11 +148,15 @@
     "blitz_mode_desc": "まず数字を選択し、マスをタップして素早く配置します",
     "blitz_auto_select": "自動選択",
     "blitz_auto_select_desc": "埋まっているマスをタップするとその数字が選択されます",
+    "auto_notes": "自動メモ",
+    "auto_notes_desc": "メモボタンを長押しすると、有効な候補をすべて自動で入力・消去できます",
     "haptic_feedback": "触覚フィードバック",
     "haptic_feedback_desc": "数字の配置やエラー時に振動します",
     "hints_label": "使用可能なヒント数",
     "hints_default": "デフォルト: 3",
     "section_errors": "ミスの上限",
+    "free_play": "フリープレイ",
+    "free_play_desc": "プレイ中はエラーをカウントしません。グリッドが完成したときにエラーが表示されます。",
     "limit_errors": "ミスを制限する",
     "limit_errors_desc": "ミスの上限に達するとゲームが終了します",
     "max_errors_label": "最大ミス数",

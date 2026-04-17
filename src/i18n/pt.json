@@ -39,7 +39,11 @@
     "notes": "Notas",
     "hint": "Dica",
     "daily_badge": "DESAFIO DO DIA",
-    "hints_plural": "Dicas"
+    "hints_plural": "Dicas",
+    "free_play_title": "GRELHA COMPLETA",
+    "free_play_msg_one": "1 célula contém um erro. As células incorretas estão destacadas a vermelho.",
+    "free_play_msg_many": "{{n}} células contêm erros. As células incorretas estão destacadas a vermelho.",
+    "free_play_continue": "CONTINUAR"
   },
   "hint": {
     "title": "DICA",
@@ -144,11 +148,15 @@
     "blitz_mode_desc": "Selecione primeiro um dígito, depois toque nas células para colocá-lo",
     "blitz_auto_select": "Seleção automática",
     "blitz_auto_select_desc": "Tocar numa célula preenchida seleciona o seu dígito",
+    "auto_notes": "Notas automáticas",
+    "auto_notes_desc": "Prima prolongadamente Notas para preencher ou limpar automaticamente todos os candidatos válidos",
     "haptic_feedback": "Resposta háptica",
     "haptic_feedback_desc": "Vibrações ao colocar um número ou cometer um erro",
     "hints_label": "Dicas disponíveis",
     "hints_default": "Padrão: 3",
     "section_errors": "ERROS POR JOGO",
+    "free_play": "Jogo livre",
+    "free_play_desc": "Os erros não são contados durante o jogo. São revelados quando a grelha estiver completa.",
     "limit_errors": "Limitar erros",
     "limit_errors_desc": "Encerra a partida ao atingir o número máximo de erros",
     "max_errors_label": "Número máximo de erros",

@@ -39,7 +39,11 @@
     "notes": "Notes",
     "hint": "Hint",
     "daily_badge": "DAILY CHALLENGE",
-    "hints_plural": "Hints"
+    "hints_plural": "Hints",
+    "free_play_title": "GRID COMPLETE",
+    "free_play_msg_one": "1 cell contains an error. Incorrect cells are highlighted in red.",
+    "free_play_msg_many": "{{n}} cells contain errors. Incorrect cells are highlighted in red.",
+    "free_play_continue": "CONTINUE"
   },
   "hint": {
     "title": "HINT",
@@ -144,11 +148,15 @@
     "blitz_mode_desc": "Select a digit first, then tap cells to place it",
     "blitz_auto_select": "Auto-select digit",
     "blitz_auto_select_desc": "Tapping a filled cell selects its digit",
+    "auto_notes": "Auto-notes",
+    "auto_notes_desc": "Long press Notes to automatically fill or clear all valid candidates",
     "haptic_feedback": "Haptic feedback",
     "haptic_feedback_desc": "Vibrations when placing a number or making an error",
     "hints_label": "Available hints",
     "hints_default": "Default: 3",
     "section_errors": "ERRORS PER GAME",
+    "free_play": "Free play",
+    "free_play_desc": "Errors are not counted during play. They are revealed when the grid is complete.",
     "limit_errors": "Limit errors",
     "limit_errors_desc": "Ends the game when the maximum number of errors is reached",
     "max_errors_label": "Maximum errors allowed",

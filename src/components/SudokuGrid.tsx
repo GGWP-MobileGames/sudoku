@@ -29,13 +29,14 @@ interface Props {
   largeNumbers?:           boolean;
   highlightNotes?:         boolean;
   selectedValueOverride?:  number; // mode blitz : force la valeur pour les highlights (match + notes)
+  freePlayErrorCells?:     Set<string>; // cases erronées révélées (mode jeu libre)
 }
 
 function SudokuGrid({
   grid, notes, errors, selected, onSelect, isFixed, isError, puzzleKey, gridSize, completedGroups,
   bounceCell, shakeCell, victoryWave, showCoords, hintHighlight, hintTarget, hintPreviewValue,
   highlightIdentical = true, highlightGroup = true, largeNumbers = true, highlightNotes = true,
-  selectedValueOverride,
+  selectedValueOverride, freePlayErrorCells,
 }: Props) {
   const { colors } = useSettings();
   const CELL_SIZE = gridSize / 9;
@@ -291,6 +292,7 @@ const hintHighlightSet = React.useMemo(() => {
                     isHighlighted={isHighlighted(r, c)}
                     isHintHighlight={isHintHighlight(r, c)}
                     isHintTarget={!!(hintTarget && hintTarget[0] === r && hintTarget[1] === c)}
+                    isFreePlayError={freePlayErrorCells?.has(`${r},${c}`) ?? false}
                     isMatchValue={isMatchValue(r, c)}
                     isError={isError(r, c)}
                     highlightNoteValue={highlightNotes && effectiveValue !== 0 ? effectiveValue : 0}
