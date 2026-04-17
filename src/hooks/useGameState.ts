@@ -50,7 +50,7 @@ type HistoryEntry = {
   grid:       Grid;
   notes:      NotesGrid;
   cellErrors: ErrorsGrid;
-  mistakes:   number;
+  // mistakes intentionnellement exclu : les erreurs commises sont permanentes
 };
 
 export type NotesGrid  = CellNotes[][];
@@ -250,7 +250,6 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
       grid:       deepCopy(gridRef.current),
       notes:      notesRef.current.map(row => row.map(s => new Set(s))),
       cellErrors: cellErrorsRef.current.map(row => row.map(s => new Set(s))),
-      mistakes:   mistakesRef.current,
     });
     setHistoryLength(stack.length);
   }, []); // refs et setState sont stables
@@ -275,6 +274,37 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
         if (cell.has(num)) cell.delete(num); else cell.add(num);
         return next;
       });
+      return;
+    }
+
+    // ── Mode hypothèse : placement direct, sans comptage d'erreurs ──────────
+    if (hypothesisMode && num !== 0) {
+      pushHistory();
+      const prevGrid = gridRef.current;
+      const nextGrid = deepCopy(prevGrid);
+      nextGrid[r][c] = num;
+      setGrid(nextGrid);
+      setBounceCell({ r, c, tick: Date.now() });
+
+      const _h_br = Math.floor(r / 3) * 3;
+      const _h_bc = Math.floor(c / 3) * 3;
+      for (let i = 0; i < 9; i++) {
+        autoNotesSetRef.current.delete(`${r}-${i}-${num}`);
+        autoNotesSetRef.current.delete(`${i}-${c}-${num}`);
+      }
+      for (let dr = 0; dr < 3; dr++)
+        for (let dc = 0; dc < 3; dc++)
+          autoNotesSetRef.current.delete(`${_h_br + dr}-${_h_bc + dc}-${num}`);
+      setNotes(prevN => {
+        const nn = prevN.map(row => row.map(s => new Set(s)));
+        for (let i = 0; i < 9; i++) { nn[r][i].delete(num); nn[i][c].delete(num); }
+        for (let dr = 0; dr < 3; dr++)
+          for (let dc = 0; dc < 3; dc++)
+            nn[_h_br + dr][_h_bc + dc].delete(num);
+        return nn;
+      });
+
+      if (isComplete(nextGrid, solution)) setCompleted(true);
       return;
     }
 
@@ -528,7 +558,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
     setGrid(prev.grid);
     setNotes(prev.notes);
     setCellErrors(prev.cellErrors);
-    setMistakes(prev.mistakes);
+    // mistakes non restauré : les erreurs commises restent définitives
     autoNotesSetRef.current = new Set();
     setFreePlayErrors(null);
     // Si on est retourné avant le marqueur d'hypothèse, sortir du mode
@@ -563,7 +593,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
       setGrid(restore.grid);
       setNotes(restore.notes);
       setCellErrors(restore.cellErrors);
-      setMistakes(restore.mistakes);
+      // mistakes non restauré : les erreurs commises restent définitives
       historyStackRef.current = stack.slice(0, marker);
       setHistoryLength(marker);
     }
