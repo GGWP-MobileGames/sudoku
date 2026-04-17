@@ -246,6 +246,19 @@ function findNakedPair(grid: Grid, cands: Candidates, tr: TFunc): PedagogicHint 
 // Dans un groupe, deux chiffres n'apparaissent que dans exactement deux cases.
 // → Ces cases ne peuvent contenir que ces deux chiffres.
 
+// Retourne le nom du groupe (ligne / colonne / bloc) dont les cases correspondent
+// exactement à un ensemble de highlightCells (9 cases). Utile pour nommer la
+// conséquence d'une technique qui déborde sur un groupe différent.
+function groupNameFromHighlight(highlightCells: [number, number][], tr: TFunc): string | null {
+  const keys = new Set(highlightCells.map(([r, c]) => `${r},${c}`));
+  for (const { cells, name } of allGroups(tr)) {
+    if (cells.length === keys.size && cells.every(([r, c]) => keys.has(`${r},${c}`))) {
+      return name;
+    }
+  }
+  return null;
+}
+
 function findHiddenPair(grid: Grid, cands: Candidates, tr: TFunc): PedagogicHint | null {
   for (const { cells, name } of allGroups(tr)) {
     const empty = cells.filter(([r, c]) => grid[r][c] === 0);
@@ -269,9 +282,28 @@ function findHiddenPair(grid: Grid, cands: Candidates, tr: TFunc): PedagogicHint
         ];
         if (toElim.length === 0) continue;
 
-        const result = findNakedSingle(grid, withElim(cands, toElim), tr)
-                    ?? findHiddenSingle(grid, withElim(cands, toElim), tr);
+        const modCands = withElim(cands, toElim);
+        const nakResult = findNakedSingle(grid, modCands, tr);
+        const hidResult = nakResult ? null : findHiddenSingle(grid, modCands, tr);
+        const result    = nakResult ?? hidResult;
         if (!result) continue;
+
+        const base = {
+          group: name,
+          cell1: cellName(r1, c1c), cell2: cellName(r2, c2c),
+          a: String(n1), b: String(n2),
+        };
+
+        // Détecter si la conséquence est dans un groupe différent (cross-group)
+        const [tr_r, tr_c] = result.targetCell;
+        const inSameGroup  = cells.some(([r, c]) => r === tr_r && c === tr_c);
+        const crossGroup   = hidResult && !inSameGroup
+          ? groupNameFromHighlight(hidResult.highlightCells, tr)
+          : null;
+
+        const message = crossGroup
+          ? fill(tr("hints.hidden_pair_cross"), { ...base, consequence: crossGroup })
+          : fill(tr("hints.hidden_pair"), base);
 
         return {
           techniqueTitle: tr("hints.technique.hidden_pair"),
@@ -279,11 +311,7 @@ function findHiddenPair(grid: Grid, cands: Candidates, tr: TFunc): PedagogicHint
           targetCell:     result.targetCell,
           relatedCells:   [[r1, c1c], [r2, c2c]],
           highlightCells: dedupCells([...cells, ...result.highlightCells]),
-          message: fill(tr("hints.hidden_pair"), {
-            group: name,
-            cell1: cellName(r1, c1c), cell2: cellName(r2, c2c),
-            a: String(n1), b: String(n2),
-          }),
+          message,
         };
       }
     }
@@ -295,24 +323,37 @@ function findHiddenPair(grid: Grid, cands: Candidates, tr: TFunc): PedagogicHint
 // Dans un bloc, tous les candidats d'un chiffre sont alignés sur une ligne/colonne.
 // → Ce chiffre ne peut pas apparaître ailleurs sur cette ligne/colonne.
 
-// Résout la cible après élimination :
-// Priorité 1 — une des cases `outside` devient un naked single (conséquence directe, cohérente avec le message).
-// Priorité 2 — fallback sur n'importe quel hidden single, mais on utilise result.value (pas n).
+// Résout la cible après élimination pour une Pointing Pair.
+// Les conséquences doivent rester dans la ligne/colonne directement affectée
+// (jamais dans une autre partie de la grille sans rapport logique).
+//
+// Priorité 1 — une case `outside` devient un naked single (conséquence directe).
+// Priorité 2 — un chiffre quelconque n'a plus qu'une seule case dans la ligne/colonne affectée (hidden single dans cette ligne/colonne).
+// Pas de fallback sur la grille entière : cela trouverait des cases sans lien avec la pointing pair.
 function resolveAfterElim(
   grid: Grid, cands: Candidates, tr: TFunc,
-  outside: [number, number][], elim: { r: number; c: number; vals: number[] }[]
+  outside: [number, number][], elim: { r: number; c: number; vals: number[] }[],
+  lineCells: [number, number][]   // toutes les cases de la ligne ou colonne affectée
 ): { targetCell: [number, number]; value: number } | null {
   const modCands = withElim(cands, elim);
-  // Priorité : une case outside devient naked single (consequence directe)
+
+  // Priorité 1 : une case outside devient naked single
   for (const [r, c] of outside) {
     if (modCands[r][c].size === 1) {
       return { targetCell: [r, c], value: [...modCands[r][c]][0] };
     }
   }
-  // Fallback : n'importe quel hidden single débloqué
-  const result = findHiddenSingle(grid, modCands, tr);
-  if (!result) return null;
-  return { targetCell: result.targetCell, value: result.value };
+
+  // Priorité 2 : hidden single dans la ligne/colonne affectée (n'importe quel chiffre)
+  const lineEmpty = lineCells.filter(([r, c]) => grid[r][c] === 0);
+  for (let n = 1; n <= 9; n++) {
+    const possible = lineEmpty.filter(([r, c]) => modCands[r][c].has(n));
+    if (possible.length === 1) {
+      return { targetCell: possible[0] as [number, number], value: n };
+    }
+  }
+
+  return null;
 }
 
 function findPointingPair(grid: Grid, cands: Candidates, tr: TFunc): PedagogicHint | null {
@@ -333,7 +374,7 @@ function findPointingPair(grid: Grid, cands: Candidates, tr: TFunc): PedagogicHi
           ) as [number, number][];
           if (outside.length === 0) continue;
           const elim = outside.map(([r, c]) => ({ r, c, vals: [n] }));
-          const resolved = resolveAfterElim(grid, cands, tr, outside, elim);
+          const resolved = resolveAfterElim(grid, cands, tr, outside, elim, getRow(row) as [number, number][]);
           if (!resolved) continue;
           return {
             techniqueTitle: tr("hints.technique.pointing_pair"),
@@ -354,7 +395,7 @@ function findPointingPair(grid: Grid, cands: Candidates, tr: TFunc): PedagogicHi
           ) as [number, number][];
           if (outside.length === 0) continue;
           const elim = outside.map(([r, c]) => ({ r, c, vals: [n] }));
-          const resolved = resolveAfterElim(grid, cands, tr, outside, elim);
+          const resolved = resolveAfterElim(grid, cands, tr, outside, elim, getCol(col) as [number, number][]);
           if (!resolved) continue;
           return {
             techniqueTitle: tr("hints.technique.pointing_pair"),

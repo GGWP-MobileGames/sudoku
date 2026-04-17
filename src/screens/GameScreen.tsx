@@ -85,6 +85,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
   }, [inputNumber]);
 
   // ── Mode Blitz ──────────────────────────────────────────────────────────────
+  // null = rien sélectionné, -1 = mode effacement, 1-9 = chiffre sélectionné
   const [blitzNumber, setBlitzNumber] = React.useState<number | null>(null);
   const blitzNumberRef = React.useRef<number | null>(null);
   blitzNumberRef.current = blitzNumber;
@@ -96,6 +97,13 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
     if (!settings.blitzMode) setBlitzNumber(null);
   }, [settings.blitzMode]);
 
+  // Désélectionner automatiquement un chiffre quand il est complètement placé (9 fois)
+  React.useEffect(() => {
+    if (!settings.blitzMode || blitzNumber === null || blitzNumber <= 0) return;
+    const placed = grid.flat().filter(v => v === blitzNumber).length;
+    if (placed >= 9) setBlitzNumber(null);
+  }, [grid, blitzNumber, settings.blitzMode]);
+
   const pausedRef = React.useRef(paused);
   pausedRef.current = paused;
   const handleSelect = React.useCallback((r: number, c: number) => {
@@ -104,7 +112,8 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
       // En mode blitz : placer directement si un chiffre est sélectionné
       const bn = blitzNumberRef.current;
       if (bn !== null) {
-        inputNumber(bn, r, c);
+        // -1 = mode effacement → inputNumber(0), sinon placer le chiffre
+        inputNumber(bn === -1 ? 0 : bn, r, c);
       }
       // Sinon ne rien faire (pas de sélection de case)
       return;

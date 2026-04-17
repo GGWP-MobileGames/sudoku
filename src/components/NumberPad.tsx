@@ -14,8 +14,8 @@ interface Props {
   compact?:             boolean;
   // Mode Blitz
   blitzMode?:           boolean;
-  blitzNumber?:         number | null; // null = rien, 0 = effacement, 1-9 = chiffre
-  onSelectBlitzNumber?: (n: number) => void;
+  blitzNumber?:         number | null; // null = rien, -1 = effacement, 1-9 = chiffre
+  onSelectBlitzNumber?: (n: number | null) => void;
 }
 
 function countInGrid(grid: Grid, num: number): number {
@@ -26,14 +26,14 @@ const NumberPad = React.memo(function NumberPad({
   onInput, onErase, onHint, hintsLeft, notesMode, onToggleNotes, grid, compact,
   blitzMode, blitzNumber, onSelectBlitzNumber,
 }: Props) {
-  // État local optimiste pour un retour visuel instantané
+  // États locaux optimistes pour un retour visuel instantané
   const [localNotes, setLocalNotes] = useState(notesMode);
   useEffect(() => { setLocalNotes(notesMode); }, [notesMode]);
 
-  const handleToggleNotes = () => {
-    setLocalNotes(n => !n);
-    onToggleNotes();
-  };
+  // État local pour la sélection blitz (retour visuel immédiat + toggle fiable)
+  const [localBlitzNumber, setLocalBlitzNumber] = useState<number | null>(blitzNumber ?? null);
+  useEffect(() => { setLocalBlitzNumber(blitzNumber ?? null); }, [blitzNumber]);
+
   const { t, settings, colors } = useSettings();
   const large = settings.largeNumbers;
   const sz = {
@@ -47,9 +47,25 @@ const NumberPad = React.memo(function NumberPad({
   const secColor    = { color: colors.textSecondary };
   const primaryColor = { color: colors.textPrimary };
 
+  const handleToggleNotes = () => {
+    const newNotes = !localNotes;
+    setLocalNotes(newNotes);
+    onToggleNotes();
+    // En mode blitz, désélectionner le chiffre actif quand on active les notes
+    if (blitzMode && newNotes && onSelectBlitzNumber) {
+      setLocalBlitzNumber(null);
+      onSelectBlitzNumber(null);
+    }
+  };
+
   const handleNumPress = (n: number) => {
     if (blitzMode && onSelectBlitzNumber) {
-      onSelectBlitzNumber(n);
+      // Désactiver les notes si elles sont actives (exclusion mutuelle)
+      if (localNotes) { setLocalNotes(false); onToggleNotes(); }
+      // Toggle : si déjà sélectionné, désélectionner ; sinon sélectionner
+      const next = localBlitzNumber === n ? null : n;
+      setLocalBlitzNumber(next);
+      onSelectBlitzNumber(next);
     } else {
       onInput(n);
     }
@@ -57,7 +73,12 @@ const NumberPad = React.memo(function NumberPad({
 
   const handleErasePress = () => {
     if (blitzMode && onSelectBlitzNumber) {
-      onSelectBlitzNumber(0);
+      // Désactiver les notes si elles sont actives (exclusion mutuelle)
+      if (localNotes) { setLocalNotes(false); onToggleNotes(); }
+      // Toggle : si déjà en mode effacement, désélectionner ; sinon activer
+      const next = localBlitzNumber === -1 ? null : -1;
+      setLocalBlitzNumber(next);
+      onSelectBlitzNumber(next);
     } else {
       onErase();
     }
@@ -71,7 +92,7 @@ const NumberPad = React.memo(function NumberPad({
           const placed    = countInGrid(grid, n);
           const remaining = 9 - placed;
           const done      = remaining === 0;
-          const isBlitzSelected = blitzMode && blitzNumber === n;
+          const isBlitzSelected = blitzMode && localBlitzNumber === n;
           return (
             <TouchableOpacity
               key={n}
@@ -113,18 +134,18 @@ const NumberPad = React.memo(function NumberPad({
           onPress={handleErasePress}
           style={[
             styles.actionBtn, btnStyle, { borderColor: colors.textSecondary },
-            blitzMode && blitzNumber === 0 && { backgroundColor: colors.bgCellSelected, borderColor: colors.borderBox },
+            blitzMode && localBlitzNumber === -1 && { backgroundColor: colors.bgCellSelected, borderColor: colors.borderBox },
           ]}
           activeOpacity={0.6}
         >
           <Text style={[
             styles.actionIcon, secColor,
-            blitzMode && blitzNumber === 0 && { color: colors.textOnSelected },
+            blitzMode && localBlitzNumber === -1 && { color: colors.textOnSelected },
             { fontSize: sz.actionIcon },
           ]}>✕</Text>
           <Text style={[
             styles.actionLabel, secColor,
-            blitzMode && blitzNumber === 0 && { color: colors.textOnSelected },
+            blitzMode && localBlitzNumber === -1 && { color: colors.textOnSelected },
             { fontSize: sz.actionLabel },
           ]}>{t("game.erase")}</Text>
         </TouchableOpacity>
