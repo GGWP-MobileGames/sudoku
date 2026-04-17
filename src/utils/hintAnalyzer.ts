@@ -196,6 +196,33 @@ function findHiddenSingle(grid: Grid, cands: Candidates, tr: TFunc): PedagogicHi
   return null;
 }
 
+// ─── Helper : résolution contrainte à un groupe ───────────────────────────────
+// Cherche une conséquence (naked single ou hidden single) STRICTEMENT dans les
+// cases du groupe fourni, après application des éliminations.
+// Règle d'or : la cible doit être logiquement liée aux cases éliminées.
+function resolveInGroup(
+  grid: Grid, cands: Candidates,
+  groupCells: [number, number][], elim: { r: number; c: number; vals: number[] }[]
+): { targetCell: [number, number]; value: number } | null {
+  const modCands = withElim(cands, elim);
+  const empty = groupCells.filter(([r, c]) => grid[r][c] === 0);
+
+  // Naked single : une seule candidate restante dans une case du groupe
+  for (const [r, c] of empty) {
+    if (modCands[r][c].size === 1) {
+      return { targetCell: [r, c], value: [...modCands[r][c]][0] };
+    }
+  }
+  // Hidden single : un chiffre n'a plus qu'une seule case possible dans le groupe
+  for (let n = 1; n <= 9; n++) {
+    const possible = empty.filter(([r, c]) => modCands[r][c].has(n));
+    if (possible.length === 1) {
+      return { targetCell: possible[0], value: n };
+    }
+  }
+  return null;
+}
+
 // ─── Technique 3 : Naked Pair ─────────────────────────────────────────────────
 // Deux cases d'un groupe partagent exactement les mêmes deux candidats.
 // → Ces deux chiffres sont réservés à ces cases et éliminés des autres.
@@ -220,8 +247,8 @@ function findNakedPair(grid: Grid, cands: Candidates, tr: TFunc): PedagogicHint 
           .map(([r, c]) => ({ r, c, vals: [a, b] }));
         if (toElim.length === 0) continue;
 
-        const result = findNakedSingle(grid, withElim(cands, toElim), tr)
-                    ?? findHiddenSingle(grid, withElim(cands, toElim), tr);
+        // Conséquence restreinte au même groupe (la paire élimine dans son propre groupe)
+        const result = resolveInGroup(grid, cands, cells as [number, number][], toElim);
         if (!result) continue;
 
         return {
@@ -229,7 +256,7 @@ function findNakedPair(grid: Grid, cands: Candidates, tr: TFunc): PedagogicHint 
           value:          result.value,
           targetCell:     result.targetCell,
           relatedCells:   [pairs[i], pairs[j]],
-          highlightCells: dedupCells([...cells, ...result.highlightCells]),
+          highlightCells: cells as [number, number][],
           message: fill(tr("hints.naked_pair"), {
             group: name,
             cell1: cellName(r1, c1), cell2: cellName(r2, c2),
@@ -245,19 +272,6 @@ function findNakedPair(grid: Grid, cands: Candidates, tr: TFunc): PedagogicHint 
 // ─── Technique 4 : Hidden Pair ────────────────────────────────────────────────
 // Dans un groupe, deux chiffres n'apparaissent que dans exactement deux cases.
 // → Ces cases ne peuvent contenir que ces deux chiffres.
-
-// Retourne le nom du groupe (ligne / colonne / bloc) dont les cases correspondent
-// exactement à un ensemble de highlightCells (9 cases). Utile pour nommer la
-// conséquence d'une technique qui déborde sur un groupe différent.
-function groupNameFromHighlight(highlightCells: [number, number][], tr: TFunc): string | null {
-  const keys = new Set(highlightCells.map(([r, c]) => `${r},${c}`));
-  for (const { cells, name } of allGroups(tr)) {
-    if (cells.length === keys.size && cells.every(([r, c]) => keys.has(`${r},${c}`))) {
-      return name;
-    }
-  }
-  return null;
-}
 
 function findHiddenPair(grid: Grid, cands: Candidates, tr: TFunc): PedagogicHint | null {
   for (const { cells, name } of allGroups(tr)) {
@@ -282,10 +296,30 @@ function findHiddenPair(grid: Grid, cands: Candidates, tr: TFunc): PedagogicHint
         ];
         if (toElim.length === 0) continue;
 
-        const modCands = withElim(cands, toElim);
-        const nakResult = findNakedSingle(grid, modCands, tr);
-        const hidResult = nakResult ? null : findHiddenSingle(grid, modCands, tr);
-        const result    = nakResult ?? hidResult;
+        // Priorité 1 : conséquence dans le même groupe
+        let result = resolveInGroup(grid, cands, cells as [number, number][], toElim);
+        let crossGroupCells: [number, number][] | null = null;
+        let crossGroupName: string | null = null;
+
+        // Priorité 2 : conséquence cross-group (groupe adjacent partageant au moins une case de la paire)
+        // Légitime car les cases de la paire appartiennent aussi à d'autres groupes (ligne, colonne, bloc).
+        if (!result) {
+          const pairKey = new Set([`${r1},${c1c}`, `${r2},${c2c}`]);
+          const curKey  = (cells as [number, number][]).map(([r, c]) => `${r},${c}`).sort().join("|");
+          for (const { cells: adjCells, name: adjName } of allGroups(tr)) {
+            const adjKey = (adjCells as [number, number][]).map(([r, c]) => `${r},${c}`).sort().join("|");
+            if (adjKey === curKey) continue; // même groupe
+            if (!adjCells.some(([r, c]) => pairKey.has(`${r},${c}`))) continue; // pas adjacent
+            const crossResult = resolveInGroup(grid, cands, adjCells as [number, number][], toElim);
+            if (crossResult) {
+              result = crossResult;
+              crossGroupCells = adjCells as [number, number][];
+              crossGroupName  = adjName;
+              break;
+            }
+          }
+        }
+
         if (!result) continue;
 
         const base = {
@@ -293,16 +327,8 @@ function findHiddenPair(grid: Grid, cands: Candidates, tr: TFunc): PedagogicHint
           cell1: cellName(r1, c1c), cell2: cellName(r2, c2c),
           a: String(n1), b: String(n2),
         };
-
-        // Détecter si la conséquence est dans un groupe différent (cross-group)
-        const [tr_r, tr_c] = result.targetCell;
-        const inSameGroup  = cells.some(([r, c]) => r === tr_r && c === tr_c);
-        const crossGroup   = hidResult && !inSameGroup
-          ? groupNameFromHighlight(hidResult.highlightCells, tr)
-          : null;
-
-        const message = crossGroup
-          ? fill(tr("hints.hidden_pair_cross"), { ...base, consequence: crossGroup })
+        const message = crossGroupName
+          ? fill(tr("hints.hidden_pair_cross"), { ...base, consequence: crossGroupName })
           : fill(tr("hints.hidden_pair"), base);
 
         return {
@@ -310,7 +336,9 @@ function findHiddenPair(grid: Grid, cands: Candidates, tr: TFunc): PedagogicHint
           value:          result.value,
           targetCell:     result.targetCell,
           relatedCells:   [[r1, c1c], [r2, c2c]],
-          highlightCells: dedupCells([...cells, ...result.highlightCells]),
+          highlightCells: crossGroupCells
+            ? dedupCells([...(cells as [number, number][]), ...crossGroupCells])
+            : cells as [number, number][],
           message,
         };
       }
@@ -441,8 +469,8 @@ function findNakedTriple(grid: Grid, cands: Candidates, tr: TFunc): PedagogicHin
             .map(([r, c]) => ({ r, c, vals }));
           if (toElim.length === 0) continue;
 
-          const result = findNakedSingle(grid, withElim(cands, toElim), tr)
-                      ?? findHiddenSingle(grid, withElim(cands, toElim), tr);
+          // Conséquence restreinte au même groupe (le triple élimine dans son propre groupe)
+          const result = resolveInGroup(grid, cands, cells as [number, number][], toElim);
           if (!result) continue;
 
           return {
@@ -450,7 +478,7 @@ function findNakedTriple(grid: Grid, cands: Candidates, tr: TFunc): PedagogicHin
             value:          result.value,
             targetCell:     result.targetCell,
             relatedCells:   [[r1, c1], [r2, c2], [r3, c3]],
-            highlightCells: dedupCells([...cells, ...result.highlightCells]),
+            highlightCells: cells as [number, number][],
             message: fill(tr("hints.naked_triple"), {
               group: name,
               cell1: cellName(r1, c1), cell2: cellName(r2, c2), cell3: cellName(r3, c3),
