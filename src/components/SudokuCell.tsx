@@ -18,6 +18,7 @@ interface Props {
   isHintHighlight?:  boolean;
   isHintTarget?:     boolean; // case cible de l'indice actif
   isFreePlayError?:  boolean; // case erronée révélée en fin de partie (mode jeu libre)
+  isHypothesis?:     boolean; // case posée pendant le mode hypothèse (bleu)
   highlightNoteValue?: number; // chiffre sélectionné → surligne les notes correspondantes
   onPress:       () => void;
   animValue?:    Animated.Value;
@@ -31,7 +32,7 @@ const ROWS_3x3 = [[1,2,3],[4,5,6],[7,8,9]] as const;
 const SudokuCell = React.memo(function SudokuCell({
   value, notes, errors,
   isFixed, isSelected, isHighlighted, isMatchValue, isError, isHintHighlight, isHintTarget,
-  isFreePlayError,
+  isFreePlayError, isHypothesis,
   highlightNoteValue,
   onPress, animValue, goldAnim, cellFontSize, noteFontSize,
 }: Props) {
@@ -41,6 +42,7 @@ const SudokuCell = React.memo(function SudokuCell({
   if (isHintTarget)           bg = colors.hintColor;
   else if (isSelected)        bg = colors.bgCellSelectedGrid;
   else if (isFreePlayError)   bg = colors.error + "28"; // rouge translucide
+  else if (isHypothesis)      bg = "#3A6BC424";          // bleu translucide
   else if (isHintHighlight)   bg = colors.hintHighlight;
   else if (isMatchValue)      bg = colors.bgCellMatch;
   else if (isHighlighted)     bg = colors.bgCellHighlight;
@@ -50,6 +52,7 @@ const SudokuCell = React.memo(function SudokuCell({
   if (isSelected) textColor = '#1A1A1A';
   else if (isHintTarget) textColor = colors.bg;
   else if (isFreePlayError) textColor = colors.error;
+  else if (isHypothesis) textColor = "#3A6BC4";
 
   const noteNumbers  = value === 0 ? [...notes].sort((a, b) => a - b) : [];
   const showNotes    = noteNumbers.length > 0;

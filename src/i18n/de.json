@@ -43,7 +43,11 @@
     "free_play_title": "GITTER VOLLSTÄNDIG",
     "free_play_msg_one": "1 Feld enthält einen Fehler. Falsche Felder sind rot hervorgehoben.",
     "free_play_msg_many": "{{n}} Felder enthalten Fehler. Falsche Felder sind rot hervorgehoben.",
-    "free_play_continue": "WEITER"
+    "free_play_continue": "WEITER",
+    "undo": "Rückgängig",
+    "hypothesis": "Test",
+    "hypothesis_validate": "Bestätigen",
+    "hypothesis_cancel": "Abbrechen"
   },
   "hint": {
     "title": "TIPP",

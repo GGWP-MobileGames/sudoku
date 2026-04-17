@@ -43,7 +43,11 @@
     "free_play_title": "CUADRÍCULA COMPLETA",
     "free_play_msg_one": "1 celda contiene un error. Las celdas incorrectas están resaltadas en rojo.",
     "free_play_msg_many": "{{n}} celdas contienen errores. Las celdas incorrectas están resaltadas en rojo.",
-    "free_play_continue": "CONTINUAR"
+    "free_play_continue": "CONTINUAR",
+    "undo": "Deshacer",
+    "hypothesis": "Test",
+    "hypothesis_validate": "Confirmar",
+    "hypothesis_cancel": "Cancelar"
   },
   "hint": {
     "title": "PISTA",

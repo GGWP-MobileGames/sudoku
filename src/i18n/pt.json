@@ -43,7 +43,11 @@
     "free_play_title": "GRELHA COMPLETA",
     "free_play_msg_one": "1 célula contém um erro. As células incorretas estão destacadas a vermelho.",
     "free_play_msg_many": "{{n}} células contêm erros. As células incorretas estão destacadas a vermelho.",
-    "free_play_continue": "CONTINUAR"
+    "free_play_continue": "CONTINUAR",
+    "undo": "Desfazer",
+    "hypothesis": "Teste",
+    "hypothesis_validate": "Confirmar",
+    "hypothesis_cancel": "Cancelar"
   },
   "hint": {
     "title": "DICA",

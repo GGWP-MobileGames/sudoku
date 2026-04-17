@@ -77,6 +77,9 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
     secondsRef, mistakesRef, hintsLeftRef,
     autoFillNotes,
     freePlayErrors, clearFreePlayErrors,
+    canUndo, undo,
+    hypothesisMode, hypothesisCells,
+    enterHypothesis, validateHypothesis, cancelHypothesis,
   } = useGameState(difficulty, {
     savedGame, prebuilt, hintsPerGame, t,
     limitErrors: effectiveLimitErrors, maxErrors: effectiveMaxErrors,
@@ -331,6 +334,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
             ? new Set(freePlayErrors.map(([r, c]) => `${r},${c}`))
             : undefined
         }
+        hypothesisCells={hypothesisCells}
       />
       {paused && (
         <TouchableOpacity
@@ -357,6 +361,12 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         blitzMode={settings.blitzMode}
         blitzNumber={blitzNumber}
         onSelectBlitzNumber={setBlitzNumber}
+        canUndo={canUndo}
+        onUndo={undo}
+        hypothesisMode={hypothesisMode}
+        onEnterHypothesis={enterHypothesis}
+        onValidateHypothesis={validateHypothesis}
+        onCancelHypothesis={cancelHypothesis}
       />
     </TouchableOpacity>
   );

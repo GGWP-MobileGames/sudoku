@@ -18,6 +18,14 @@ interface Props {
   onSelectBlitzNumber?: (n: number | null) => void;
   // Auto-notes
   onLongPressNotes?:    () => void; // appui long → remplir/vider les candidats
+  // Undo
+  canUndo?:             boolean;
+  onUndo?:              () => void;
+  // Mode hypothèse
+  hypothesisMode?:      boolean;
+  onEnterHypothesis?:   () => void;
+  onValidateHypothesis?: () => void;
+  onCancelHypothesis?:  () => void;
 }
 
 function countInGrid(grid: Grid, num: number): number {
@@ -28,6 +36,8 @@ const NumberPad = React.memo(function NumberPad({
   onInput, onErase, onHint, hintsLeft, notesMode, onToggleNotes, grid, compact,
   blitzMode, blitzNumber, onSelectBlitzNumber,
   onLongPressNotes,
+  canUndo, onUndo,
+  hypothesisMode, onEnterHypothesis, onValidateHypothesis, onCancelHypothesis,
 }: Props) {
   // États locaux optimistes pour un retour visuel instantané
   const [localNotes, setLocalNotes] = useState(notesMode);
@@ -44,6 +54,7 @@ const NumberPad = React.memo(function NumberPad({
     remaining:   large ? 13 : 11,
     actionIcon:  large ? 20 : 16,
     actionLabel: large ? 15 : 12,
+    undoIcon:    large ? 17 : 14,
   };
 
   const btnStyle    = { backgroundColor: colors.btnNum, borderColor: colors.btnNumBorder };
@@ -86,6 +97,16 @@ const NumberPad = React.memo(function NumberPad({
       onErase();
     }
   };
+
+  // Couleur du bouton hypothèse selon l'état
+  const hypothesisBtnStyle = hypothesisMode
+    ? { backgroundColor: "#3A6BC4", borderColor: "#3A6BC4" }
+    : { backgroundColor: colors.btnNum, borderColor: colors.btnNumBorder };
+  const hypothesisTextColor = hypothesisMode ? "#FFFFFF" : colors.textSecondary;
+
+  // En mode hypothèse : Indice → ✗ Annuler
+  const cancelStyle = { backgroundColor: colors.btnNum, borderColor: colors.error };
+  const cancelTextColor = colors.error;
 
   return (
     <View style={[styles.container, compact && { paddingHorizontal: 4, gap: 4 }]}>
@@ -132,26 +153,46 @@ const NumberPad = React.memo(function NumberPad({
       {/* Actions */}
       <View style={styles.actionRow}>
 
-        {/* Effacer */}
-        <TouchableOpacity
-          onPress={handleErasePress}
-          style={[
-            styles.actionBtn, btnStyle, { borderColor: colors.textSecondary },
-            blitzMode && localBlitzNumber === -1 && { backgroundColor: colors.bgCellSelected, borderColor: colors.borderBox },
-          ]}
-          activeOpacity={0.6}
-        >
-          <Text style={[
-            styles.actionIcon, secColor,
-            blitzMode && localBlitzNumber === -1 && { color: colors.textOnSelected },
-            { fontSize: sz.actionIcon },
-          ]}>✕</Text>
-          <Text style={[
-            styles.actionLabel, secColor,
-            blitzMode && localBlitzNumber === -1 && { color: colors.textOnSelected },
-            { fontSize: sz.actionLabel },
-          ]}>{t("game.erase")}</Text>
-        </TouchableOpacity>
+        {/* Groupe Undo + Effacer (collés, sans espace entre eux) */}
+        <View style={styles.eraseGroup}>
+          {/* ↩ Undo — petit bouton fixe */}
+          <TouchableOpacity
+            onPress={onUndo}
+            disabled={!canUndo}
+            style={[
+              styles.undoBtn, btnStyle,
+              !canUndo && styles.disabledBtn,
+            ]}
+            activeOpacity={0.6}
+          >
+            <Text style={[
+              styles.undoIcon, secColor,
+              { fontSize: sz.undoIcon },
+              !canUndo && { opacity: 0.4 },
+            ]}>↩</Text>
+          </TouchableOpacity>
+
+          {/* Effacer */}
+          <TouchableOpacity
+            onPress={handleErasePress}
+            style={[
+              styles.eraseBtn, btnStyle, { borderColor: colors.textSecondary },
+              blitzMode && localBlitzNumber === -1 && { backgroundColor: colors.bgCellSelected, borderColor: colors.borderBox },
+            ]}
+            activeOpacity={0.6}
+          >
+            <Text style={[
+              styles.actionIcon, secColor,
+              blitzMode && localBlitzNumber === -1 && { color: colors.textOnSelected },
+              { fontSize: sz.actionIcon },
+            ]}>✕</Text>
+            <Text style={[
+              styles.actionLabel, secColor,
+              blitzMode && localBlitzNumber === -1 && { color: colors.textOnSelected },
+              { fontSize: sz.actionLabel },
+            ]}>{t("game.erase")}</Text>
+          </TouchableOpacity>
+        </View>
 
         {/* Notes */}
         <TouchableOpacity
@@ -168,16 +209,48 @@ const NumberPad = React.memo(function NumberPad({
           <Text style={[styles.actionLabel, secColor, localNotes && { color: colors.textOnSelected }, { fontSize: sz.actionLabel }]}>{t("game.notes")}</Text>
         </TouchableOpacity>
 
-        {/* Indice */}
-        <TouchableOpacity
-          onPress={onHint}
-          disabled={hintsLeft === 0}
-          style={[styles.actionBtn, btnStyle, { borderColor: colors.hintColor }, hintsLeft === 0 && styles.disabledBtn]}
-          activeOpacity={0.6}
-        >
-          <Text style={[styles.actionIcon, { color: colors.hintColor, fontSize: sz.actionIcon }]}>✦</Text>
-          <Text style={[styles.actionLabel, { color: colors.hintColor, fontSize: sz.actionLabel }]}>{hintsLeft >= 2 ? t("game.hints_plural") : t("game.hint")} ({hintsLeft})</Text>
-        </TouchableOpacity>
+        {/* Indice → ✗ Annuler en mode hypothèse */}
+        {hypothesisMode ? (
+          <TouchableOpacity
+            onPress={onCancelHypothesis}
+            style={[styles.actionBtn, cancelStyle]}
+            activeOpacity={0.6}
+          >
+            <Text style={[styles.actionIcon, { color: cancelTextColor, fontSize: sz.actionIcon }]}>✕</Text>
+            <Text style={[styles.actionLabel, { color: cancelTextColor, fontSize: sz.actionLabel }]}>{t("game.hypothesis_cancel")}</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            onPress={onHint}
+            disabled={hintsLeft === 0}
+            style={[styles.actionBtn, btnStyle, { borderColor: colors.hintColor }, hintsLeft === 0 && styles.disabledBtn]}
+            activeOpacity={0.6}
+          >
+            <Text style={[styles.actionIcon, { color: colors.hintColor, fontSize: sz.actionIcon }]}>✦</Text>
+            <Text style={[styles.actionLabel, { color: colors.hintColor, fontSize: sz.actionLabel }]}>{hintsLeft >= 2 ? t("game.hints_plural") : t("game.hint")} ({hintsLeft})</Text>
+          </TouchableOpacity>
+        )}
+
+        {/* ⊙ Test → ✓ Valider en mode hypothèse */}
+        {hypothesisMode ? (
+          <TouchableOpacity
+            onPress={onValidateHypothesis}
+            style={[styles.actionBtn, { backgroundColor: "#3A6BC4", borderColor: "#3A6BC4", borderWidth: 1 }]}
+            activeOpacity={0.6}
+          >
+            <Text style={[styles.actionIcon, { color: "#FFFFFF", fontSize: sz.actionIcon }]}>✓</Text>
+            <Text style={[styles.actionLabel, { color: "#FFFFFF", fontSize: sz.actionLabel }]}>{t("game.hypothesis_validate")}</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            onPress={onEnterHypothesis}
+            style={[styles.actionBtn, hypothesisBtnStyle, { borderWidth: 1 }]}
+            activeOpacity={0.6}
+          >
+            <Text style={[styles.actionIcon, { color: hypothesisTextColor, fontSize: sz.actionIcon }]}>⊙</Text>
+            <Text style={[styles.actionLabel, { color: hypothesisTextColor, fontSize: sz.actionLabel }]}>{t("game.hypothesis")}</Text>
+          </TouchableOpacity>
+        )}
 
       </View>
     </View>
@@ -219,6 +292,32 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 2,
   },
+
+  // Groupe Undo + Effacer
+  eraseGroup: {
+    flex: 1,
+    flexDirection: "row",
+  },
+  undoBtn: {
+    width: 36,
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderRightWidth: 0, // fusion visuelle avec Effacer
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  undoIcon: {
+    fontWeight: "600",
+  },
+  eraseBtn: {
+    flex: 1,
+    paddingVertical: 10,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 2,
+  },
+
   disabledBtn: { opacity: 0.45 },
   actionIcon:  { fontSize: 16 },
   actionLabel: { fontSize: 12, letterSpacing: 0.3 },

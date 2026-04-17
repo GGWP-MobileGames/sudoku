@@ -43,7 +43,11 @@
     "free_play_title": "GRILLE COMPLÈTE",
     "free_play_msg_one": "1 case contient une erreur. Les cases incorrectes sont surlignées en rouge.",
     "free_play_msg_many": "{{n}} cases contiennent des erreurs. Les cases incorrectes sont surlignées en rouge.",
-    "free_play_continue": "CONTINUER"
+    "free_play_continue": "CONTINUER",
+    "undo": "Annuler",
+    "hypothesis": "Test",
+    "hypothesis_validate": "Valider",
+    "hypothesis_cancel": "Annuler"
   },
   "hint": {
     "title": "INDICE",

@@ -43,7 +43,11 @@
     "free_play_title": "GRID COMPLETE",
     "free_play_msg_one": "1 cell contains an error. Incorrect cells are highlighted in red.",
     "free_play_msg_many": "{{n}} cells contain errors. Incorrect cells are highlighted in red.",
-    "free_play_continue": "CONTINUE"
+    "free_play_continue": "CONTINUE",
+    "undo": "Undo",
+    "hypothesis": "Test",
+    "hypothesis_validate": "Confirm",
+    "hypothesis_cancel": "Cancel"
   },
   "hint": {
     "title": "HINT",

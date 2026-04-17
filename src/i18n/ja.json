@@ -43,7 +43,11 @@
     "free_play_title": "グリッド完成",
     "free_play_msg_one": "1つのマスにエラーがあります。間違ったマスが赤く表示されています。",
     "free_play_msg_many": "{{n}}つのマスにエラーがあります。間違ったマスが赤く表示されています。",
-    "free_play_continue": "続ける"
+    "free_play_continue": "続ける",
+    "undo": "元に戻す",
+    "hypothesis": "テスト",
+    "hypothesis_validate": "確定",
+    "hypothesis_cancel": "キャンセル"
   },
   "hint": {
     "title": "ヒント",

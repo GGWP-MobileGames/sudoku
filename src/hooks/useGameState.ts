@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { AppState, type AppStateStatus } from "react-native";
 import { saveGame, serializeNotes, serializeCellErrors, deserializeNotes, deserializeCellErrors, type SavedGame } from "../utils/storage";
 import { analyzeHint, type PedagogicHint } from "../utils/hintAnalyzer";
@@ -44,6 +44,14 @@ function groupKey(cells: number[][]): string {
 
 export type CellNotes  = Set<number>;
 export type CellErrors = Set<number>; // mauvais essais accumulés
+
+// ── Historique (undo / mode hypothèse) ──────────────────────────────────────
+type HistoryEntry = {
+  grid:       Grid;
+  notes:      NotesGrid;
+  cellErrors: ErrorsGrid;
+  mistakes:   number;
+};
 
 export type NotesGrid  = CellNotes[][];
 export type ErrorsGrid = CellErrors[][];
@@ -120,8 +128,10 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
   const [completedGroups, setCompletedGroups] = useState<number[][]>([]);
   const [bounceCell, setBounceCell] = useState<{ r: number; c: number; tick: number } | null>(null);
   const [shakeCell,  setShakeCell]  = useState<{ r: number; c: number; tick: number } | null>(null);
-  const [pendingHint,   setPendingHint]   = useState<PedagogicHint | null>(null);
+  const [pendingHint,    setPendingHint]    = useState<PedagogicHint | null>(null);
   const [freePlayErrors, setFreePlayErrors] = useState<[number, number][] | null>(null);
+  const [hypothesisMode, setHypothesisMode] = useState(false);
+  const [historyLength,  setHistoryLength]  = useState(0); // miroir de historyStackRef.length pour déclencher les rendus
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const gridRef        = useRef<Grid>(grid);
@@ -132,6 +142,11 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
   const hintsLeftRef   = useRef<number>(hintsLeft);
   // Clés "r-c-n" des notes ajoutées automatiquement (appui long Notes)
   const autoNotesSetRef = useRef<Set<string>>(new Set());
+  // Pile d'historique pour undo (max 100 entrées)
+  const historyStackRef        = useRef<HistoryEntry[]>([]);
+  // Mode hypothèse : index de la pile à l'entrée + snapshot de la grille
+  const hypothesisMarkerRef    = useRef<number>(0);
+  const hypothesisSnapshotRef  = useRef<Grid | null>(null);
 
   gridRef.current       = grid;
   notesRef.current      = notes;
@@ -156,7 +171,12 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
     setPaused(false);
     setCompleted(false);
     setFreePlayErrors(null);
-    autoNotesSetRef.current = new Set();
+    setHypothesisMode(false);
+    setHistoryLength(0);
+    autoNotesSetRef.current      = new Set();
+    historyStackRef.current      = [];
+    hypothesisMarkerRef.current  = 0;
+    hypothesisSnapshotRef.current = null;
   }, [difficulty]);
 
   // ── Timer ───────────────────────────────────────────────────────────────────
@@ -222,6 +242,19 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
   }, [puzzle, solution, difficulty, completed, defeated]);
   flushSaveRef.current = flushSave;
 
+  // ── Historique : capture l'état courant avant chaque action ────────────────
+  const pushHistory = useCallback(() => {
+    const stack = historyStackRef.current;
+    if (stack.length >= 100) stack.shift();
+    stack.push({
+      grid:       deepCopy(gridRef.current),
+      notes:      notesRef.current.map(row => row.map(s => new Set(s))),
+      cellErrors: cellErrorsRef.current.map(row => row.map(s => new Set(s))),
+      mistakes:   mistakesRef.current,
+    });
+    setHistoryLength(stack.length);
+  }, []); // refs et setState sont stables
+
   // ── Saisie ──────────────────────────────────────────────────────────────────
   const inputNumber = useCallback((num: number, forceR?: number, forceC?: number) => {
     if (completed) return;
@@ -233,6 +266,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
     if (gridRef.current[r]?.[c] !== 0 && gridRef.current[r]?.[c] === solution[r]?.[c]) return;
 
     if (notesMode && num !== 0) {
+      pushHistory();
       // La note est modifiée manuellement → elle n'est plus "auto"
       autoNotesSetRef.current.delete(`${r}-${c}-${num}`);
       setNotes(prev => {
@@ -251,6 +285,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
         const hasNotes   = (notesRef.current[r]?.[c]?.size ?? 0) > 0;
         const hasValue   = gridRef.current[r][c] !== 0;
         if (!hasNotes && !hasValue) return;
+        pushHistory();
         if (hasValue) {
           const nextGrid = deepCopy(gridRef.current);
           nextGrid[r][c] = 0;
@@ -269,6 +304,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
       }
 
       // Placer directement (bon ou mauvais)
+      pushHistory();
       const prevGrid = gridRef.current;
       const nextGrid = deepCopy(prevGrid);
       nextGrid[r][c] = num;
@@ -320,6 +356,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
       const hasErrors = (cellErrorsRef.current[r]?.[c]?.size ?? 0) > 0;
       const hasIncorrectValue = grid[r][c] !== 0 && grid[r][c] !== solution[r][c];
       if (!hasNotes && !hasIncorrectValue && !hasErrors) return; // rien à effacer
+      pushHistory();
       if (hasIncorrectValue) {
         const nextGrid = deepCopy(gridRef.current);
         nextGrid[r][c] = 0;
@@ -345,6 +382,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
     }
 
     if (solution[r][c] !== num) {
+      pushHistory();
       const alreadyTried = cellErrorsRef.current[r]?.[c]?.has(num) ?? false;
       if (!alreadyTried) setMistakes(m => m + 1);
       setCellErrors(prev => {
@@ -357,6 +395,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
     }
 
     // Bonne réponse
+    pushHistory();
     setCellErrors(prev => {
       const next = prev.map(row => row.map(s => new Set(s)));
       next[r][c].clear();
@@ -407,7 +446,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
         setCompletedGroups(allCells);
       }
     }
-  }, [selected, completed, notesMode, puzzle, solution]);
+  }, [selected, completed, notesMode, puzzle, solution, pushHistory]);
 
   // ── Indice ──────────────────────────────────────────────────────────────────
 
@@ -437,6 +476,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
   // - 2e appui long : efface uniquement les notes auto-taguées ; les notes manuelles survivent
   const autoFillNotes = useCallback(() => {
     if (completed) return;
+    pushHistory();
     if (autoNotesSetRef.current.size > 0) {
       // Retirer uniquement les notes auto-taguées
       const toRemove = new Set(autoNotesSetRef.current);
@@ -472,9 +512,78 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
       });
       autoNotesSetRef.current = newAutoKeys;
     }
-  }, [completed]);
+  }, [completed, pushHistory]);
 
   const clearFreePlayErrors = useCallback(() => setFreePlayErrors(null), []);
+
+  // ── Undo ────────────────────────────────────────────────────────────────────
+  const canUndo = historyLength > 0 && !completed;
+
+  const undo = useCallback(() => {
+    if (completed) return;
+    const stack = historyStackRef.current;
+    if (stack.length === 0) return;
+    const prev = stack.pop()!;
+    setHistoryLength(stack.length);
+    setGrid(prev.grid);
+    setNotes(prev.notes);
+    setCellErrors(prev.cellErrors);
+    setMistakes(prev.mistakes);
+    autoNotesSetRef.current = new Set();
+    setFreePlayErrors(null);
+    // Si on est retourné avant le marqueur d'hypothèse, sortir du mode
+    if (hypothesisMode && stack.length <= hypothesisMarkerRef.current) {
+      setHypothesisMode(false);
+      hypothesisSnapshotRef.current = null;
+    }
+  }, [completed, hypothesisMode]);
+
+  // ── Mode Hypothèse ──────────────────────────────────────────────────────────
+  const enterHypothesis = useCallback(() => {
+    if (completed || hypothesisMode) return;
+    hypothesisMarkerRef.current   = historyStackRef.current.length;
+    hypothesisSnapshotRef.current = deepCopy(gridRef.current);
+    setHypothesisMode(true);
+  }, [completed, hypothesisMode]);
+
+  const validateHypothesis = useCallback(() => {
+    if (!hypothesisMode) return;
+    // Les coups deviennent définitifs — on garde la pile telle quelle
+    setHypothesisMode(false);
+    hypothesisSnapshotRef.current = null;
+  }, [hypothesisMode]);
+
+  const cancelHypothesis = useCallback(() => {
+    if (!hypothesisMode) return;
+    const marker = hypothesisMarkerRef.current;
+    const stack  = historyStackRef.current;
+    if (stack.length > marker) {
+      // Restaure l'état qui était au sommet de la pile quand on a fait le 1er coup d'hypothèse
+      const restore = stack[marker];
+      setGrid(restore.grid);
+      setNotes(restore.notes);
+      setCellErrors(restore.cellErrors);
+      setMistakes(restore.mistakes);
+      historyStackRef.current = stack.slice(0, marker);
+      setHistoryLength(marker);
+    }
+    autoNotesSetRef.current       = new Set();
+    setFreePlayErrors(null);
+    setHypothesisMode(false);
+    hypothesisSnapshotRef.current = null;
+  }, [hypothesisMode]);
+
+  // Cellules posées pendant l'hypothèse (pour surlignage bleu)
+  const hypothesisCells = useMemo((): Set<string> => {
+    if (!hypothesisMode || !hypothesisSnapshotRef.current) return new Set();
+    const snap = hypothesisSnapshotRef.current;
+    const result = new Set<string>();
+    for (let r = 0; r < 9; r++)
+      for (let c = 0; c < 9; c++)
+        if (grid[r][c] !== 0 && snap[r][c] === 0)
+          result.add(`${r},${c}`);
+    return result;
+  }, [grid, hypothesisMode]);
 
   const isFixed = (r: number, c: number) => puzzle[r]?.[c] !== 0;
   const isError = (r: number, c: number) => (cellErrors[r]?.[c]?.size ?? 0) > 0;
@@ -500,5 +609,8 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
     secondsRef, mistakesRef, hintsLeftRef,
     autoFillNotes,
     freePlayErrors, clearFreePlayErrors,
+    canUndo, undo,
+    hypothesisMode, hypothesisCells,
+    enterHypothesis, validateHypothesis, cancelHypothesis,
   };
 }
