@@ -142,6 +142,8 @@
     "highlight_notes_desc": "Met en évidence les candidats en notes qui correspondent au chiffre sélectionné",
     "blitz_mode": "Mode Blitz",
     "blitz_mode_desc": "Sélectionnez d'abord un chiffre, puis tapez les cases pour le placer",
+    "blitz_auto_select": "Sélection automatique",
+    "blitz_auto_select_desc": "Taper une case déjà remplie sélectionne son chiffre",
     "haptic_feedback": "Retour haptique",
     "haptic_feedback_desc": "Vibrations lors du placement d'un chiffre ou d'une erreur",
     "hints_label": "Nombre d'indices disponibles",

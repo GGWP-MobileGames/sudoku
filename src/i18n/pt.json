@@ -142,6 +142,8 @@
     "highlight_notes_desc": "Destaca os candidatos nas notas que correspondem ao dígito selecionado",
     "blitz_mode": "Modo Blitz",
     "blitz_mode_desc": "Selecione primeiro um dígito, depois toque nas células para colocá-lo",
+    "blitz_auto_select": "Seleção automática",
+    "blitz_auto_select_desc": "Tocar numa célula preenchida seleciona o seu dígito",
     "haptic_feedback": "Resposta háptica",
     "haptic_feedback_desc": "Vibrações ao colocar um número ou cometer um erro",
     "hints_label": "Dicas disponíveis",

@@ -142,6 +142,8 @@
     "highlight_notes_desc": "選択した数字と一致するメモ候補を強調します",
     "blitz_mode": "ブリッツモード",
     "blitz_mode_desc": "まず数字を選択し、マスをタップして素早く配置します",
+    "blitz_auto_select": "自動選択",
+    "blitz_auto_select_desc": "埋まっているマスをタップするとその数字が選択されます",
     "haptic_feedback": "触覚フィードバック",
     "haptic_feedback_desc": "数字の配置やエラー時に振動します",
     "hints_label": "使用可能なヒント数",

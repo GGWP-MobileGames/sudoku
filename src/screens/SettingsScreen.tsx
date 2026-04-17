@@ -170,6 +170,9 @@ export default function SettingsScreen({ onBack }: Props) {
           <Row label={t('settings.show_cell_errors')} desc={t('settings.show_cell_errors_desc')} value={settings.showCellErrors} onToggle={() => updateSettings({ showCellErrors: !settings.showCellErrors })} />
           <Row label={t('settings.highlight_notes')} desc={t('settings.highlight_notes_desc')} value={settings.highlightNotes} onToggle={() => updateSettings({ highlightNotes: !settings.highlightNotes })} />
           <Row label={t('settings.blitz_mode')} desc={t('settings.blitz_mode_desc')} value={settings.blitzMode} onToggle={() => updateSettings({ blitzMode: !settings.blitzMode })} />
+          {settings.blitzMode && (
+            <Row label={t('settings.blitz_auto_select')} desc={t('settings.blitz_auto_select_desc')} value={settings.blitzAutoSelect ?? true} onToggle={() => updateSettings({ blitzAutoSelect: !(settings.blitzAutoSelect ?? true) })} />
+          )}
           <Row label={t('settings.haptic_feedback')} desc={t('settings.haptic_feedback_desc')} value={settings.hapticFeedback} onToggle={() => updateSettings({ hapticFeedback: !settings.hapticFeedback })} last />
         </View>
 

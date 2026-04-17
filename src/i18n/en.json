@@ -142,6 +142,8 @@
     "highlight_notes_desc": "Highlights note candidates that match the selected digit",
     "blitz_mode": "Blitz Mode",
     "blitz_mode_desc": "Select a digit first, then tap cells to place it",
+    "blitz_auto_select": "Auto-select digit",
+    "blitz_auto_select_desc": "Tapping a filled cell selects its digit",
     "haptic_feedback": "Haptic feedback",
     "haptic_feedback_desc": "Vibrations when placing a number or making an error",
     "hints_label": "Available hints",

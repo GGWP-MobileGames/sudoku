@@ -91,6 +91,11 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
   blitzNumberRef.current = blitzNumber;
   const blitzModeRef = React.useRef(false);
   blitzModeRef.current = settings.blitzMode ?? false;
+  const blitzAutoSelectRef = React.useRef(true);
+  blitzAutoSelectRef.current = settings.blitzAutoSelect ?? true;
+  // Ref sur la grille courante pour accès sans stale closure dans handleSelect
+  const gridRef = React.useRef(grid);
+  gridRef.current = grid;
 
   // Réinitialiser le chiffre blitz quand on quitte le mode
   React.useEffect(() => {
@@ -109,13 +114,19 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
   const handleSelect = React.useCallback((r: number, c: number) => {
     if (pausedRef.current) return;
     if (blitzModeRef.current) {
-      // En mode blitz : placer directement si un chiffre est sélectionné
+      const cellValue = gridRef.current[r]?.[c] ?? 0;
+
+      // Auto-sélection : clic sur une case remplie → sélectionne son chiffre
+      if (cellValue !== 0 && blitzAutoSelectRef.current) {
+        setBlitzNumber(cellValue);
+        return;
+      }
+
+      // Placer le chiffre sélectionné (ou effacer si -1)
       const bn = blitzNumberRef.current;
       if (bn !== null) {
-        // -1 = mode effacement → inputNumber(0), sinon placer le chiffre
         inputNumber(bn === -1 ? 0 : bn, r, c);
       }
-      // Sinon ne rien faire (pas de sélection de case)
       return;
     }
     setSelected([r, c]);

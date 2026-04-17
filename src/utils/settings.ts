@@ -14,6 +14,7 @@ export interface AppSettings {
   hapticFeedback:     boolean;  // retour haptique (vibration)
   highlightNotes:     boolean;  // surligner les notes correspondant au chiffre sélectionné
   blitzMode:          boolean;  // mode blitz : sélectionner le chiffre d'abord, puis la case
+  blitzAutoSelect:    boolean;  // blitz : clic sur case remplie → sélectionne son chiffre
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -30,6 +31,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   hapticFeedback:     true,
   highlightNotes:     true,
   blitzMode:          false,
+  blitzAutoSelect:    true,
 };
 
 const KEY = "app_settings";
