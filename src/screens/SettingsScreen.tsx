@@ -34,7 +34,7 @@ export default function SettingsScreen({ onBack }: Props) {
     <SafeAreaView style={[s.safe, { backgroundColor: colors.bg }]}>
       <StatusBar barStyle={colors.isDark ? "light-content" : "dark-content"} backgroundColor={colors.bg} />
 
-      <View style={s.header}>
+      <View style={[s.header, isTablet && { maxWidth: 520 }]}>
         <View style={s.titleBlock}>
           <Text style={[s.titleSub, { color: colors.textSecondary }]}>{t('settings.title_sub')}</Text>
           <View style={s.titleRow}>
@@ -180,7 +180,7 @@ export default function SettingsScreen({ onBack }: Props) {
 
 const s = StyleSheet.create({
   safe:         { flex: 1 },
-  header:       { paddingHorizontal: 20, paddingTop: 52, paddingBottom: 12, gap: 12, alignItems: "center", maxWidth: 700, alignSelf: "center", width: "100%" },
+  header:       { paddingHorizontal: 20, paddingTop: 52, paddingBottom: 12, gap: 12, alignItems: "center", alignSelf: "center", width: "100%" },
   scroll:       { alignItems: "center", paddingHorizontal: 20, paddingTop: 8, paddingBottom: 40, gap: 16 },
   titleBlock:   { width: "100%", alignItems: "center", gap: 2 },
   titleSub:     { fontSize: 12, letterSpacing: 6, fontWeight: "500" },
