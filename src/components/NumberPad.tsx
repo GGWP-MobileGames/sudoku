@@ -51,8 +51,9 @@ const NumberPad = React.memo(function NumberPad({
     const newNotes = !localNotes;
     setLocalNotes(newNotes);
     onToggleNotes();
-    // En mode blitz, désélectionner le chiffre actif quand on active les notes
-    if (blitzMode && newNotes && onSelectBlitzNumber) {
+    // En mode blitz : activer Notes désélectionne uniquement le mode Effacer
+    // (Notes + chiffre = écriture de note → compatible, pas d'exclusion)
+    if (blitzMode && newNotes && localBlitzNumber === -1 && onSelectBlitzNumber) {
       setLocalBlitzNumber(null);
       onSelectBlitzNumber(null);
     }
@@ -60,9 +61,8 @@ const NumberPad = React.memo(function NumberPad({
 
   const handleNumPress = (n: number) => {
     if (blitzMode && onSelectBlitzNumber) {
-      // Désactiver les notes si elles sont actives (exclusion mutuelle)
-      if (localNotes) { setLocalNotes(false); onToggleNotes(); }
       // Toggle : si déjà sélectionné, désélectionner ; sinon sélectionner
+      // Notes reste actif si elle l'était (Notes + chiffre = écriture de note)
       const next = localBlitzNumber === n ? null : n;
       setLocalBlitzNumber(next);
       onSelectBlitzNumber(next);
@@ -73,7 +73,7 @@ const NumberPad = React.memo(function NumberPad({
 
   const handleErasePress = () => {
     if (blitzMode && onSelectBlitzNumber) {
-      // Désactiver les notes si elles sont actives (exclusion mutuelle)
+      // Effacer désactive Notes (on efface, on n'annote pas)
       if (localNotes) { setLocalNotes(false); onToggleNotes(); }
       // Toggle : si déjà en mode effacement, désélectionner ; sinon activer
       const next = localBlitzNumber === -1 ? null : -1;
