@@ -129,12 +129,24 @@ const maxDist = Math.sqrt(32); // dist max ≈ 5.66
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [victoryWave]);
 
-const prevGroupsRef = useRef<string>("");
+const prevGroupsRef   = useRef<string>("");
+  // Référence à l'animation de groupe en cours pour pouvoir l'arrêter proprement
+  const groupAnimRef  = useRef<Animated.CompositeAnimation | null>(null);
+
   useEffect(() => {
     if (!completedGroups || completedGroups.length === 0) return;
     const key = completedGroups.map(([r, c]) => `${r},${c}`).join("|");
     if (key === prevGroupsRef.current) return;
     prevGroupsRef.current = key;
+
+    // Stopper l'animation précédente si elle tourne encore, et remettre à zéro
+    // tous les goldAnims/scaleAnims pour éviter les artefacts visuels en mode Blitz
+    if (groupAnimRef.current) {
+      groupAnimRef.current.stop();
+      groupAnimRef.current = null;
+      goldAnims.forEach(a => a.setValue(0));
+      scaleAnims.forEach(a => a.setValue(1));
+    }
 
     // Barycentre des cellules complétées → point d'origine de la vague
     const centerR = completedGroups.reduce((s, [r]) => s + r, 0) / completedGroups.length;
@@ -167,7 +179,9 @@ const prevGroupsRef = useRef<string>("");
       ]);
     });
 
-    Animated.parallel([...anims, ...scaleAn]).start();
+    const composite = Animated.parallel([...anims, ...scaleAn]);
+    groupAnimRef.current = composite;
+    composite.start(() => { groupAnimRef.current = null; });
   }, [completedGroups]);
 
   // ── Bounce sur placement correct ────────────────────────────────────────────
