@@ -476,7 +476,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
         setCompletedGroups(allCells);
       }
     }
-  }, [selected, completed, notesMode, puzzle, solution, pushHistory]);
+  }, [selected, completed, notesMode, puzzle, solution, pushHistory, hypothesisMode]);
 
   // ── Indice ──────────────────────────────────────────────────────────────────
 
