@@ -77,17 +77,23 @@ const SudokuCell = React.memo(function SudokuCell({
                 const isNote     = noteNumbers.includes(n);
                 const isErr      = errorNumbers.includes(n);
                 const isNoteHit  = isNote && !!highlightNoteValue && n === highlightNoteValue;
+                const badgeSize  = nfs + 5;
                 return (
                   <View key={n} style={styles.noteCell}>
                     {(isNote || isErr) && (
-                      <Text style={[
-                        isErr ? styles.errorDigit : styles.noteDigit,
-                        { fontSize: nfs, color: isErr ? colors.error : isNoteHit ? colors.hintColor : colors.textSecondary },
-                        onDark && (isErr ? styles.errorsOnDark : styles.notesOnDark),
-                        isNoteHit && styles.noteHit,
-                      ]}>
-                        {n}
-                      </Text>
+                      <View style={isNoteHit
+                        ? [styles.noteHitBadge, { backgroundColor: colors.bgCellMatch, width: badgeSize, height: badgeSize }]
+                        : undefined
+                      }>
+                        <Text style={[
+                          isErr ? styles.errorDigit : styles.noteDigit,
+                          { fontSize: nfs, color: isErr ? colors.error : colors.textSecondary },
+                          onDark && (isErr ? styles.errorsOnDark : styles.notesOnDark),
+                          isNoteHit && styles.noteHit,
+                        ]}>
+                          {n}
+                        </Text>
+                      </View>
                     )}
                   </View>
                 );
@@ -160,6 +166,11 @@ const styles = StyleSheet.create({
   },
   noteDigit:    { fontWeight: "600" },
   noteHit:      { fontWeight: "800" },
+  noteHitBadge: {
+    borderRadius: 2,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   notesOnDark:  { color: "#1A1A1A" },
   errorDigit:   { fontWeight: "700" },
   errorsOnDark: { color: "#FFD0CC" },
