@@ -301,6 +301,37 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
     </View>
   );
 
+  const hypothesisBlock = !completed && !defeatPending ? (
+    <View style={styles.hypothesisRow}>
+      {hypothesisMode ? (
+        <View style={{ flexDirection: "row", gap: 6 }}>
+          <TouchableOpacity
+            onPress={cancelHypothesis}
+            style={[styles.hypothesisCircleBtn, { backgroundColor: colors.error }]}
+            activeOpacity={0.75}
+          >
+            <Text style={styles.hypothesisCircleText}>✕</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={validateHypothesis}
+            style={[styles.hypothesisCircleBtn, { backgroundColor: "#3A6BC4" }]}
+            activeOpacity={0.75}
+          >
+            <Text style={styles.hypothesisCircleText}>✓</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <TouchableOpacity
+          onPress={enterHypothesis}
+          style={[styles.hypothesisCircleBtn, { borderWidth: 1.5, borderColor: colors.borderBox, backgroundColor: "transparent" }]}
+          activeOpacity={0.75}
+        >
+          <Text style={[styles.hypothesisCircleText, { color: colors.textSecondary }]}>T</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  ) : null;
+
   const gridBlock = (
     <TouchableOpacity activeOpacity={1} onPress={e => e.stopPropagation()} style={styles.gridWrapper}>
       <SudokuGrid
@@ -336,38 +367,6 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         }
         hypothesisCells={hypothesisCells}
       />
-      {/* Bouton flottant Mode Hypothèse — coin supérieur droit de la grille */}
-      {!completed && !paused && !pendingHint && !defeatPending && (
-        <View style={styles.hypothesisFloat} pointerEvents="box-none">
-          {hypothesisMode ? (
-            <View style={{ flexDirection: "row", gap: 6 }} pointerEvents="box-none">
-              <TouchableOpacity
-                onPress={cancelHypothesis}
-                style={[styles.hypothesisCircleBtn, { backgroundColor: colors.error }]}
-                activeOpacity={0.75}
-              >
-                <Text style={styles.hypothesisCircleText}>✕</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={validateHypothesis}
-                style={[styles.hypothesisCircleBtn, { backgroundColor: "#3A6BC4" }]}
-                activeOpacity={0.75}
-              >
-                <Text style={styles.hypothesisCircleText}>✓</Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <TouchableOpacity
-              onPress={enterHypothesis}
-              style={[styles.hypothesisCircleBtn, { backgroundColor: colors.bgCellDefault, borderWidth: 1.5, borderColor: colors.borderBox }]}
-              activeOpacity={0.75}
-            >
-              <Text style={[styles.hypothesisCircleIcon, { color: colors.textSecondary }]}>⊙</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      )}
-
       {paused && (
         <TouchableOpacity
           activeOpacity={0.9}
@@ -416,6 +415,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
             <View style={styles.landscapeRight}>
               {headerBlock}
               {statsBarBlock}
+              {hypothesisBlock}
               <View style={{ flex: 1 }} />
               {padBlock}
             </View>
@@ -425,6 +425,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
             {/* Portrait : layout vertical classique */}
             {headerBlock}
             {statsBarBlock}
+            {hypothesisBlock}
             {gridBlock}
             {padBlock}
           </>
@@ -569,12 +570,11 @@ const styles = StyleSheet.create({
   // Grille avec overlay pause
   gridWrapper: { position: "relative" },
 
-  // Bouton flottant Mode Hypothèse
-  hypothesisFloat: {
-    position: "absolute",
-    top: 8,
-    right: 8,
-    zIndex: 10,
+  // Ligne bouton Hypothèse (au-dessus de la grille, alignée à droite)
+  hypothesisRow: {
+    width: "100%",
+    paddingHorizontal: 16,
+    alignItems: "flex-end",
   },
   hypothesisCircleBtn: {
     width: 34,
@@ -587,11 +587,6 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 14,
     fontWeight: "800",
-  },
-  hypothesisCircleIcon: {
-    fontSize: 17,
-    fontWeight: "600",
-    lineHeight: 20,
   },
   pausedOverlay: {
     position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
