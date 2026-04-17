@@ -295,6 +295,26 @@ function findHiddenPair(grid: Grid, cands: Candidates, tr: TFunc): PedagogicHint
 // Dans un bloc, tous les candidats d'un chiffre sont alignés sur une ligne/colonne.
 // → Ce chiffre ne peut pas apparaître ailleurs sur cette ligne/colonne.
 
+// Résout la cible après élimination :
+// Priorité 1 — une des cases `outside` devient un naked single (conséquence directe, cohérente avec le message).
+// Priorité 2 — fallback sur n'importe quel hidden single, mais on utilise result.value (pas n).
+function resolveAfterElim(
+  grid: Grid, cands: Candidates, tr: TFunc,
+  outside: [number, number][], elim: { r: number; c: number; vals: number[] }[]
+): { targetCell: [number, number]; value: number } | null {
+  const modCands = withElim(cands, elim);
+  // Priorité : une case outside devient naked single (consequence directe)
+  for (const [r, c] of outside) {
+    if (modCands[r][c].size === 1) {
+      return { targetCell: [r, c], value: [...modCands[r][c]][0] };
+    }
+  }
+  // Fallback : n'importe quel hidden single débloqué
+  const result = findHiddenSingle(grid, modCands, tr);
+  if (!result) return null;
+  return { targetCell: result.targetCell, value: result.value };
+}
+
 function findPointingPair(grid: Grid, cands: Candidates, tr: TFunc): PedagogicHint | null {
   for (let br = 0; br < 9; br += 3) {
     for (let bc = 0; bc < 9; bc += 3) {
@@ -310,15 +330,15 @@ function findPointingPair(grid: Grid, cands: Candidates, tr: TFunc): PedagogicHi
           const outside = getRow(row).filter(([r, c]) =>
             Math.floor(c / 3) !== Math.floor(bc / 3) &&
             grid[r][c] === 0 && cands[r][c].has(n)
-          );
+          ) as [number, number][];
           if (outside.length === 0) continue;
           const elim = outside.map(([r, c]) => ({ r, c, vals: [n] }));
-          const result = findHiddenSingle(grid, withElim(cands, elim), tr);
-          if (!result) continue;
+          const resolved = resolveAfterElim(grid, cands, tr, outside, elim);
+          if (!resolved) continue;
           return {
             techniqueTitle: tr("hints.technique.pointing_pair"),
-            value:          n,
-            targetCell:     result.targetCell,
+            value:          resolved.value,
+            targetCell:     resolved.targetCell,
             relatedCells:   cells as [number, number][],
             highlightCells: dedupCells([...getRow(row), ...getBox(br, bc)]),
             message: fill(tr("hints.pointing_pair_row"), {
@@ -331,15 +351,15 @@ function findPointingPair(grid: Grid, cands: Candidates, tr: TFunc): PedagogicHi
           const outside = getCol(col).filter(([r, c]) =>
             Math.floor(r / 3) !== Math.floor(br / 3) &&
             grid[r][c] === 0 && cands[r][c].has(n)
-          );
+          ) as [number, number][];
           if (outside.length === 0) continue;
           const elim = outside.map(([r, c]) => ({ r, c, vals: [n] }));
-          const result = findHiddenSingle(grid, withElim(cands, elim), tr);
-          if (!result) continue;
+          const resolved = resolveAfterElim(grid, cands, tr, outside, elim);
+          if (!resolved) continue;
           return {
             techniqueTitle: tr("hints.technique.pointing_pair"),
-            value:          n,
-            targetCell:     result.targetCell,
+            value:          resolved.value,
+            targetCell:     resolved.targetCell,
             relatedCells:   cells as [number, number][],
             highlightCells: dedupCells([...getCol(col), ...getBox(br, bc)]),
             message: fill(tr("hints.pointing_pair_col"), {
