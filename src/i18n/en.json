@@ -61,7 +61,10 @@
     "replay": "PLAY AGAIN",
     "home": "BACK TO MENU",
     "menu": "MENU",
-    "level": "LEVEL"
+    "level": "LEVEL",
+    "new_record": "★ NEW RECORD",
+    "perfect": "✦ PERFECT",
+    "record_label": "Best"
   },
   "defeat": {
     "title": "GAME OVER"

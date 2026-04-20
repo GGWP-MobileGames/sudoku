@@ -14,7 +14,8 @@ import { COLORS, SPACING } from "../utils/theme";
 import { useSettings } from "../context/SettingsContext";
 import { useResponsive } from "../hooks/useResponsive";
 import { useKeyboard } from "../hooks/useKeyboard";
-import { clearOngoing, clearSavedGame, serializeNotes, serializeCellErrors } from "../utils/storage";
+import { clearOngoing, clearSavedGame, serializeNotes, serializeCellErrors, loadStats } from "../utils/storage";
+import type { VictoryStats } from "../components/VictoryModal";
 import { saveDailyRecord, getTodayKey, saveDailyGame, clearDailyGame, recordDailyInHistory, recordDailyFailureInHistory } from "../utils/dailyChallenge";
 import type { Difficulty } from "../utils/puzzles";
 import type { Grid } from "../utils/sudoku";
@@ -151,6 +152,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
   }, [mistakes]);
 
   const [victoryReady,  setVictoryReady]  = React.useState(false);
+  const [victoryStats,  setVictoryStats]  = React.useState<VictoryStats | null>(null);
   const [defeatPending, setDefeatPending] = React.useState(false);
   const [defeatReady,   setDefeatReady]   = React.useState(false);
   const [defeatStats,   setDefeatStats]   = React.useState<{ seconds: number; mistakes: number; hintsUsed: number } | null>(null);
@@ -228,10 +230,30 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
     if (completed) {
       setSelected(null);
       setVictoryReady(false);
+      const hintsUsed = hintsPerGame - hintsLeftRef.current;
       if (isDaily) {
-        saveDailyRecord({ dateKey: gameDateKey, seconds: secondsRef.current, mistakes: mistakesRef.current, hints: hintsPerGame - hintsLeftRef.current, completed: true, isCatchup });
+        saveDailyRecord({ dateKey: gameDateKey, seconds: secondsRef.current, mistakes: mistakesRef.current, hints: hintsUsed, completed: true, isCatchup });
         recordDailyInHistory(secondsRef.current, mistakesRef.current);
         clearDailyGame();
+        // Pour les défis quotidiens : juste le badge Parfait, pas de comparaison perso
+        setVictoryStats({
+          isPerfect:       hintsUsed === 0 && mistakesRef.current === 0,
+          isNewRecord:     false,
+          prevBestSeconds: null,
+          prevGamesPlayed: 0,
+        });
+      } else {
+        // Charger les stats AVANT enregistrement pour la comparaison
+        loadStats().then(stats => {
+          const lvl = stats[difficulty];
+          const isNew = lvl.bestTime === null || secondsRef.current < lvl.bestTime;
+          setVictoryStats({
+            isPerfect:       hintsUsed === 0 && mistakesRef.current === 0,
+            isNewRecord:     isNew,
+            prevBestSeconds: lvl.bestTime,
+            prevGamesPlayed: lvl.gamesPlayed,
+          });
+        });
       }
       victoryTimerRef.current = setTimeout(() => setVictoryReady(true), 3200);
     }
@@ -455,6 +477,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         difficulty={difficulty}
         diffLabel={t(`home.difficulties.${difficulty}`)}
         isDaily={isDaily}
+        victoryStats={victoryStats}
         onReplay={() => { setVictoryReady(false); setBlitzNumber(null); newGame(); }}
         onHome={onBackToHome}
       />

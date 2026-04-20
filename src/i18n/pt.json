@@ -61,7 +61,10 @@
     "replay": "JOGAR NOVAMENTE",
     "home": "VOLTAR AO MENU",
     "menu": "MENU",
-    "level": "NÍVEL"
+    "level": "NÍVEL",
+    "new_record": "★ NOVO RECORDE",
+    "perfect": "✦ PERFEITO",
+    "record_label": "Recorde"
   },
   "defeat": {
     "title": "DERROTA!"

@@ -61,7 +61,10 @@
     "replay": "REJOUER",
     "home": "RETOUR AU MENU",
     "menu": "MENU",
-    "level": "NIVEAU"
+    "level": "NIVEAU",
+    "new_record": "★ NOUVEAU RECORD",
+    "perfect": "✦ PARFAIT",
+    "record_label": "Record"
   },
   "defeat": {
     "title": "ÉCHEC !"

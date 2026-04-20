@@ -61,7 +61,10 @@
     "replay": "NOCHMAL",
     "home": "ZURÜCK ZUM MENÜ",
     "menu": "MENÜ",
-    "level": "STUFE"
+    "level": "STUFE",
+    "new_record": "★ NEUER REKORD",
+    "perfect": "✦ PERFEKT",
+    "record_label": "Rekord"
   },
   "defeat": {
     "title": "VERLOREN!"

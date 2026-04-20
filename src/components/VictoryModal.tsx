@@ -1,25 +1,35 @@
 import React, { useEffect, useRef } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Modal, Animated, Platform } from "react-native";
 import { useSettings } from "../context/SettingsContext";
-import { clearSavedGame, recordCompletion } from "../utils/storage";
+import { clearSavedGame, recordCompletion, formatTime } from "../utils/storage";
 import type { Difficulty } from "../utils/puzzles";
+import { COLORS } from "../utils/theme";
+
+export interface VictoryStats {
+  isPerfect:       boolean;
+  isNewRecord:     boolean;   // meilleur temps brut sur ce niveau
+  prevBestSeconds: number | null; // null = première victoire
+  prevGamesPlayed: number;
+}
 
 interface Props {
-  visible:    boolean;
-  time:       string;
-  seconds:    number;
-  mistakes:   number;
-  hintsLeft:  number;
-  maxHints:   number;
-  difficulty: Difficulty;
-  diffLabel:  string;
-  isDaily?:   boolean;
-  onReplay:   () => void;
-  onHome:     () => void;
+  visible:       boolean;
+  time:          string;
+  seconds:       number;
+  mistakes:      number;
+  hintsLeft:     number;
+  maxHints:      number;
+  difficulty:    Difficulty;
+  diffLabel:     string;
+  isDaily?:      boolean;
+  victoryStats?: VictoryStats | null;
+  onReplay:      () => void;
+  onHome:        () => void;
 }
 
 export default function VictoryModal({
-  visible, time, seconds, mistakes, hintsLeft, maxHints, difficulty, diffLabel, isDaily, onReplay, onHome,
+  visible, time, seconds, mistakes, hintsLeft, maxHints, difficulty, diffLabel,
+  isDaily, victoryStats, onReplay, onHome,
 }: Props) {
   const { t, colors } = useSettings();
   const [saved, setSaved] = React.useState(false);
@@ -29,12 +39,20 @@ export default function VictoryModal({
   const cardScale      = useRef(new Animated.Value(0.82)).current;
   const cardOpacity    = useRef(new Animated.Value(0)).current;
   const titleScale     = useRef(new Animated.Value(0.6)).current;
-  // Stats arrivent ligne par ligne
   const stat1Opacity   = useRef(new Animated.Value(0)).current;
   const stat2Opacity   = useRef(new Animated.Value(0)).current;
   const stat3Opacity   = useRef(new Animated.Value(0)).current;
+  const stat4Opacity   = useRef(new Animated.Value(0)).current;
+  const stat4Scale     = useRef(new Animated.Value(0.7)).current;
   const btnsTranslate  = useRef(new Animated.Value(20)).current;
   const btnsOpacity    = useRef(new Animated.Value(0)).current;
+
+  // Détermine si on affiche quelque chose dans le bloc récap
+  const showRecap = !!victoryStats && (
+    victoryStats.isPerfect ||
+    (victoryStats.isNewRecord && victoryStats.prevGamesPlayed >= 1) ||
+    (!victoryStats.isNewRecord && victoryStats.prevBestSeconds !== null && victoryStats.prevGamesPlayed >= 1)
+  );
 
   useEffect(() => {
     if (visible && !saved) {
@@ -52,6 +70,7 @@ export default function VictoryModal({
     cardScale.setValue(0.82); cardOpacity.setValue(0);
     titleScale.setValue(0.6);
     stat1Opacity.setValue(0); stat2Opacity.setValue(0); stat3Opacity.setValue(0);
+    stat4Opacity.setValue(0); stat4Scale.setValue(0.7);
     btnsTranslate.setValue(20); btnsOpacity.setValue(0);
 
     // Séquence d'entrée
@@ -70,13 +89,57 @@ export default function VictoryModal({
         Animated.timing(stat2Opacity, { toValue: 1, duration: 200, useNativeDriver: Platform.OS !== "web" }),
         Animated.timing(stat3Opacity, { toValue: 1, duration: 200, useNativeDriver: Platform.OS !== "web" }),
       ]),
-      // 4. Boutons glissent vers le haut
+      // 4. Bloc récap (avec petit rebond si parfait/record)
+      ...(showRecap ? [
+        Animated.parallel([
+          Animated.timing(stat4Opacity, { toValue: 1, duration: 240, useNativeDriver: Platform.OS !== "web" }),
+          Animated.spring(stat4Scale,   { toValue: 1, tension: 120, friction: 8, useNativeDriver: Platform.OS !== "web" }),
+        ]),
+      ] : []),
+      // 5. Boutons
       Animated.parallel([
-        Animated.timing(btnsOpacity,    { toValue: 1,  duration: 200, useNativeDriver: Platform.OS !== "web" }),
-        Animated.spring(btnsTranslate,  { toValue: 0,  tension: 80, friction: 10, useNativeDriver: Platform.OS !== "web" }),
+        Animated.timing(btnsOpacity,   { toValue: 1, duration: 200, useNativeDriver: Platform.OS !== "web" }),
+        Animated.spring(btnsTranslate, { toValue: 0, tension: 80, friction: 10, useNativeDriver: Platform.OS !== "web" }),
       ]),
     ]).start();
   }, [visible]);
+
+  // Contenu du bloc récap
+  const renderRecap = () => {
+    if (!victoryStats) return null;
+    const { isPerfect, isNewRecord, prevBestSeconds, prevGamesPlayed } = victoryStats;
+
+    if (isPerfect) {
+      return (
+        <Animated.View style={[
+          styles.recapRow,
+          { backgroundColor: COLORS.gold + "22", borderColor: COLORS.gold, opacity: stat4Opacity, transform: [{ scale: stat4Scale }] }
+        ]}>
+          <Text style={[styles.recapTextLarge, { color: COLORS.gold }]}>{t("victory.perfect")}</Text>
+        </Animated.View>
+      );
+    }
+    if (isNewRecord && prevGamesPlayed >= 1) {
+      return (
+        <Animated.View style={[
+          styles.recapRow,
+          { backgroundColor: COLORS.gold + "22", borderColor: COLORS.gold, opacity: stat4Opacity, transform: [{ scale: stat4Scale }] }
+        ]}>
+          <Text style={[styles.recapTextLarge, { color: COLORS.gold }]}>{t("victory.new_record")}</Text>
+        </Animated.View>
+      );
+    }
+    if (!isNewRecord && prevBestSeconds !== null && prevGamesPlayed >= 1) {
+      return (
+        <Animated.View style={[styles.recapRowSubtle, { opacity: stat4Opacity }]}>
+          <Text style={[styles.recapTextSmall, { color: colors.textSecondary }]}>
+            {t("victory.record_label")} : {formatTime(prevBestSeconds)}
+          </Text>
+        </Animated.View>
+      );
+    }
+    return null;
+  };
 
   return (
     <Modal visible={visible} transparent animationType="none">
@@ -122,6 +185,9 @@ export default function VictoryModal({
               <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{t("victory.level")}</Text>
             </Animated.View>
           </View>
+
+          {/* Récap personnalisé (A + B) */}
+          {showRecap && renderRecap()}
 
           <View style={styles.ornament}>
             <View style={[styles.ornamentLine, { backgroundColor: colors.borderThin }]} />
@@ -177,6 +243,17 @@ const styles = StyleSheet.create({
   statValueSmall: { fontSize: 18 },
   statLabel:   { fontSize: 11, letterSpacing: 2, marginTop: 3 },
   statSep:     { width: 1, height: 36, alignSelf: "center" },
+  // Récap A+B
+  recapRow: {
+    width: "100%", paddingVertical: 10, paddingHorizontal: 16,
+    alignItems: "center", borderWidth: 1,
+  },
+  recapRowSubtle: {
+    width: "100%", alignItems: "center",
+  },
+  recapTextLarge: { fontSize: 15, fontWeight: "800", letterSpacing: 3 },
+  recapTextSmall: { fontSize: 12, letterSpacing: 1.5 },
+  // Boutons
   btnRow:      { flexDirection: "row", gap: 12, width: "100%" },
   btn:         { flex: 1, paddingVertical: 14, alignItems: "center", borderWidth: 1.5 },
   btnPrimary:       {},

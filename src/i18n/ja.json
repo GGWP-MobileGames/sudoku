@@ -61,7 +61,10 @@
     "replay": "もう一度",
     "home": "メニューに戻る",
     "menu": "メニュー",
-    "level": "レベル"
+    "level": "レベル",
+    "new_record": "★ 新記録",
+    "perfect": "✦ 完璧",
+    "record_label": "記録"
   },
   "defeat": {
     "title": "ゲームオーバー"
