@@ -42,7 +42,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
   const { gridSize, isLandscape, isCompact, deviceType } = useResponsive();
   // Sur desktop/web, toujours le layout portrait centré (plus esthétique)
   const useLandscape = isLandscape && deviceType !== "desktop";
-  const hintsPerGame = isDaily ? 3 : (settings?.hintsPerGame ?? 3);
+  const hintsPerGame = isDaily ? 3 : Math.min(settings?.hintsPerGame ?? 3, 3);
   const effectiveLimitErrors = isDaily ? true : (settings?.limitErrors ?? true);
   const effectiveMaxErrors   = isDaily ? 3   : (settings?.maxErrors   ?? 3);
   const effectiveFreePlay    = isDaily ? false : (settings?.freePlayMode ?? false);

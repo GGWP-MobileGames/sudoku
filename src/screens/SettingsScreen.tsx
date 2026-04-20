@@ -105,23 +105,36 @@ export default function SettingsScreen({ onBack }: Props) {
           <View style={[s.sectionHead, { backgroundColor: colors.bgCard, borderBottomColor: colors.borderThin }]}>
             <Text style={[s.sectionTitle, { color: colors.textSecondary }]}>{t('settings.section_hints')}</Text>
           </View>
-          <View style={[s.row, s.rowLast, { borderBottomColor: colors.borderThin }]}>
-            <View style={{ flex: 1 }}>
+          <View style={[s.row, s.rowLast, { borderBottomColor: colors.borderThin, flexDirection: "column", alignItems: "flex-start", gap: 10 }]}>
+            <View>
               <Text style={[s.rowLabel, { color: colors.textPrimary }]}>{t('settings.hints_label')}</Text>
               <Text style={[s.rowDesc, { color: colors.textSecondary }]}>{t('settings.hints_default')}</Text>
             </View>
-            <TextInput
-              style={[s.hintsInput, { borderColor: colors.borderBox, color: colors.textPrimary, backgroundColor: colors.bg }]}
-              value={String(settings.hintsPerGame)}
-              onChangeText={v => {
-                const n = parseInt(v, 10);
-                if (!isNaN(n) && n >= 0 && n <= 99) updateSettings({ hintsPerGame: n });
-                else if (v === "") updateSettings({ hintsPerGame: 0 });
-              }}
-              keyboardType="number-pad"
-              maxLength={2}
-              selectTextOnFocus
-            />
+            <View style={s.hintSegment}>
+              {[0, 1, 2, 3].map(n => {
+                const active = (Math.min(settings.hintsPerGame, 3)) === n;
+                return (
+                  <TouchableOpacity
+                    key={n}
+                    onPress={() => updateSettings({ hintsPerGame: n })}
+                    style={[
+                      s.hintSegBtn,
+                      { borderColor: colors.borderBox, backgroundColor: colors.bg },
+                      active && { backgroundColor: colors.bgCellSelected, borderColor: colors.borderBox },
+                    ]}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={[
+                      s.hintSegText,
+                      { color: colors.textSecondary },
+                      active && { color: colors.textOnSelected, fontWeight: "800" },
+                    ]}>
+                      {n}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
           </View>
         </View>
 
@@ -209,8 +222,11 @@ const s = StyleSheet.create({
   rowLast:      { borderBottomWidth: 0 },
   rowLabel:     { fontSize: 14, fontWeight: "500", flex: 1, marginRight: 12 },
   rowDesc:      { fontSize: 12, marginTop: 2 },
-  hintsInput:   { width: 64, height: 44, borderWidth: 1, textAlign: "center", fontSize: 18, fontWeight: "700", paddingVertical: 0, includeFontPadding: false, textAlignVertical: "center" },
-  langRow:      { flexDirection: "row", flexWrap: "wrap", gap: 8, paddingHorizontal: 16, paddingVertical: 14 },
+  hintsInput:    { width: 64, height: 44, borderWidth: 1, textAlign: "center", fontSize: 18, fontWeight: "700", paddingVertical: 0, includeFontPadding: false, textAlignVertical: "center" },
+  hintSegment:   { flexDirection: "row", gap: 0 },
+  hintSegBtn:    { width: 52, height: 44, borderWidth: 1, alignItems: "center", justifyContent: "center", marginRight: -1 },
+  hintSegText:   { fontSize: 18, fontWeight: "600" },
+  langRow:       { flexDirection: "row", flexWrap: "wrap", gap: 8, paddingHorizontal: 16, paddingVertical: 14 },
   langBtn:      { paddingVertical: 6, paddingHorizontal: 14, borderWidth: 1 },
   langText:     { fontSize: 12 },
 });
