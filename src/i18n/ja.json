@@ -15,7 +15,7 @@
     "stats_link": "統計を見る",
     "discard_title": "ゲームを諦めますか？",
     "discard_message": "進行状況は完全に失われます。本当によろしいですか？",
-    "discard_ok": "はい、諦める",
+    "discard_ok": "諦める",
     "discard_cancel": "いいえ",
     "confirm_title": "ゲーム中",
     "confirm_message": "進行中のゲームがあります。新しいゲームを始めると進行状況が失われます。続けますか？",

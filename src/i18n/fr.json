@@ -15,7 +15,7 @@
     "stats_link": "Voir mes statistiques",
     "discard_title": "Abandonner la partie ?",
     "discard_message": "Votre progression sera définitivement perdue. Êtes-vous sûr ?",
-    "discard_ok": "Oui, abandonner",
+    "discard_ok": "Abandonner",
     "discard_cancel": "Non",
     "confirm_title": "Partie en cours",
     "confirm_message": "Vous avez une partie en cours. Commencer une nouvelle partie effacera votre progression. Continuer ?",

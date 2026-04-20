@@ -15,7 +15,7 @@
     "stats_link": "View my statistics",
     "discard_title": "Abandon this game?",
     "discard_message": "Your progress will be permanently lost. Are you sure?",
-    "discard_ok": "Yes, abandon",
+    "discard_ok": "Abandon",
     "discard_cancel": "No",
     "confirm_title": "Game in progress",
     "confirm_message": "You have a game in progress. Starting a new game will erase your progress. Continue?",
