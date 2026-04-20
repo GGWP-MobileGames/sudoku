@@ -115,6 +115,14 @@ function AppContent({ onReady }: AppContentProps) {
     navigate("daily-game", "right");
   };
 
+  const handleAbandonAndStartPast = (dateKey: string) => {
+    clearDailyGame();
+    setDailySaved(null);
+    const p = getDailyPuzzle(dateKey);
+    dailyGameRef.current = p;
+    navigate("daily-game", "right");
+  };
+
   // ── Geste retour Android ──────────────────────────────────────────────────
   React.useEffect(() => {
     const onBack = () => {
@@ -169,6 +177,7 @@ function AppContent({ onReady }: AppContentProps) {
         hasSavedGame={!!dailySaved && dailySaved.dateKey === getTodayKey()}
         onStartPast={handleStartPast}
         onResumePast={handleResumePast}
+        onAbandonAndStartPast={handleAbandonAndStartPast}
         savedPastDateKey={dailySaved?.isCatchup ? dailySaved.dateKey : undefined}
         onBack={handleBackDaily}
       />

@@ -103,7 +103,8 @@
     "play_past": "RECUPERAR",
     "status_not_played": "Não jogado",
     "result_catchup": "Recuperado",
-    "catch_up_blocked": "Termine primeiro o seu desafio atual"
+    "catch_up_blocked": "Há um desafio em curso. Pode abandoná-lo para jogar este.",
+    "catch_up_abandon_btn": "ABANDONAR E JOGAR"
   },
   "stats": {
     "title_sub": "MINHAS",

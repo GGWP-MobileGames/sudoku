@@ -103,7 +103,8 @@
     "play_past": "NACHHOLEN",
     "status_not_played": "Nicht gespielt",
     "result_catchup": "Nachgeholt",
-    "catch_up_blocked": "Beende zuerst deine aktuelle Herausforderung"
+    "catch_up_blocked": "Eine Aufgabe läuft noch. Du kannst sie aufgeben, um diese zu spielen.",
+    "catch_up_abandon_btn": "AUFGEBEN UND SPIELEN"
   },
   "stats": {
     "title_sub": "MEINE",

@@ -103,7 +103,8 @@
     "play_past": "RATTRAPER",
     "status_not_played": "Non joué",
     "result_catchup": "Rattrapé",
-    "catch_up_blocked": "Terminez d'abord votre défi en cours"
+    "catch_up_blocked": "Un défi est en cours. Vous pouvez l'abandonner pour jouer ce rattrapage.",
+    "catch_up_abandon_btn": "ABANDONNER ET JOUER"
   },
   "stats": {
     "title_sub": "MES",

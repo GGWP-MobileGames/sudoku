@@ -17,13 +17,14 @@ import { formatTime } from "../utils/storage";
 const COLOR_CATCHUP = "#4A8C8C";
 
 interface Props {
-  onStart:           () => void;
-  onResume:          () => void;
-  onBack:            () => void;
-  hasSavedGame?:     boolean;     // partie du jour en cours
-  onStartPast:       (dateKey: string) => void;
-  onResumePast:      (dateKey: string) => void;
-  savedPastDateKey?: string;      // rattrapage en cours (dateKey)
+  onStart:                () => void;
+  onResume:               () => void;
+  onBack:                 () => void;
+  hasSavedGame?:          boolean;     // partie du jour en cours
+  onStartPast:            (dateKey: string) => void;
+  onResumePast:           (dateKey: string) => void;
+  onAbandonAndStartPast:  (dateKey: string) => void;
+  savedPastDateKey?:      string;      // rattrapage en cours (dateKey)
 }
 
 function getThirtyDaysAgoKey(): string {
@@ -111,7 +112,7 @@ const cal = StyleSheet.create({
   cellText:  { fontSize: 12 },
 });
 
-export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSavedGame, onStartPast, onResumePast, savedPastDateKey }: Props) {
+export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSavedGame, onStartPast, onResumePast, onAbandonAndStartPast, savedPastDateKey }: Props) {
   const { colors, settings, t } = useSettings();
   const { isTablet } = useResponsive();
   const [todayRecord, setTodayRecord] = useState<DailyRecord | null>(null);
@@ -347,11 +348,25 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
                     </View>
                   </>
                 )}
-                {/* Message si un autre défi est en cours */}
+                {/* Message + bouton abandon si un autre défi est en cours */}
                 {isInWindow && !rec?.completed && !rec?.failed && hasActiveGame && !isCatchupInProgress && (
-                  <Text style={[modal.blockedMsg, { color: colors.textSecondary }]}>
-                    {t('daily.catch_up_blocked')}
-                  </Text>
+                  <View style={{ gap: 12, marginTop: 4 }}>
+                    <Text style={[modal.blockedMsg, { color: colors.textSecondary }]}>
+                      {t('daily.catch_up_blocked')}
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setSelectedDay(null);
+                        onAbandonAndStartPast(key);
+                      }}
+                      style={[modal.playBtn, { backgroundColor: "#E05040", borderColor: "#E05040" }]}
+                      activeOpacity={0.75}
+                    >
+                      <Text style={[modal.playTxt, { color: "#FFFFFF" }]}>
+                        {t("daily.catch_up_abandon_btn")}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
                 )}
               </View>
 

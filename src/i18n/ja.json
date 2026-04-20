@@ -103,7 +103,8 @@
     "play_past": "プレイ",
     "status_not_played": "未プレイ",
     "result_catchup": "補完",
-    "catch_up_blocked": "現在の挑戦を終えてからにしてください"
+    "catch_up_blocked": "挑戦が進行中です。放棄してこのチャレンジを始めることができます。",
+    "catch_up_abandon_btn": "放棄してプレイ"
   },
   "stats": {
     "title_sub": "マイ",

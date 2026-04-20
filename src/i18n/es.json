@@ -103,7 +103,8 @@
     "play_past": "RECUPERAR",
     "status_not_played": "No jugado",
     "result_catchup": "Recuperado",
-    "catch_up_blocked": "Termina primero tu desafío actual"
+    "catch_up_blocked": "Hay un desafío en curso. Puedes abandonarlo para jugar este.",
+    "catch_up_abandon_btn": "ABANDONAR Y JUGAR"
   },
   "stats": {
     "title_sub": "MIS",
