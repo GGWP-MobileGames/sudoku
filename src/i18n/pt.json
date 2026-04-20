@@ -98,7 +98,12 @@
     "day_3": "Q",
     "day_4": "S",
     "day_5": "S",
-    "day_6": "D"
+    "day_6": "D",
+    "legend_catchup": "Recuperado",
+    "play_past": "RECUPERAR",
+    "status_not_played": "Não jogado",
+    "result_catchup": "Recuperado",
+    "catch_up_blocked": "Termine primeiro o seu desafio atual"
   },
   "stats": {
     "title_sub": "MINHAS",

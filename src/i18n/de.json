@@ -98,7 +98,12 @@
     "day_3": "D",
     "day_4": "F",
     "day_5": "S",
-    "day_6": "S"
+    "day_6": "S",
+    "legend_catchup": "Nachgeholt",
+    "play_past": "NACHHOLEN",
+    "status_not_played": "Nicht gespielt",
+    "result_catchup": "Nachgeholt",
+    "catch_up_blocked": "Beende zuerst deine aktuelle Herausforderung"
   },
   "stats": {
     "title_sub": "MEINE",

@@ -55,8 +55,8 @@ function AppContent({ onReady }: AppContentProps) {
       Platform.OS !== "web" ? new Promise(resolve => setTimeout(resolve, 2000)) : Promise.resolve(),
     ]).then(([welcomed, saved]) => {
       const today = getTodayKey();
-      if (saved && saved.dateKey !== today) {
-        // Partie d'un jour précédent → la noter comme tentée et effacer la sauvegarde
+      if (saved && saved.dateKey !== today && !saved.isCatchup) {
+        // Partie d'un jour précédent (non-rattrapage) → la noter comme tentée et effacer
         saveDailyRecord({
           dateKey:   saved.dateKey,
           seconds:   saved.seconds   ?? 0,
@@ -65,7 +65,8 @@ function AppContent({ onReady }: AppContentProps) {
           completed: false,
         });
         clearDailyGame();
-      } else if (saved && saved.dateKey === today) {
+      } else if (saved) {
+        // Partie du jour ou rattrapage en cours → recharger
         setDailySaved(saved);
       }
       const initialScreen: Screen = welcomed ? "home" : "welcome";
@@ -100,6 +101,19 @@ function AppContent({ onReady }: AppContentProps) {
   const handleBackSettings = () => navigate("home", "down");
   const handleGoDaily      = () => navigate("daily", "right");
   const handleBackDaily    = () => navigate("home", "left");
+
+  const handleStartPast = (dateKey: string) => {
+    const p = getDailyPuzzle(dateKey);
+    dailyGameRef.current = p;
+    setDailySaved(null);
+    navigate("daily-game", "right");
+  };
+
+  const handleResumePast = (dateKey: string) => {
+    const p = getDailyPuzzle(dateKey);
+    dailyGameRef.current = p;
+    navigate("daily-game", "right");
+  };
 
   // ── Geste retour Android ──────────────────────────────────────────────────
   React.useEffect(() => {
@@ -152,7 +166,10 @@ function AppContent({ onReady }: AppContentProps) {
           dailyGameRef.current = p;
           navigate("daily-game", "right");
         }}
-        hasSavedGame={!!dailySaved}
+        hasSavedGame={!!dailySaved && dailySaved.dateKey === getTodayKey()}
+        onStartPast={handleStartPast}
+        onResumePast={handleResumePast}
+        savedPastDateKey={dailySaved?.isCatchup ? dailySaved.dateKey : undefined}
         onBack={handleBackDaily}
       />
     );
@@ -170,7 +187,8 @@ function AppContent({ onReady }: AppContentProps) {
         dailyDateKey={dailySaved?.dateKey ?? dailyGameRef.current?.dateKey ?? getTodayKey()}
         onBackToHome={() => {
           loadDailyGame().then(s => {
-            setDailySaved(s && s.dateKey === getTodayKey() ? s : null);
+            const today = getTodayKey();
+            setDailySaved(s && (s.dateKey === today || s.isCatchup) ? s : null);
           });
           navigate("home", "left");
         }}

@@ -98,7 +98,12 @@
     "day_3": "T",
     "day_4": "F",
     "day_5": "S",
-    "day_6": "S"
+    "day_6": "S",
+    "legend_catchup": "Caught up",
+    "play_past": "PLAY",
+    "status_not_played": "Not played",
+    "result_catchup": "Caught up",
+    "catch_up_blocked": "Finish your current challenge first"
   },
   "stats": {
     "title_sub": "MY",

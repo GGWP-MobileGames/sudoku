@@ -4,7 +4,7 @@ import database from "./puzzleDatabase.json";
 import type { Grid } from "./sudoku";
 import { addHistory, type SavedGame } from "./storage";
 
-export type DailySavedGame = Omit<SavedGame, "savedAt"> & { dateKey: string };
+export type DailySavedGame = Omit<SavedGame, "savedAt"> & { dateKey: string; isCatchup?: boolean };
 
 export interface DailyRecord {
   dateKey:   string;
@@ -12,7 +12,8 @@ export interface DailyRecord {
   mistakes:  number;
   hints:     number;
   completed: boolean;
-  failed?:   boolean; // nombre max d'erreurs atteint
+  failed?:   boolean;   // nombre max d'erreurs atteint
+  isCatchup?: boolean;  // partie de rattrapage (jour passé)
 }
 
 const MONTH_NAMES = [

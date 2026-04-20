@@ -13,19 +13,33 @@ import {
 } from "../utils/dailyChallenge";
 import { formatTime } from "../utils/storage";
 
+// Couleur du rattrapage (bleu-vert)
+const COLOR_CATCHUP = "#4A8C8C";
+
 interface Props {
-  onStart:      () => void;
-  onResume:     () => void;
-  onBack:       () => void;
-  hasSavedGame?: boolean;
+  onStart:           () => void;
+  onResume:          () => void;
+  onBack:            () => void;
+  hasSavedGame?:     boolean;     // partie du jour en cours
+  onStartPast:       (dateKey: string) => void;
+  onResumePast:      (dateKey: string) => void;
+  savedPastDateKey?: string;      // rattrapage en cours (dateKey)
 }
 
-function MonthCalendar({ records, year, month, colors, onDayPress, t }: {
+function getThirtyDaysAgoKey(): string {
+  const d = new Date();
+  d.setDate(d.getDate() - 30);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+
+function MonthCalendar({ records, year, month, colors, onDayPress, t, savedPastDateKey }: {
   records: DailyRecord[]; year: number; month: number; colors: ColorTheme;
   onDayPress: (key: string, rec: DailyRecord | null) => void;
   t: (key: string) => string;
+  savedPastDateKey?: string;
 }) {
   const today = getTodayKey();
+  const thirtyDaysAgo = getThirtyDaysAgoKey();
   const firstDay = new Date(year, month, 1);
   // Décalage lundi=0
   let startDow = firstDay.getDay() - 1;
@@ -35,7 +49,6 @@ function MonthCalendar({ records, year, month, colors, onDayPress, t }: {
   const cells: (number | null)[] = [];
   for (let i = 0; i < startDow; i++) cells.push(null);
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
-  // Compléter jusqu'à 42 pour 6 lignes
   while (cells.length % 7 !== 0) cells.push(null);
 
   return (
@@ -47,29 +60,41 @@ function MonthCalendar({ records, year, month, colors, onDayPress, t }: {
         if (!d) return <View key={`e-${i}`} style={cal.empty} />;
         const key = `${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
         const rec = records.find(r => r.dateKey === key);
-        const isToday = key === today;
-        const done     = rec?.completed;
-        const failed   = rec && !rec.completed && rec.failed;
-        const attempted = rec && !rec.completed && !rec.failed;
-        const isFuture = key > today;
+        const isToday    = key === today;
+        const isFuture   = key > today;
+        const isPast     = key < today;
+        const isCatchupActive = savedPastDateKey === key; // rattrapage en cours pour ce jour
+        const isInWindow = isPast && key >= thirtyDaysAgo; // dans la fenêtre de 30 jours
+
+        const done        = rec?.completed && !rec?.isCatchup;
+        const doneCatchup = rec?.completed && rec?.isCatchup;
+        const failed      = rec && !rec.completed && rec.failed;
+        const attempted   = rec && !rec.completed && !rec.failed && !rec.isCatchup;
+
+        const isTappable = !isFuture && (isToday || isInWindow || !!rec);
+
         return (
           <TouchableOpacity
             key={key}
-            onPress={() => !isFuture && onDayPress(key, rec ?? null)}
-            activeOpacity={isFuture ? 1 : 0.7}
+            onPress={() => isTappable && onDayPress(key, rec ?? null)}
+            activeOpacity={isTappable ? 0.7 : 1}
             style={[
               cal.cell,
-              done      && { backgroundColor: COLORS.gold },
-              failed    && { backgroundColor: '#E05040' },
-              attempted && { backgroundColor: colors.borderThin },
-              isToday   && { borderWidth: 1.5, borderColor: colors.borderBox },
+              done         && { backgroundColor: COLORS.gold },
+              doneCatchup  && { backgroundColor: COLOR_CATCHUP },
+              failed       && { backgroundColor: '#E05040' },
+              attempted    && { backgroundColor: colors.borderThin },
+              isToday      && { borderWidth: 1.5, borderColor: colors.borderBox },
+              isCatchupActive && { borderWidth: 1.5, borderColor: COLOR_CATCHUP },
             ]}
           >
             <Text style={[
               cal.cellText,
-              { color: isFuture ? colors.borderThin : (done || failed) ? "#FFFFFF" : colors.textPrimary },
-              done   && { color: "#1A1A1A" },
-              isToday && { fontWeight: "700" },
+              { color: isFuture ? colors.borderThin : (done || doneCatchup || failed) ? "#FFFFFF" : colors.textPrimary },
+              done        && { color: "#1A1A1A" },
+              doneCatchup && { color: "#FFFFFF" },
+              isToday     && { fontWeight: "700" },
+              !isTappable && !isFuture && { color: colors.borderThin }, // hors fenêtre, pas jouable
             ]}>{d}</Text>
           </TouchableOpacity>
         );
@@ -86,7 +111,7 @@ const cal = StyleSheet.create({
   cellText:  { fontSize: 12 },
 });
 
-export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSavedGame }: Props) {
+export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSavedGame, onStartPast, onResumePast, savedPastDateKey }: Props) {
   const { colors, settings, t } = useSettings();
   const { isTablet } = useResponsive();
   const [todayRecord, setTodayRecord] = useState<DailyRecord | null>(null);
@@ -102,15 +127,14 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
   const [calMonth, setCalMonth] = React.useState(new Date().getMonth());
   const [selectedDay, setSelectedDay] = React.useState<{ key: string; rec: DailyRecord | null } | null>(null);
 
-  // Streak : compte les jours consécutifs complétés jusqu'à aujourd'hui (inclus si complété)
+  // Streak : compte les jours consécutifs complétés (hors rattrapage) jusqu'à aujourd'hui
   const streak = React.useMemo(() => {
     const isCompleted = (d: Date) => {
       const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-      return !!allRecords.find(r => r.dateKey === key && r.completed);
+      return !!allRecords.find(r => r.dateKey === key && r.completed && !r.isCatchup);
     };
-    const today = new Date();
-    // Si aujourd'hui n'est pas complété, on part d'hier
-    const start = isCompleted(today) ? today : new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+    const todayDate = new Date();
+    const start = isCompleted(todayDate) ? todayDate : new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate() - 1);
     let count = 0;
     const d = new Date(start);
     while (isCompleted(d)) {
@@ -128,6 +152,11 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
   const alreadyPlayed = !!todayRecord || !!hasSavedGame;
   const completed     = todayRecord?.completed;
   const failed        = !!(todayRecord?.failed);
+
+  // Détermine si on peut lancer un rattrapage (aucun défi actif en cours)
+  const hasActiveGame = hasSavedGame || !!savedPastDateKey;
+
+  const thirtyDaysAgo = getThirtyDaysAgoKey();
 
   return (
     <SafeAreaView style={[s.safe, { backgroundColor: colors.bg }]}>
@@ -227,13 +256,23 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
             <Text style={[s.calLegendText, { color: colors.textSecondary }]}>{t('daily.legend_done')}</Text>
             <View style={[s.calLegendDot, { backgroundColor: '#E05040', marginLeft: 12 }]} />
             <Text style={[s.calLegendText, { color: colors.textSecondary }]}>{t('daily.legend_failed')}</Text>
+            <View style={[s.calLegendDot, { backgroundColor: COLOR_CATCHUP, marginLeft: 12 }]} />
+            <Text style={[s.calLegendText, { color: colors.textSecondary }]}>{t('daily.legend_catchup')}</Text>
             <View style={[s.calLegendDot, { backgroundColor: colors.borderThin, marginLeft: 12 }]} />
             <Text style={[s.calLegendText, { color: colors.textSecondary }]}>{t('daily.legend_tried')}</Text>
           </View>
-          <MonthCalendar records={allRecords} year={calYear} month={calMonth} colors={colors} onDayPress={(key, rec) => setSelectedDay({ key, rec })} t={t} />
+          <MonthCalendar
+            records={allRecords}
+            year={calYear}
+            month={calMonth}
+            colors={colors}
+            onDayPress={(key, rec) => setSelectedDay({ key, rec })}
+            t={t}
+            savedPastDateKey={savedPastDateKey}
+          />
         </View>
 
-        {/* Bouton jouer — après le calendrier */}
+        {/* Bouton jouer aujourd'hui — après le calendrier */}
         {!completed && !failed && (
           <TouchableOpacity
             onPress={alreadyPlayed ? onResume : onStart}
@@ -247,64 +286,103 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
         )}
 
       </ScrollView>
+
       {/* Modal détail d'un jour */}
-      {selectedDay && (
-        <TouchableOpacity
-          style={[modal.backdrop]}
-          activeOpacity={1}
-          onPress={() => setSelectedDay(null)}
-        >
-          <TouchableOpacity activeOpacity={1} onPress={e => e.stopPropagation()}
-            style={[modal.card, { backgroundColor: colors.bg, borderColor: colors.borderBox }]}
+      {selectedDay && (() => {
+        const { key, rec } = selectedDay;
+        const isPastKey    = key < today;
+        const isInWindow   = isPastKey && key >= thirtyDaysAgo;
+        const isCatchupInProgress = savedPastDateKey === key;
+
+        // États jouables pour un jour passé
+        const canPlayPast   = isInWindow && !rec?.completed && !rec?.failed && !hasActiveGame && !isCatchupInProgress;
+        const canResumePast = isCatchupInProgress;
+
+        return (
+          <TouchableOpacity
+            style={[modal.backdrop]}
+            activeOpacity={1}
+            onPress={() => setSelectedDay(null)}
           >
-            <Text style={[modal.date, { color: colors.textSecondary }]}>
-              {formatDayI18n(selectedDay.key).toUpperCase()}
-            </Text>
-            <View style={[modal.divider, { backgroundColor: colors.borderThin }]} />
-            <View style={modal.rows}>
-              <View style={modal.row}>
-                <Text style={[modal.label, { color: colors.textSecondary }]}>{t('daily.result_label')}</Text>
-                <Text style={[modal.value, {
-                  color: !selectedDay.rec ? colors.textSecondary
-                    : selectedDay.rec.completed ? COLORS.gold
-                    : selectedDay.rec.failed    ? '#E05040'
-                    : colors.textSecondary
-                }]}>
-                  {!selectedDay.rec ? "—"
-                    : selectedDay.rec.completed ? t("daily.done")
-                    : selectedDay.rec.failed    ? t("daily.failed_result")
-                    : t("daily.tried")}
-                </Text>
-              </View>
-              <View style={modal.row}>
-                <Text style={[modal.label, { color: colors.textSecondary }]}>{t('daily.time_label')}</Text>
-                <Text style={[modal.value, { color: colors.textPrimary }]}>
-                  {selectedDay.rec ? formatTime(selectedDay.rec.seconds) : "—"}
-                </Text>
-              </View>
-              <View style={modal.row}>
-                <Text style={[modal.label, { color: colors.textSecondary }]}>{t('daily.errors_label')}</Text>
-                <Text style={[modal.value, { color: colors.textPrimary }]}>
-                  {selectedDay.rec ? String(selectedDay.rec.mistakes) : "—"}
-                </Text>
-              </View>
-              <View style={modal.row}>
-                <Text style={[modal.label, { color: colors.textSecondary }]}>{t('daily.hints_used_label')}</Text>
-                <Text style={[modal.value, { color: colors.textPrimary }]}>
-                  {selectedDay.rec ? String(selectedDay.rec.hints) : "—"}
-                </Text>
-              </View>
-            </View>
-            <TouchableOpacity
-              onPress={() => setSelectedDay(null)}
-              style={[modal.closeBtn, { borderColor: colors.borderBox }]}
-              activeOpacity={0.7}
+            <TouchableOpacity activeOpacity={1} onPress={e => e.stopPropagation()}
+              style={[modal.card, { backgroundColor: colors.bg, borderColor: colors.borderBox }]}
             >
-              <Text style={[modal.closeTxt, { color: colors.textPrimary }]}>{t('daily.close')}</Text>
+              <Text style={[modal.date, { color: colors.textSecondary }]}>
+                {formatDayI18n(key).toUpperCase()}
+              </Text>
+              <View style={[modal.divider, { backgroundColor: colors.borderThin }]} />
+              <View style={modal.rows}>
+                <View style={modal.row}>
+                  <Text style={[modal.label, { color: colors.textSecondary }]}>{t('daily.result_label')}</Text>
+                  <Text style={[modal.value, {
+                    color: !rec ? (isCatchupInProgress ? COLOR_CATCHUP : colors.textSecondary)
+                      : rec.completed && rec.isCatchup ? COLOR_CATCHUP
+                      : rec.completed ? COLORS.gold
+                      : rec.failed    ? '#E05040'
+                      : colors.textSecondary
+                  }]}>
+                    {!rec
+                      ? (isCatchupInProgress ? t("daily.status_ongoing") : t("daily.status_not_played"))
+                      : rec.completed && rec.isCatchup ? t("daily.result_catchup")
+                      : rec.completed ? t("daily.done")
+                      : rec.failed    ? t("daily.failed_result")
+                      : t("daily.tried")}
+                  </Text>
+                </View>
+                {rec && (
+                  <>
+                    <View style={modal.row}>
+                      <Text style={[modal.label, { color: colors.textSecondary }]}>{t('daily.time_label')}</Text>
+                      <Text style={[modal.value, { color: colors.textPrimary }]}>
+                        {formatTime(rec.seconds)}
+                      </Text>
+                    </View>
+                    <View style={modal.row}>
+                      <Text style={[modal.label, { color: colors.textSecondary }]}>{t('daily.errors_label')}</Text>
+                      <Text style={[modal.value, { color: colors.textPrimary }]}>{rec.mistakes}</Text>
+                    </View>
+                    <View style={modal.row}>
+                      <Text style={[modal.label, { color: colors.textSecondary }]}>{t('daily.hints_used_label')}</Text>
+                      <Text style={[modal.value, { color: colors.textPrimary }]}>{rec.hints}</Text>
+                    </View>
+                  </>
+                )}
+                {/* Message si un autre défi est en cours */}
+                {isInWindow && !rec?.completed && !rec?.failed && hasActiveGame && !isCatchupInProgress && (
+                  <Text style={[modal.blockedMsg, { color: colors.textSecondary }]}>
+                    {t('daily.catch_up_blocked')}
+                  </Text>
+                )}
+              </View>
+
+              {/* Bouton rattrapage */}
+              {(canPlayPast || canResumePast) && (
+                <TouchableOpacity
+                  onPress={() => {
+                    setSelectedDay(null);
+                    if (canResumePast) onResumePast(key);
+                    else onStartPast(key);
+                  }}
+                  style={[modal.playBtn, { backgroundColor: COLOR_CATCHUP, borderColor: COLOR_CATCHUP }]}
+                  activeOpacity={0.75}
+                >
+                  <Text style={[modal.playTxt, { color: "#FFFFFF" }]}>
+                    {canResumePast ? t("daily.resume") : t("daily.play_past")}
+                  </Text>
+                </TouchableOpacity>
+              )}
+
+              <TouchableOpacity
+                onPress={() => setSelectedDay(null)}
+                style={[modal.closeBtn, { borderColor: colors.borderBox }]}
+                activeOpacity={0.7}
+              >
+                <Text style={[modal.closeTxt, { color: colors.textPrimary }]}>{t('daily.close')}</Text>
+              </TouchableOpacity>
             </TouchableOpacity>
           </TouchableOpacity>
-        </TouchableOpacity>
-      )}
+        );
+      })()}
     </SafeAreaView>
   );
 }
@@ -325,7 +403,10 @@ const modal = StyleSheet.create({
   row:     { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   label:   { fontSize: 12, fontWeight: "700", letterSpacing: 2 },
   value:   { fontSize: 16, fontWeight: "300" },
-  closeBtn:{ borderWidth: 1, paddingVertical: 10, alignItems: "center", marginTop: 4 },
+  blockedMsg: { fontSize: 12, fontStyle: "italic", textAlign: "center", marginTop: 4 },
+  playBtn: { paddingVertical: 14, alignItems: "center", borderWidth: 2, marginTop: 4 },
+  playTxt: { fontSize: 12, fontWeight: "700", letterSpacing: 3 },
+  closeBtn:{ borderWidth: 1, paddingVertical: 10, alignItems: "center" },
   closeTxt:{ fontSize: 12, fontWeight: "700", letterSpacing: 2.5 },
 });
 
@@ -369,7 +450,7 @@ const s = StyleSheet.create({
   calMonthLabel: { fontSize: 14, fontWeight: "600", letterSpacing: 1 },
   calArrow:   { padding: 8 },
   calArrowText: { fontSize: 22, fontWeight: "300", lineHeight: 22 },
-  calLegend:  { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6 },
+  calLegend:  { flexDirection: "row", alignItems: "center", justifyContent: "center", flexWrap: "wrap", gap: 6 },
   calLegendDot:  { width: 10, height: 10, borderRadius: 5 },
   calLegendText: { fontSize: 12 },
 });

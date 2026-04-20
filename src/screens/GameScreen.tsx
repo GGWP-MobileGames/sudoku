@@ -50,6 +50,8 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
   // Capturer le dateKey au montage — ne jamais utiliser getTodayKey() dynamiquement
   // pour éviter le bug minuit (partie commencée hier, quittée après minuit)
   const gameDateKey = useRef<string>(dailyDateKey ?? getTodayKey()).current;
+  // Partie de rattrapage si c'est un défi quotidien d'un jour passé
+  const isCatchup = isDaily && gameDateKey !== getTodayKey();
 
   const mistakesAnim = useRef(new Animated.Value(1)).current;
   const prevMistakesRef = useRef(0);
@@ -215,6 +217,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
           puzzle, solution,
           mistakes: mistakesRef.current, hintsLeft: hintsLeftRef.current, seconds: secondsRef.current,
           dateKey: gameDateKey,
+          isCatchup,
         });
       } catch (e) { console.warn("saveDailyGame failed", e); }
     }, 2000);
@@ -226,7 +229,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
       setSelected(null);
       setVictoryReady(false);
       if (isDaily) {
-        saveDailyRecord({ dateKey: gameDateKey, seconds: secondsRef.current, mistakes: mistakesRef.current, hints: hintsPerGame - hintsLeftRef.current, completed: true });
+        saveDailyRecord({ dateKey: gameDateKey, seconds: secondsRef.current, mistakes: mistakesRef.current, hints: hintsPerGame - hintsLeftRef.current, completed: true, isCatchup });
         recordDailyInHistory(secondsRef.current, mistakesRef.current);
         clearDailyGame();
       }
@@ -242,7 +245,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
       const hintsUsed = hintsPerGame - hintsLeftRef.current;
       setDefeatStats({ seconds: secondsRef.current, mistakes: mistakesRef.current, hintsUsed });
       if (isDaily) {
-        saveDailyRecord({ dateKey: gameDateKey, seconds: secondsRef.current, mistakes: mistakesRef.current, hints: hintsUsed, completed: false, failed: true }).catch(() => {});
+        saveDailyRecord({ dateKey: gameDateKey, seconds: secondsRef.current, mistakes: mistakesRef.current, hints: hintsUsed, completed: false, failed: true, isCatchup }).catch(() => {});
         recordDailyFailureInHistory(secondsRef.current, mistakesRef.current);
         clearDailyGame();
       } else {
@@ -257,7 +260,9 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
   const headerBlock = (
     <View style={styles.header}>
       <TouchableOpacity onPress={async () => {
-          if (!completed && isDaily) {
+          if (!completed && isDaily && !isCatchup) {
+            // Pour les défis du jour, on sauvegarde la progression (état "tenté")
+            // Pour les rattrapages, on ne crée pas de record : le jour reste "non joué"
             saveDailyRecord({ dateKey: gameDateKey, seconds: secondsRef.current, mistakes: mistakesRef.current, hints: hintsPerGame - hintsLeftRef.current, completed: false }).catch(() => {});
           }
           flushSave();

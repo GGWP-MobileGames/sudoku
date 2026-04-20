@@ -98,7 +98,12 @@
     "day_3": "木",
     "day_4": "金",
     "day_5": "土",
-    "day_6": "日"
+    "day_6": "日",
+    "legend_catchup": "補完",
+    "play_past": "プレイ",
+    "status_not_played": "未プレイ",
+    "result_catchup": "補完",
+    "catch_up_blocked": "現在の挑戦を終えてからにしてください"
   },
   "stats": {
     "title_sub": "マイ",

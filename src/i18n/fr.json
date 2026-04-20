@@ -98,7 +98,12 @@
     "day_3": "J",
     "day_4": "V",
     "day_5": "S",
-    "day_6": "D"
+    "day_6": "D",
+    "legend_catchup": "Rattrapé",
+    "play_past": "RATTRAPER",
+    "status_not_played": "Non joué",
+    "result_catchup": "Rattrapé",
+    "catch_up_blocked": "Terminez d'abord votre défi en cours"
   },
   "stats": {
     "title_sub": "MES",

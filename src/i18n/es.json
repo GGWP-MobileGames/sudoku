@@ -98,7 +98,12 @@
     "day_3": "J",
     "day_4": "V",
     "day_5": "S",
-    "day_6": "D"
+    "day_6": "D",
+    "legend_catchup": "Recuperado",
+    "play_past": "RECUPERAR",
+    "status_not_played": "No jugado",
+    "result_catchup": "Recuperado",
+    "catch_up_blocked": "Termina primero tu desafío actual"
   },
   "stats": {
     "title_sub": "MIS",
