@@ -122,6 +122,9 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
     if (blitzModeRef.current) {
       const cellValue = gridRef.current[r]?.[c] ?? 0;
 
+      // Toujours mettre à jour selected pour que la surbrillance groupe suive le tap
+      setSelected([r, c]);
+
       // Auto-sélection : clic sur une case remplie → sélectionne son chiffre
       if (cellValue !== 0 && blitzAutoSelectRef.current) {
         setBlitzNumber(cellValue);
