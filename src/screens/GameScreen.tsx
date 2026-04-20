@@ -340,7 +340,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         hypothesisCells={hypothesisCells}
       />
       {/* Bouton Test — ancré juste au-dessus du coin supérieur droit de la grille */}
-      {!completed && !defeatPending && (
+      {!completed && !defeatPending && settings.testModeEnabled && (
         <View style={styles.hypothesisAnchor} pointerEvents="box-none">
           {hypothesisMode ? (
             <View style={{ flexDirection: "row", gap: 6 }}>

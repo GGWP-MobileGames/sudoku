@@ -156,6 +156,8 @@
     "blitz_auto_select_desc": "Taper une case déjà remplie sélectionne son chiffre",
     "auto_notes": "Notes automatiques",
     "auto_notes_desc": "Appui long sur Notes pour remplir ou effacer automatiquement tous les candidats valides",
+    "test_mode": "Mode Test",
+    "test_mode_desc": "Affiche le bouton T pour tester une hypothèse sans risquer d'erreurs",
     "haptic_feedback": "Retour haptique",
     "haptic_feedback_desc": "Vibrations lors du placement d'un chiffre ou d'une erreur",
     "hints_label": "Nombre d'indices disponibles",

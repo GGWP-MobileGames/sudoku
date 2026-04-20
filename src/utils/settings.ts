@@ -17,6 +17,7 @@ export interface AppSettings {
   blitzAutoSelect:    boolean;  // blitz : clic sur case remplie → sélectionne son chiffre
   autoNotesEnabled:   boolean;  // appui long sur Notes → remplit/vide tous les candidats
   freePlayMode:       boolean;  // jeu libre : pas de comptage d'erreurs, révélées en fin de partie
+  testModeEnabled:    boolean;  // afficher le bouton T (mode Test/Hypothèse)
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -36,6 +37,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   blitzAutoSelect:    true,
   autoNotesEnabled:   false,
   freePlayMode:       false,
+  testModeEnabled:    false,
 };
 
 const KEY = "app_settings";

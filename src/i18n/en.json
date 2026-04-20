@@ -156,6 +156,8 @@
     "blitz_auto_select_desc": "Tapping a filled cell selects its digit",
     "auto_notes": "Auto-notes",
     "auto_notes_desc": "Long press Notes to automatically fill or clear all valid candidates",
+    "test_mode": "Test Mode",
+    "test_mode_desc": "Shows the T button to test a hypothesis without risking errors",
     "haptic_feedback": "Haptic feedback",
     "haptic_feedback_desc": "Vibrations when placing a number or making an error",
     "hints_label": "Available hints",

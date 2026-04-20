@@ -156,6 +156,8 @@
     "blitz_auto_select_desc": "Auf ein ausgefülltes Feld tippen wählt seine Ziffer aus",
     "auto_notes": "Auto-Notizen",
     "auto_notes_desc": "Noten-Taste lang drücken, um alle gültigen Kandidaten automatisch auszufüllen oder zu löschen",
+    "test_mode": "Testmodus",
+    "test_mode_desc": "Zeigt die T-Schaltfläche zum Testen einer Hypothese ohne Fehlerrisiko",
     "haptic_feedback": "Haptisches Feedback",
     "haptic_feedback_desc": "Vibrationen beim Platzieren einer Zahl oder bei einem Fehler",
     "hints_label": "Verfügbare Tipps",

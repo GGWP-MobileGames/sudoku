@@ -156,6 +156,8 @@
     "blitz_auto_select_desc": "Tocar una celda rellena selecciona su dígito",
     "auto_notes": "Notas automáticas",
     "auto_notes_desc": "Mantén pulsado Notas para rellenar o borrar automáticamente todos los candidatos válidos",
+    "test_mode": "Modo Test",
+    "test_mode_desc": "Muestra el botón T para probar una hipótesis sin arriesgar errores",
     "haptic_feedback": "Respuesta háptica",
     "haptic_feedback_desc": "Vibraciones al colocar un número o cometer un error",
     "hints_label": "Pistas disponibles",
