@@ -121,8 +121,10 @@
     "result_daily": "★ Tagesaufgabe",
     "result_failed": "✕ Verloren",
     "result_ongoing": "Laufend",
+    "col_score": "WERTUNG",
     "col_hints_used": "TIPPS\nGENUTZT",
-    "result_daily_short": "★ Tages-\naufgabe"
+    "result_daily_short": "★ Tages-\naufgabe",
+    "score_note": "Die Wertung ist die angepasste Lösungszeit: +10% pro genutztem Tipp, +5% pro Fehler. Eine niedrigere Wertung ist besser. Die reine Zeit wird darunter angezeigt."
   },
   "settings": {
     "title_sub": "MEINE",

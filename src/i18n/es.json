@@ -121,8 +121,10 @@
     "result_daily": "★ Desafío del día",
     "result_failed": "✕ Fallida",
     "result_ongoing": "En curso",
+    "col_score": "PUNTOS",
     "col_hints_used": "PISTAS\nUSADAS",
-    "result_daily_short": "★ Desafío\ndel día"
+    "result_daily_short": "★ Desafío\ndel día",
+    "score_note": "La puntuación es el tiempo de resolución ajustado: +10% por pista usada, +5% por error. Una puntuación más baja es mejor. El tiempo real se muestra debajo."
   },
   "settings": {
     "title_sub": "MIS",

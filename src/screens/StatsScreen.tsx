@@ -4,7 +4,7 @@ import {
   StatusBar, ScrollView, ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { loadStats, loadHistory, formatTime, formatDate, type AllStats, type HistoryEntry } from "../utils/storage";
+import { loadStats, loadHistory, formatTime, formatDate, calcAdjustedTime, type AllStats, type HistoryEntry } from "../utils/storage";
 import { useSettings } from "../context/SettingsContext";
 import { COLORS, type ColorTheme } from "../utils/theme";
 import { useResponsive } from "../hooks/useResponsive";
@@ -112,18 +112,28 @@ export default function StatsScreen({ onBack }: Props) {
           <View style={[tbl.table, { borderColor: colors.borderBox }]}>
             <View style={[tbl.row, { backgroundColor: colors.bgCard }]}>
               <Text style={[tbl.cell, tbl.wide, tbl.hTxt, { color: colors.textSecondary }]}>{t('stats.col_level')}</Text>
-              <Text style={[tbl.cell, tbl.hTxt, { color: colors.textSecondary }]}>{t('stats.col_best_time')}</Text>
+              <Text style={[tbl.cell, tbl.hTxt, { color: colors.textSecondary }]}>{t('stats.col_score')}</Text>
               <Text style={[tbl.cell, tbl.hTxt, { color: colors.textSecondary }]}>{t('stats.col_errors')}</Text>
               <Text style={[tbl.cell, tbl.hTxt, { color: colors.textSecondary }]}>{t('stats.col_hints_used')}</Text>
             </View>
             {LEVELS.map(({ key }, i) => {
-              const s = stats[key] ?? { gamesPlayed: 0, totalSeconds: 0, totalErrors: 0, bestTime: null, bestTimeErrors: 0 };
+              const s = stats[key] ?? { gamesPlayed: 0, totalSeconds: 0, totalErrors: 0, bestTime: null, bestTimeErrors: 0, bestTimeHints: 0 };
+              const adjTime = s.bestTime !== null
+                ? calcAdjustedTime(s.bestTime, s.bestTimeHints ?? 0, s.bestTimeErrors)
+                : null;
               return (
                 <View key={key} style={[tbl.row, i < LEVELS.length - 1 && { borderBottomWidth: 0.5, borderBottomColor: colors.borderThin }]}>
                   <Text style={[tbl.cell, tbl.wide, tbl.bold, { color: colors.textPrimary }]}>{t(`home.difficulties.${key}`)}</Text>
-                  <Text style={[tbl.cell, { color: s.bestTime !== null ? COLORS.gold : colors.textPrimary, fontWeight: s.bestTime !== null ? "700" : "400" }]}>
-                    {s.bestTime !== null ? formatTime(s.bestTime) : "—"}
-                  </Text>
+                  <View style={[tbl.cellView, { flexDirection: "column", gap: 1 }]}>
+                    <Text style={{ color: adjTime !== null ? COLORS.gold : colors.textPrimary, fontWeight: adjTime !== null ? "700" : "400", fontSize: 13, textAlign: "center" }}>
+                      {adjTime !== null ? formatTime(Math.round(adjTime)) : "—"}
+                    </Text>
+                    {adjTime !== null && s.bestTime !== null && (
+                      <Text style={{ color: colors.textSecondary, fontSize: 10, textAlign: "center" }}>
+                        {formatTime(s.bestTime)}
+                      </Text>
+                    )}
+                  </View>
                   <Text style={[tbl.cell, { color: colors.textPrimary }]}>
                     {s.bestTime !== null ? s.bestTimeErrors : "—"}
                   </Text>
@@ -134,6 +144,11 @@ export default function StatsScreen({ onBack }: Props) {
               );
             })}
           </View>
+
+          {/* Explication de la formule de score */}
+          <Text style={[styles.scoreNote, { color: colors.textSecondary, borderColor: colors.borderThin }]}>
+            {t('stats.score_note')}
+          </Text>
 
           <View style={styles.ornament}>
             <View style={[styles.ornamentLine, { backgroundColor: colors.borderThin }]} />
@@ -211,5 +226,6 @@ const styles = StyleSheet.create({
   ornament:     { width: "100%", flexDirection: "row", alignItems: "center", gap: 12 },
   ornamentLine: { flex: 1, height: 0.5 },
   ornamentDot:  { fontSize: 8 },
-  empty: { padding: 20, textAlign: "center", fontSize: 13, fontStyle: "italic" },
+  empty:     { padding: 20, textAlign: "center", fontSize: 13, fontStyle: "italic" },
+  scoreNote: { width: "100%", fontSize: 11, lineHeight: 17, textAlign: "center", fontStyle: "italic", paddingHorizontal: 4, borderTopWidth: 0.5, paddingTop: 10 },
 });

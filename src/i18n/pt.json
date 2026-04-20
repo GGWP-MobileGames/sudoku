@@ -121,8 +121,10 @@
     "result_daily": "★ Desafio do dia",
     "result_failed": "✕ Perdido",
     "result_ongoing": "Em andamento",
+    "col_score": "PONTOS",
     "col_hints_used": "DICAS\nUSADAS",
-    "result_daily_short": "★ Desafio\ndo dia"
+    "result_daily_short": "★ Desafio\ndo dia",
+    "score_note": "A pontuação é o tempo de resolução ajustado: +10% por dica usada, +5% por erro. Uma pontuação mais baixa é melhor. O tempo real é mostrado abaixo."
   },
   "settings": {
     "title_sub": "MINHAS",

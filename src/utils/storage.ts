@@ -36,7 +36,15 @@ export interface HistoryEntry {
   result:     GameResult;
   seconds:    number;
   mistakes:   number;
+  hintsUsed?: number; // optionnel pour rétrocompatibilité
   date:       number; // timestamp ms
+}
+
+// ─── Score ajusté ─────────────────────────────────────────────────────────────
+// Formule : temps × (1 + indices × 0.10) × (1 + erreurs × 0.05)
+// Plus bas = meilleur. Une partie parfaite (0 indice, 0 erreur) = temps brut.
+export function calcAdjustedTime(seconds: number, hintsUsed: number, mistakes: number): number {
+  return seconds * (1 + hintsUsed * 0.10) * (1 + mistakes * 0.05);
 }
 
 const KEYS = {
@@ -125,12 +133,11 @@ export async function recordCompletion(
     lvl.gamesPlayed  += 1;
     lvl.totalErrors  += mistakes;
     lvl.totalSeconds += seconds;
-    const isBetter =
-      lvl.bestTime === null ||
-      seconds < lvl.bestTime ||
-      (seconds === lvl.bestTime && mistakes < lvl.bestTimeErrors) ||
-      (seconds === lvl.bestTime && mistakes === lvl.bestTimeErrors && hintsUsed < lvl.bestTimeHints);
-    if (isBetter) {
+    const newAdj  = calcAdjustedTime(seconds, hintsUsed, mistakes);
+    const bestAdj = lvl.bestTime !== null
+      ? calcAdjustedTime(lvl.bestTime, lvl.bestTimeHints ?? 0, lvl.bestTimeErrors)
+      : Infinity;
+    if (newAdj < bestAdj) {
       lvl.bestTime       = seconds;
       lvl.bestTimeErrors = mistakes;
       lvl.bestTimeHints  = hintsUsed;
@@ -140,7 +147,7 @@ export async function recordCompletion(
     const listH: HistoryEntry[] = rawH ? JSON.parse(rawH) : [];
     const cleanH = listH.filter(e => e.result !== "ongoing");
     await AsyncStorage.setItem(KEYS.history, JSON.stringify(cleanH));
-    await addHistory({ difficulty, result: "win", seconds, mistakes, date: Date.now() });
+    await addHistory({ difficulty, result: "win", seconds, mistakes, hintsUsed, date: Date.now() });
   } catch (e) { console.warn("recordCompletion error", e); }
 }
 

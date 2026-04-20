@@ -121,8 +121,10 @@
     "result_daily": "★ Défi du jour",
     "result_failed": "✕ Échouée",
     "result_ongoing": "En cours",
+    "col_score": "SCORE",
     "col_hints_used": "INDICES\nUTILISÉS",
-    "result_daily_short": "★ Défi\ndu jour"
+    "result_daily_short": "★ Défi\ndu jour",
+    "score_note": "Le score correspond au temps de résolution ajusté : +10 % par indice utilisé, +5 % par erreur. Un score plus bas est meilleur. Le temps brut est affiché en dessous."
   },
   "settings": {
     "title_sub": "MES",

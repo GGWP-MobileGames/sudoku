@@ -121,8 +121,10 @@
     "result_daily": "★ Daily challenge",
     "result_failed": "✕ Failed",
     "result_ongoing": "In progress",
+    "col_score": "SCORE",
     "col_hints_used": "HINTS\nUSED",
-    "result_daily_short": "★ Daily\nChallenge"
+    "result_daily_short": "★ Daily\nChallenge",
+    "score_note": "The score is the adjusted completion time: +10% per hint used, +5% per error. A lower score is better. The raw time is shown below."
   },
   "settings": {
     "title_sub": "MY",
