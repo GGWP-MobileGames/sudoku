@@ -133,7 +133,7 @@
     "col_score": "SCORE",
     "col_hints_used": "INDICES\nUTILISÉS",
     "result_daily_short": "★ Défi\ndu jour",
-    "score_note": "Le score correspond au temps de résolution ajusté : +10 % par indice utilisé, +5 % par erreur. Un score plus bas est meilleur. Le temps brut est affiché en dessous."
+    "score_note": "Le score correspond au temps de résolution ajusté : +10 % par indice utilisé, +5 % par erreur. Un score plus bas est meilleur."
   },
   "settings": {
     "title_sub": "MES",

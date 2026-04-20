@@ -133,7 +133,7 @@
     "col_score": "PONTOS",
     "col_hints_used": "DICAS\nUSADAS",
     "result_daily_short": "★ Desafio\ndo dia",
-    "score_note": "A pontuação é o tempo de resolução ajustado: +10% por dica usada, +5% por erro. Uma pontuação mais baixa é melhor. O tempo real é mostrado abaixo."
+    "score_note": "A pontuação é o tempo de resolução ajustado: +10% por dica usada, +5% por erro. Uma pontuação mais baixa é melhor."
   },
   "settings": {
     "title_sub": "MINHAS",

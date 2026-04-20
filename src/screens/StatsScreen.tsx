@@ -124,16 +124,9 @@ export default function StatsScreen({ onBack }: Props) {
               return (
                 <View key={key} style={[tbl.row, i < LEVELS.length - 1 && { borderBottomWidth: 0.5, borderBottomColor: colors.borderThin }]}>
                   <Text style={[tbl.cell, tbl.wide, tbl.bold, { color: colors.textPrimary }]}>{t(`home.difficulties.${key}`)}</Text>
-                  <View style={[tbl.cellView, { flexDirection: "column", gap: 1 }]}>
-                    <Text style={{ color: adjTime !== null ? COLORS.gold : colors.textPrimary, fontWeight: adjTime !== null ? "700" : "400", fontSize: 13, textAlign: "center" }}>
-                      {adjTime !== null ? formatTime(Math.round(adjTime)) : "—"}
-                    </Text>
-                    {adjTime !== null && s.bestTime !== null && (
-                      <Text style={{ color: colors.textSecondary, fontSize: 10, textAlign: "center" }}>
-                        {formatTime(s.bestTime)}
-                      </Text>
-                    )}
-                  </View>
+                  <Text style={[tbl.cell, { color: adjTime !== null ? COLORS.gold : colors.textPrimary, fontWeight: adjTime !== null ? "700" : "400" }]}>
+                    {adjTime !== null ? formatTime(Math.round(adjTime)) : "—"}
+                  </Text>
                   <Text style={[tbl.cell, { color: colors.textPrimary }]}>
                     {s.bestTime !== null ? s.bestTimeErrors : "—"}
                   </Text>
