@@ -575,7 +575,7 @@ const styles = StyleSheet.create({
   // Bouton Test — ancré en absolu juste au-dessus du bord supérieur droit de la grille
   hypothesisAnchor: {
     position: "absolute",
-    top: -21,   // moitié de la hauteur du bouton (34/2 ≈ 17) + quelques px de marge
+    top: -40,   // bouton (34px) + espace (6px) au-dessus du bord supérieur de la grille
     right: 8,
     zIndex: 10,
   },
