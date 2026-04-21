@@ -250,7 +250,7 @@
     "subtitle": "COMO JOGAR",
     "back": "MENU",
     "section_1_title": "OBJETIVO",
-    "section_1_body": "O Sudoku joga-se numa grelha de 81 casas, dividida em nove blocos de 3×3. No início, alguns dígitos já estão colocados: são as suas pistas. O seu objetivo é preencher todas as casas vazias com um dígito de 1 a 9, respeitando uma única regra — explicada a seguir.",
+    "section_1_body": "O Sudoku joga-se numa grelha de 81 casas, dividida em nove blocos de 3×3. No início, alguns dígitos já estão colocados: são as suas pistas. O seu objetivo é preencher todas as casas vazias com um dígito de 1 a 9, respeitando três regras simples — explicadas a seguir.",
     "section_2_title": "CADA LINHA",
     "section_2_body": "Em cada linha horizontal, os nove dígitos de 1 a 9 devem aparecer uma única vez. Por outras palavras, um mesmo dígito nunca se pode repetir na mesma linha.",
     "section_3_title": "CADA COLUNA",

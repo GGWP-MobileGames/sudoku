@@ -250,7 +250,7 @@
     "subtitle": "COMMENT JOUER",
     "back": "MENU",
     "section_1_title": "OBJECTIF",
-    "section_1_body": "Le Sudoku se joue sur une grille de 81 cases, divisée en neuf blocs de 3×3. Au départ, quelques chiffres sont déjà placés : ce sont vos indices. Votre but est de remplir toutes les cases vides avec un chiffre de 1 à 9, en respectant une règle unique — expliquée ci-dessous.",
+    "section_1_body": "Le Sudoku se joue sur une grille de 81 cases, divisée en neuf blocs de 3×3. Au départ, quelques chiffres sont déjà placés : ce sont vos indices. Votre but est de remplir toutes les cases vides avec un chiffre de 1 à 9, en respectant trois règles simples — expliquées ci-dessous.",
     "section_2_title": "CHAQUE LIGNE",
     "section_2_body": "Sur chaque ligne horizontale, les neuf chiffres de 1 à 9 doivent apparaître une seule fois. Autrement dit, un même chiffre ne peut jamais se répéter sur la même ligne.",
     "section_3_title": "CHAQUE COLONNE",

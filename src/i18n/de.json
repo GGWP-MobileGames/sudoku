@@ -250,7 +250,7 @@
     "subtitle": "SO WIRD GESPIELT",
     "back": "MENÜ",
     "section_1_title": "ZIEL",
-    "section_1_body": "Sudoku wird auf einem Gitter mit 81 Feldern gespielt, das in neun 3×3-Blöcke unterteilt ist. Zu Beginn sind einige Ziffern bereits vorgegeben: das sind deine Hinweise. Dein Ziel ist es, jedes leere Feld mit einer Ziffer von 1 bis 9 zu füllen — nach einer einzigen Regel, die unten erklärt wird.",
+    "section_1_body": "Sudoku wird auf einem Gitter mit 81 Feldern gespielt, das in neun 3×3-Blöcke unterteilt ist. Zu Beginn sind einige Ziffern bereits vorgegeben: das sind deine Hinweise. Dein Ziel ist es, jedes leere Feld mit einer Ziffer von 1 bis 9 zu füllen — nach drei einfachen Regeln, die unten erklärt werden.",
     "section_2_title": "JEDE ZEILE",
     "section_2_body": "In jeder waagerechten Zeile müssen die neun Ziffern von 1 bis 9 jeweils genau einmal vorkommen. Anders gesagt: dieselbe Ziffer darf sich in einer Zeile nie wiederholen.",
     "section_3_title": "JEDE SPALTE",

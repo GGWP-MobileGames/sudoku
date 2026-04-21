@@ -250,7 +250,7 @@
     "subtitle": "CÓMO JUGAR",
     "back": "MENÚ",
     "section_1_title": "OBJETIVO",
-    "section_1_body": "El Sudoku se juega en una cuadrícula de 81 casillas, dividida en nueve bloques de 3×3. Al inicio, algunos dígitos ya están colocados: son tus pistas. Tu objetivo es rellenar todas las casillas vacías con un dígito del 1 al 9, respetando una única regla — explicada a continuación.",
+    "section_1_body": "El Sudoku se juega en una cuadrícula de 81 casillas, dividida en nueve bloques de 3×3. Al inicio, algunos dígitos ya están colocados: son tus pistas. Tu objetivo es rellenar todas las casillas vacías con un dígito del 1 al 9, respetando tres reglas sencillas — explicadas a continuación.",
     "section_2_title": "CADA FILA",
     "section_2_body": "En cada fila horizontal, los nueve dígitos del 1 al 9 deben aparecer una sola vez. Dicho de otro modo, un mismo dígito nunca puede repetirse en la misma fila.",
     "section_3_title": "CADA COLUMNA",

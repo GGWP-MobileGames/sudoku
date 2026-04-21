@@ -250,7 +250,7 @@
     "subtitle": "HOW TO PLAY",
     "back": "MENU",
     "section_1_title": "OBJECTIVE",
-    "section_1_body": "Sudoku is played on a grid of 81 cells, divided into nine 3×3 blocks. At the start, a few digits are already placed: these are your clues. Your goal is to fill every empty cell with a digit from 1 to 9, following a single rule — explained below.",
+    "section_1_body": "Sudoku is played on a grid of 81 cells, divided into nine 3×3 blocks. At the start, a few digits are already placed: these are your clues. Your goal is to fill every empty cell with a digit from 1 to 9, following three simple rules — explained below.",
     "section_2_title": "EACH ROW",
     "section_2_body": "On each horizontal row, the nine digits from 1 to 9 must appear exactly once. In other words, the same digit can never repeat on the same row.",
     "section_3_title": "EACH COLUMN",
