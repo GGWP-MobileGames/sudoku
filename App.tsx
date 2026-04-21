@@ -10,6 +10,7 @@ import GameScreen     from "./src/screens/GameScreen";
 import StatsScreen    from "./src/screens/StatsScreen";
 import SettingsScreen      from "./src/screens/SettingsScreen";
 import DailyChallengeScreen from "./src/screens/DailyChallengeScreen";
+import RulesScreen       from "./src/screens/RulesScreen";
 import GGWPScreen         from "./src/screens/GGWPScreen";
 import AsyncStorage       from "@react-native-async-storage/async-storage";
 import { getDailyPuzzle, loadDailyGame, getTodayKey, saveDailyRecord, clearDailyGame, type DailySavedGame } from "./src/utils/dailyChallenge";
@@ -22,7 +23,7 @@ if (Platform.OS !== "web") {
   SplashScreen.preventAutoHideAsync();
 }
 
-type Screen = "home" | "game" | "stats" | "settings" | "daily" | "daily-game" | "welcome";
+type Screen = "home" | "game" | "stats" | "settings" | "daily" | "daily-game" | "welcome" | "rules";
 
 interface AppContentProps {
   onReady: () => void;
@@ -101,6 +102,8 @@ function AppContent({ onReady }: AppContentProps) {
   const handleBackSettings = () => navigate("home", "down");
   const handleGoDaily      = () => navigate("daily", "right");
   const handleBackDaily    = () => navigate("home", "left");
+  const handleGoRules      = () => navigate("rules", "up");
+  const handleBackRules    = () => navigate("home", "down");
 
   // Lance un défi passé. `mode` :
   //  - "start"   : nouveau rattrapage (aucune partie active)
@@ -126,6 +129,7 @@ function AppContent({ onReady }: AppContentProps) {
       if (screen === "settings")   { handleBackSettings(); return true; }
       if (screen === "daily")      { handleBackDaily();    return true; }
       if (screen === "daily-game") { handleBackToHome();   return true; }
+      if (screen === "rules")      { handleBackRules();    return true; }
       return false;
     };
     const sub = BackHandler.addEventListener("hardwareBackPress", onBack);
@@ -146,6 +150,9 @@ function AppContent({ onReady }: AppContentProps) {
     );
     if (screen === "settings") return (
       <SettingsScreen onBack={handleBackSettings} />
+    );
+    if (screen === "rules") return (
+      <RulesScreen onBack={handleBackRules} />
     );
     if (screen === "welcome") return (
       <GGWPScreen
@@ -206,6 +213,7 @@ function AppContent({ onReady }: AppContentProps) {
         onSettings={handleGoSettings}
         onDaily={handleGoDaily}
         onInfo={() => navigate("welcome", "left")}
+        onRules={handleGoRules}
         onDifficultyChange={setDifficulty}
       />
     );

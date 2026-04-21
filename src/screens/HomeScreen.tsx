@@ -29,10 +29,11 @@ interface Props {
   onSettings:           () => void;
   onDaily:              () => void;
   onInfo:               () => void;
+  onRules:              () => void;
   onDifficultyChange:   (difficulty: Difficulty) => void;
 }
 
-export default function HomeScreen({ initialDifficulty, onStart, onResume, onStats, onSettings, onDaily, onInfo, onDifficultyChange }: Props) {
+export default function HomeScreen({ initialDifficulty, onStart, onResume, onStats, onSettings, onDaily, onInfo, onRules, onDifficultyChange }: Props) {
   const { colors, settings, t } = useSettings();
   const { scale, isTablet } = useResponsive();
   const [selected,    setSelected]    = useState<Difficulty>(initialDifficulty);
@@ -96,6 +97,9 @@ export default function HomeScreen({ initialDifficulty, onStart, onResume, onSta
         <View style={{ width: "100%", alignItems: "center" }}>
           <TouchableOpacity onPress={onInfo} style={styles.infoBtn} activeOpacity={0.7}>
             <Text style={[styles.infoBtnText, { color: colors.textSecondary }]}>GGWP</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onRules} style={styles.rulesBtn} activeOpacity={0.7} accessibilityLabel="Rules">
+            <Ionicons name="help-circle-outline" size={24} color={colors.textSecondary} />
           </TouchableOpacity>
           <TouchableOpacity onPress={onSettings} style={styles.gearBtn} activeOpacity={0.7}>
             <Ionicons name="settings-sharp" size={22} color={colors.textSecondary} />
@@ -286,6 +290,7 @@ const styles = StyleSheet.create({
   scrollTablet: { maxWidth: 520, alignSelf: "center", width: "100%" },
 
   gearBtn:  { position: "absolute", top: 0, right: 0, padding: 8, zIndex: 1 },
+  rulesBtn: { position: "absolute", top: 0, right: 40, padding: 8, zIndex: 1 },
   infoBtn:     { position: "absolute", top: 0, left: 0, padding: 8, zIndex: 1 },
   infoBtnText: { fontSize: 14, fontFamily: "Cinzel_700Bold", letterSpacing: 1.5 },
 

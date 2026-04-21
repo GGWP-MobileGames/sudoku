@@ -244,5 +244,20 @@
     "p2": "Das Ziel von GGWP ist es, dir qualitativ hochwertige Mobile-Spiele anzubieten — kostenlos, werbefrei und ohne auch nur ein einziges deiner persönlichen Daten zu erheben. Dieses Sudoku ist das erste von vielen. Wenn du es satt hast, von Apps mit Werbung bombardiert, mit deinen Daten monetarisiert oder zum Bezahlen gedrängt zu werden, bist du hier genau richtig. Wir halten dich auf dem Laufenden, wenn neue Spiele verfügbar sind.",
     "p4": "Danke, dass du dir die Zeit genommen hast, das zu lesen. Viel Spaß beim Spielen!",
     "back_btn": "HAUPTMENÜ"
+  },
+  "rules": {
+    "title": "SPIELREGELN",
+    "subtitle": "SO WIRD GESPIELT",
+    "back": "MENÜ",
+    "section_1_title": "ZIEL",
+    "section_1_body": "Fülle das Gitter mit den Ziffern 1 bis 9. Nur die zu Beginn bereits platzierten Ziffern sind fest.",
+    "section_2_title": "JEDE ZEILE",
+    "section_2_body": "Jede waagerechte Zeile enthält alle Ziffern von 1 bis 9, jeweils nur einmal.",
+    "section_3_title": "JEDE SPALTE",
+    "section_3_body": "Jede senkrechte Spalte enthält alle Ziffern von 1 bis 9, jeweils nur einmal.",
+    "section_4_title": "JEDER BLOCK",
+    "section_4_body": "Jeder der neun 3×3-Blöcke enthält ebenfalls alle Ziffern von 1 bis 9, jeweils nur einmal.",
+    "section_5_title": "WIE DU VORANKOMMST",
+    "section_5_body": "Wenn eine Ziffer nirgendwo sonst in ihrer Zeile, Spalte oder ihrem Block platziert werden kann, gehört sie in dieses Feld."
   }
 }

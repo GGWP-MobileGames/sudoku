@@ -244,5 +244,20 @@
     "p2": "GGWP's mission is to offer quality mobile games — free, ad-free, and without collecting any of your personal data. This Sudoku is the first of many. If you are tired of apps that bombard you with ads, monetise your data, or push you to pay, you are in the right place. We will keep you informed when new games become available.",
     "p4": "Thank you for taking the time to read this. Enjoy the game!",
     "back_btn": "MAIN MENU"
+  },
+  "rules": {
+    "title": "GAME RULES",
+    "subtitle": "HOW TO PLAY",
+    "back": "MENU",
+    "section_1_title": "OBJECTIVE",
+    "section_1_body": "Fill the grid with the digits 1 to 9. Only the digits already in place at the start are fixed.",
+    "section_2_title": "EACH ROW",
+    "section_2_body": "Each horizontal row contains all the digits from 1 to 9, once only.",
+    "section_3_title": "EACH COLUMN",
+    "section_3_body": "Each vertical column contains all the digits from 1 to 9, once only.",
+    "section_4_title": "EACH BLOCK",
+    "section_4_body": "Each of the nine 3×3 blocks also contains all the digits from 1 to 9, once only.",
+    "section_5_title": "HOW TO PROGRESS",
+    "section_5_body": "When a digit cannot go anywhere else in its row, its column or its block, it belongs in that cell."
   }
 }

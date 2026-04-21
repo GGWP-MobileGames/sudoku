@@ -244,5 +244,20 @@
     "p2": "El objetivo de GGWP es ofrecerte aplicaciones móviles de calidad, gratuitas, sin publicidad y sin recopilar ninguno de tus datos personales. Este Sudoku es el primero de una larga lista. Si estás cansado de las aplicaciones que te bombardean con anuncios, monetizan tus datos o te empujan a pagar, estás en el lugar indicado. Te mantendremos informado cuando haya nuevos juegos disponibles.",
     "p4": "Gracias por tomarte el tiempo de leer esto. ¡Que disfrutes la partida!",
     "back_btn": "MENÚ PRINCIPAL"
+  },
+  "rules": {
+    "title": "REGLAS DEL JUEGO",
+    "subtitle": "CÓMO JUGAR",
+    "back": "MENÚ",
+    "section_1_title": "OBJETIVO",
+    "section_1_body": "Completar la cuadrícula con los dígitos del 1 al 9. Solo los dígitos ya colocados al inicio son fijos.",
+    "section_2_title": "CADA FILA",
+    "section_2_body": "Cada fila horizontal contiene todos los dígitos del 1 al 9, una sola vez.",
+    "section_3_title": "CADA COLUMNA",
+    "section_3_body": "Cada columna vertical contiene todos los dígitos del 1 al 9, una sola vez.",
+    "section_4_title": "CADA BLOQUE",
+    "section_4_body": "Cada uno de los nueve bloques 3×3 también contiene todos los dígitos del 1 al 9, una sola vez.",
+    "section_5_title": "CÓMO AVANZAR",
+    "section_5_body": "Cuando un dígito no puede colocarse en ningún otro lugar de su fila, su columna o su bloque, va en esa casilla."
   }
 }
