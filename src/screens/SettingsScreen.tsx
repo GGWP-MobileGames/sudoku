@@ -221,7 +221,7 @@ const s = StyleSheet.create({
   sectionTitle: { fontSize: 12, fontWeight: "700", letterSpacing: 2 },
   row:          { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 16, paddingVertical: 14, borderBottomWidth: 0.5 },
   rowLast:      { borderBottomWidth: 0 },
-  rowLabel:     { fontSize: 14, fontWeight: "500", flex: 1, marginRight: 12 },
+  rowLabel:     { fontSize: 14, fontWeight: "500" },
   rowDesc:      { fontSize: 12, marginTop: 2 },
   hintsInput:    { width: 64, height: 44, borderWidth: 1, textAlign: "center", fontSize: 18, fontWeight: "700", paddingVertical: 0, includeFontPadding: false, textAlignVertical: "center" },
   hintSegment:   { flexDirection: "row", gap: 0 },
