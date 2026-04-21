@@ -250,14 +250,14 @@
     "subtitle": "HOW TO PLAY",
     "back": "MENU",
     "section_1_title": "OBJECTIVE",
-    "section_1_body": "Fill the grid with the digits 1 to 9. Only the digits already in place at the start are fixed.",
+    "section_1_body": "Sudoku is played on a grid of 81 cells, divided into nine 3×3 blocks. At the start, a few digits are already placed: these are your clues. Your goal is to fill every empty cell with a digit from 1 to 9, following a single rule — explained below.",
     "section_2_title": "EACH ROW",
-    "section_2_body": "Each horizontal row contains all the digits from 1 to 9, once only.",
+    "section_2_body": "On each horizontal row, the nine digits from 1 to 9 must appear exactly once. In other words, the same digit can never repeat on the same row.",
     "section_3_title": "EACH COLUMN",
-    "section_3_body": "Each vertical column contains all the digits from 1 to 9, once only.",
+    "section_3_body": "The same rule applies to vertical columns: every digit from 1 to 9 appears exactly once, never twice.",
     "section_4_title": "EACH BLOCK",
-    "section_4_body": "Each of the nine 3×3 blocks also contains all the digits from 1 to 9, once only.",
-    "section_5_title": "HOW TO PROGRESS",
-    "section_5_body": "When a digit cannot go anywhere else in its row, its column or its block, it belongs in that cell."
+    "section_4_body": "Finally, within each 3×3 block, the nine digits must also appear exactly once. This is the least obvious constraint: always remember to check the block, not just the row and column.",
+    "section_5_title": "WHERE TO START",
+    "section_5_body": "Pick a digit, say 1. Find every row, column and block where it has already been placed: it can no longer go there. If only one cell is left available in a row, a column or a block, that is where it must go. Repeat with each digit, and the grid gradually reveals itself."
   }
 }

@@ -250,14 +250,14 @@
     "subtitle": "SO WIRD GESPIELT",
     "back": "MENÜ",
     "section_1_title": "ZIEL",
-    "section_1_body": "Fülle das Gitter mit den Ziffern 1 bis 9. Nur die zu Beginn bereits platzierten Ziffern sind fest.",
+    "section_1_body": "Sudoku wird auf einem Gitter mit 81 Feldern gespielt, das in neun 3×3-Blöcke unterteilt ist. Zu Beginn sind einige Ziffern bereits vorgegeben: das sind deine Hinweise. Dein Ziel ist es, jedes leere Feld mit einer Ziffer von 1 bis 9 zu füllen — nach einer einzigen Regel, die unten erklärt wird.",
     "section_2_title": "JEDE ZEILE",
-    "section_2_body": "Jede waagerechte Zeile enthält alle Ziffern von 1 bis 9, jeweils nur einmal.",
+    "section_2_body": "In jeder waagerechten Zeile müssen die neun Ziffern von 1 bis 9 jeweils genau einmal vorkommen. Anders gesagt: dieselbe Ziffer darf sich in einer Zeile nie wiederholen.",
     "section_3_title": "JEDE SPALTE",
-    "section_3_body": "Jede senkrechte Spalte enthält alle Ziffern von 1 bis 9, jeweils nur einmal.",
+    "section_3_body": "Dieselbe Regel gilt für senkrechte Spalten: jede Ziffer von 1 bis 9 erscheint genau einmal, niemals zweimal.",
     "section_4_title": "JEDER BLOCK",
-    "section_4_body": "Jeder der neun 3×3-Blöcke enthält ebenfalls alle Ziffern von 1 bis 9, jeweils nur einmal.",
-    "section_5_title": "WIE DU VORANKOMMST",
-    "section_5_body": "Wenn eine Ziffer nirgendwo sonst in ihrer Zeile, Spalte oder ihrem Block platziert werden kann, gehört sie in dieses Feld."
+    "section_4_body": "Und schließlich: innerhalb jedes 3×3-Blocks müssen die neun Ziffern ebenfalls genau einmal auftauchen. Das ist die am wenigsten offensichtliche Einschränkung — denke immer daran, auch den Block zu prüfen, nicht nur Zeile und Spalte.",
+    "section_5_title": "WO FÄNGST DU AN",
+    "section_5_body": "Wähle eine Ziffer, zum Beispiel die 1. Suche alle Zeilen, Spalten und Blöcke, in denen sie bereits steht: dort kann sie nicht mehr hin. Wenn in einer Zeile, Spalte oder einem Block nur noch ein mögliches Feld übrig bleibt, gehört sie genau dorthin. Wiederhole das mit jeder Ziffer, und das Gitter enthüllt sich nach und nach."
   }
 }

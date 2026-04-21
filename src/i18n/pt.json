@@ -250,14 +250,14 @@
     "subtitle": "COMO JOGAR",
     "back": "MENU",
     "section_1_title": "OBJETIVO",
-    "section_1_body": "Preencher a grelha com os dígitos de 1 a 9. Apenas os dígitos já colocados no início são fixos.",
+    "section_1_body": "O Sudoku joga-se numa grelha de 81 casas, dividida em nove blocos de 3×3. No início, alguns dígitos já estão colocados: são as suas pistas. O seu objetivo é preencher todas as casas vazias com um dígito de 1 a 9, respeitando uma única regra — explicada a seguir.",
     "section_2_title": "CADA LINHA",
-    "section_2_body": "Cada linha horizontal contém todos os dígitos de 1 a 9, uma única vez.",
+    "section_2_body": "Em cada linha horizontal, os nove dígitos de 1 a 9 devem aparecer uma única vez. Por outras palavras, um mesmo dígito nunca se pode repetir na mesma linha.",
     "section_3_title": "CADA COLUNA",
-    "section_3_body": "Cada coluna vertical contém todos os dígitos de 1 a 9, uma única vez.",
+    "section_3_body": "A mesma regra aplica-se às colunas verticais: cada dígito de 1 a 9 figura exatamente uma vez, nunca duas.",
     "section_4_title": "CADA BLOCO",
-    "section_4_body": "Cada um dos nove blocos 3×3 também contém todos os dígitos de 1 a 9, uma única vez.",
-    "section_5_title": "COMO PROGREDIR",
-    "section_5_body": "Quando um dígito não pode ser colocado em mais nenhum lugar da sua linha, coluna ou bloco, é nessa casa que ele vai."
+    "section_4_body": "Por fim, dentro de cada bloco de 3×3 casas, os nove dígitos também têm de aparecer uma única vez. É a restrição menos visível: lembre-se sempre de verificar o bloco, não apenas a linha e a coluna.",
+    "section_5_title": "POR ONDE COMEÇAR",
+    "section_5_body": "Escolha um dígito, por exemplo o 1. Identifique todas as linhas, colunas e blocos onde ele já está colocado: ali não pode voltar. Se restar apenas uma casa possível numa linha, coluna ou bloco, é aí que ele vai. Repita com cada dígito, e a grelha revela-se pouco a pouco."
   }
 }

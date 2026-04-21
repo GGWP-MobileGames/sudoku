@@ -250,14 +250,14 @@
     "subtitle": "COMMENT JOUER",
     "back": "MENU",
     "section_1_title": "OBJECTIF",
-    "section_1_body": "Compléter la grille avec les chiffres 1 à 9. Seuls les chiffres déjà en place au départ sont fixes.",
+    "section_1_body": "Le Sudoku se joue sur une grille de 81 cases, divisée en neuf blocs de 3×3. Au départ, quelques chiffres sont déjà placés : ce sont vos indices. Votre but est de remplir toutes les cases vides avec un chiffre de 1 à 9, en respectant une règle unique — expliquée ci-dessous.",
     "section_2_title": "CHAQUE LIGNE",
-    "section_2_body": "Chaque ligne horizontale contient tous les chiffres de 1 à 9, une seule fois.",
+    "section_2_body": "Sur chaque ligne horizontale, les neuf chiffres de 1 à 9 doivent apparaître une seule fois. Autrement dit, un même chiffre ne peut jamais se répéter sur la même ligne.",
     "section_3_title": "CHAQUE COLONNE",
-    "section_3_body": "Chaque colonne verticale contient tous les chiffres de 1 à 9, une seule fois.",
+    "section_3_body": "Même règle pour les colonnes verticales : chaque chiffre de 1 à 9 y figure exactement une fois, jamais deux.",
     "section_4_title": "CHAQUE BLOC",
-    "section_4_body": "Chacun des neuf blocs 3×3 contient également tous les chiffres de 1 à 9, une seule fois.",
-    "section_5_title": "COMMENT PROGRESSER",
-    "section_5_body": "Quand un chiffre ne peut se placer nulle part ailleurs dans sa ligne, sa colonne ou son bloc, il va à cette case."
+    "section_4_body": "Enfin, dans chaque bloc de 3×3 cases, les neuf chiffres doivent eux aussi apparaître une seule fois. C'est la contrainte la moins visible : pensez toujours à vérifier le bloc, pas seulement la ligne et la colonne.",
+    "section_5_title": "PAR OÙ COMMENCER",
+    "section_5_body": "Prenez un chiffre, par exemple le 1. Repérez toutes les lignes, colonnes et blocs où il est déjà placé : il ne peut plus y retourner. S'il ne reste qu'une seule case possible dans une ligne, une colonne ou un bloc, c'est forcément là qu'il va. Recommencez avec chaque chiffre, et la grille se dévoile peu à peu."
   }
 }

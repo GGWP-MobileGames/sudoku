@@ -250,14 +250,14 @@
     "subtitle": "CÓMO JUGAR",
     "back": "MENÚ",
     "section_1_title": "OBJETIVO",
-    "section_1_body": "Completar la cuadrícula con los dígitos del 1 al 9. Solo los dígitos ya colocados al inicio son fijos.",
+    "section_1_body": "El Sudoku se juega en una cuadrícula de 81 casillas, dividida en nueve bloques de 3×3. Al inicio, algunos dígitos ya están colocados: son tus pistas. Tu objetivo es rellenar todas las casillas vacías con un dígito del 1 al 9, respetando una única regla — explicada a continuación.",
     "section_2_title": "CADA FILA",
-    "section_2_body": "Cada fila horizontal contiene todos los dígitos del 1 al 9, una sola vez.",
+    "section_2_body": "En cada fila horizontal, los nueve dígitos del 1 al 9 deben aparecer una sola vez. Dicho de otro modo, un mismo dígito nunca puede repetirse en la misma fila.",
     "section_3_title": "CADA COLUMNA",
-    "section_3_body": "Cada columna vertical contiene todos los dígitos del 1 al 9, una sola vez.",
+    "section_3_body": "La misma regla se aplica a las columnas verticales: cada dígito del 1 al 9 figura exactamente una vez, jamás dos.",
     "section_4_title": "CADA BLOQUE",
-    "section_4_body": "Cada uno de los nueve bloques 3×3 también contiene todos los dígitos del 1 al 9, una sola vez.",
-    "section_5_title": "CÓMO AVANZAR",
-    "section_5_body": "Cuando un dígito no puede colocarse en ningún otro lugar de su fila, su columna o su bloque, va en esa casilla."
+    "section_4_body": "Por último, dentro de cada bloque de 3×3 casillas, los nueve dígitos también deben aparecer una sola vez. Es la restricción menos visible: recuerda siempre comprobar el bloque, no solo la fila y la columna.",
+    "section_5_title": "POR DÓNDE EMPEZAR",
+    "section_5_body": "Elige un dígito, por ejemplo el 1. Localiza todas las filas, columnas y bloques donde ya está colocado: no puede volver a aparecer allí. Si solo queda una casilla posible en una fila, una columna o un bloque, es ahí donde debe ir. Repite el ejercicio con cada dígito, y la cuadrícula se irá descubriendo poco a poco."
   }
 }
