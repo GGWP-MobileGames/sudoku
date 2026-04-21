@@ -39,3 +39,7 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# local tooling (not needed in repo)
+.claude/
+audit_puzzles.js
