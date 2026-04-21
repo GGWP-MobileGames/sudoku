@@ -14,7 +14,7 @@ import { COLORS, SPACING } from "../utils/theme";
 import { useSettings } from "../context/SettingsContext";
 import { useResponsive } from "../hooks/useResponsive";
 import { useKeyboard } from "../hooks/useKeyboard";
-import { clearOngoing, clearSavedGame, serializeNotes, serializeCellErrors, loadStats } from "../utils/storage";
+import { clearOngoing, clearSavedGame, serializeNotes, serializeCellErrors, loadStats, calcAdjustedTime } from "../utils/storage";
 import type { VictoryStats } from "../components/VictoryModal";
 import { saveDailyRecord, getTodayKey, saveDailyGame, clearDailyGame, recordDailyInHistory, recordDailyFailureInHistory } from "../utils/dailyChallenge";
 import type { Difficulty } from "../utils/puzzles";
@@ -51,8 +51,10 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
   // Capturer le dateKey au montage — ne jamais utiliser getTodayKey() dynamiquement
   // pour éviter le bug minuit (partie commencée hier, quittée après minuit)
   const gameDateKey = useRef<string>(dailyDateKey ?? getTodayKey()).current;
-  // Partie de rattrapage si c'est un défi quotidien d'un jour passé
-  const isCatchup = isDaily && gameDateKey !== getTodayKey();
+  // Partie de rattrapage si c'est un défi quotidien d'un jour passé.
+  // Figé au montage pour éviter qu'une partie démarrée à 23h55 ne bascule
+  // en "rattrapage" au passage de minuit.
+  const isCatchup = useRef<boolean>(!!isDaily && gameDateKey !== getTodayKey()).current;
 
   const mistakesAnim = useRef(new Animated.Value(1)).current;
   const prevMistakesRef = useRef(0);
@@ -239,19 +241,33 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         setVictoryStats({
           isPerfect:       hintsUsed === 0 && mistakesRef.current === 0,
           isNewRecord:     false,
-          prevBestSeconds: null,
+          prevBestAdj:     null,
           prevGamesPlayed: 0,
         });
       } else {
-        // Charger les stats AVANT enregistrement pour la comparaison
+        // Charger les stats AVANT enregistrement pour la comparaison.
+        // Comparaison en temps AJUSTÉ (cohérent avec recordCompletion).
+        const isPerfect = hintsUsed === 0 && mistakesRef.current === 0;
         loadStats().then(stats => {
           const lvl = stats[difficulty];
-          const isNew = lvl.bestTime === null || secondsRef.current < lvl.bestTime;
+          const newAdj = calcAdjustedTime(secondsRef.current, hintsUsed, mistakesRef.current);
+          const bestAdj = lvl.bestTime !== null
+            ? calcAdjustedTime(lvl.bestTime, lvl.bestTimeHints ?? 0, lvl.bestTimeErrors)
+            : null;
+          const isNew = bestAdj === null || newAdj < bestAdj;
           setVictoryStats({
-            isPerfect:       hintsUsed === 0 && mistakesRef.current === 0,
+            isPerfect,
             isNewRecord:     isNew,
-            prevBestSeconds: lvl.bestTime,
+            prevBestAdj:     bestAdj,
             prevGamesPlayed: lvl.gamesPlayed,
+          });
+        }).catch(() => {
+          // Fallback robuste : on garde au moins le badge Parfait
+          setVictoryStats({
+            isPerfect,
+            isNewRecord:     false,
+            prevBestAdj:     null,
+            prevGamesPlayed: 0,
           });
         });
       }

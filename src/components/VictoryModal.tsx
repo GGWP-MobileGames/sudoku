@@ -7,8 +7,8 @@ import { COLORS } from "../utils/theme";
 
 export interface VictoryStats {
   isPerfect:       boolean;
-  isNewRecord:     boolean;   // meilleur temps brut sur ce niveau
-  prevBestSeconds: number | null; // null = première victoire
+  isNewRecord:     boolean;      // meilleur score ajusté sur ce niveau
+  prevBestAdj:     number | null; // score ajusté précédent (null = 1ère victoire)
   prevGamesPlayed: number;
 }
 
@@ -51,7 +51,7 @@ export default function VictoryModal({
   const showRecap = !!victoryStats && (
     victoryStats.isPerfect ||
     (victoryStats.isNewRecord && victoryStats.prevGamesPlayed >= 1) ||
-    (!victoryStats.isNewRecord && victoryStats.prevBestSeconds !== null && victoryStats.prevGamesPlayed >= 1)
+    (!victoryStats.isNewRecord && victoryStats.prevBestAdj !== null && victoryStats.prevGamesPlayed >= 1)
   );
 
   useEffect(() => {
@@ -107,7 +107,7 @@ export default function VictoryModal({
   // Contenu du bloc récap
   const renderRecap = () => {
     if (!victoryStats) return null;
-    const { isPerfect, isNewRecord, prevBestSeconds, prevGamesPlayed } = victoryStats;
+    const { isPerfect, isNewRecord, prevBestAdj, prevGamesPlayed } = victoryStats;
 
     if (isPerfect) {
       return (
@@ -129,11 +129,11 @@ export default function VictoryModal({
         </Animated.View>
       );
     }
-    if (!isNewRecord && prevBestSeconds !== null && prevGamesPlayed >= 1) {
+    if (!isNewRecord && prevBestAdj !== null && prevGamesPlayed >= 1) {
       return (
         <Animated.View style={[styles.recapRowSubtle, { opacity: stat4Opacity }]}>
           <Text style={[styles.recapTextSmall, { color: colors.textSecondary }]}>
-            {t("victory.record_label")} : {formatTime(prevBestSeconds)}
+            {t("victory.record_label")} : {formatTime(Math.round(prevBestAdj))}
           </Text>
         </Animated.View>
       );
@@ -247,9 +247,11 @@ const styles = StyleSheet.create({
   recapRow: {
     width: "100%", paddingVertical: 10, paddingHorizontal: 16,
     alignItems: "center", borderWidth: 1,
+    marginTop: 8, marginBottom: 4,
   },
   recapRowSubtle: {
     width: "100%", alignItems: "center",
+    marginTop: 8, marginBottom: 4,
   },
   recapTextLarge: { fontSize: 15, fontWeight: "800", letterSpacing: 3 },
   recapTextSmall: { fontSize: 12, letterSpacing: 1.5 },

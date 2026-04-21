@@ -107,7 +107,8 @@
     "status_not_played": "Non joué",
     "result_catchup": "Rattrapé",
     "catch_up_blocked": "Un défi est en cours. Vous pouvez l'abandonner pour jouer ce rattrapage.",
-    "catch_up_abandon_btn": "ABANDONNER ET JOUER"
+    "catch_up_abandon_btn": "ABANDONNER ET JOUER",
+    "out_of_window": "Ce jour est trop ancien pour être rattrapé (au-delà de 30 jours)."
   },
   "stats": {
     "title_sub": "MES",

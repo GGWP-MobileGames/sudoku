@@ -107,7 +107,8 @@
     "status_not_played": "Não jogado",
     "result_catchup": "Recuperado",
     "catch_up_blocked": "Há um desafio em curso. Pode abandoná-lo para jogar este.",
-    "catch_up_abandon_btn": "ABANDONAR E JOGAR"
+    "catch_up_abandon_btn": "ABANDONAR E JOGAR",
+    "out_of_window": "Este dia é demasiado antigo para ser recuperado (mais de 30 dias)."
   },
   "stats": {
     "title_sub": "MINHAS",

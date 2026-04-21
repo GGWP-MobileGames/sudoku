@@ -107,7 +107,8 @@
     "status_not_played": "Nicht gespielt",
     "result_catchup": "Nachgeholt",
     "catch_up_blocked": "Eine Aufgabe läuft noch. Du kannst sie aufgeben, um diese zu spielen.",
-    "catch_up_abandon_btn": "AUFGEBEN UND SPIELEN"
+    "catch_up_abandon_btn": "AUFGEBEN UND SPIELEN",
+    "out_of_window": "Dieser Tag liegt zu weit zurück, um nachgeholt zu werden (älter als 30 Tage)."
   },
   "stats": {
     "title_sub": "MEINE",

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   View, Text, TouchableOpacity, StyleSheet,
-  StatusBar, ScrollView,
+  StatusBar, ScrollView, AppState,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSettings } from "../context/SettingsContext";
@@ -27,20 +27,14 @@ interface Props {
   savedPastDateKey?:      string;      // rattrapage en cours (dateKey)
 }
 
-function getThirtyDaysAgoKey(): string {
-  const d = new Date();
-  d.setDate(d.getDate() - 30);
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-}
-
-function MonthCalendar({ records, year, month, colors, onDayPress, t, savedPastDateKey }: {
+function MonthCalendar({ records, year, month, colors, onDayPress, t, savedPastDateKey, today, thirtyDaysAgo }: {
   records: DailyRecord[]; year: number; month: number; colors: ColorTheme;
   onDayPress: (key: string, rec: DailyRecord | null) => void;
   t: (key: string) => string;
   savedPastDateKey?: string;
+  today: string;
+  thirtyDaysAgo: string;
 }) {
-  const today = getTodayKey();
-  const thirtyDaysAgo = getThirtyDaysAgoKey();
   const firstDay = new Date(year, month, 1);
   // Décalage lundi=0
   let startDow = firstDay.getDay() - 1;
@@ -72,7 +66,9 @@ function MonthCalendar({ records, year, month, colors, onDayPress, t, savedPastD
         const failed      = rec && !rec.completed && rec.failed;
         const attempted   = rec && !rec.completed && !rec.failed && !rec.isCatchup;
 
-        const isTappable = !isFuture && (isToday || isInWindow || !!rec);
+        // Tous les jours passés sont cliquables (hors futur) : si hors fenêtre, la modal
+        // affiche le message out_of_window plutôt qu'un dead-end.
+        const isTappable = !isFuture;
 
         return (
           <TouchableOpacity
@@ -117,7 +113,10 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
   const { isTablet } = useResponsive();
   const [todayRecord, setTodayRecord] = useState<DailyRecord | null>(null);
   const [allRecords,  setAllRecords]  = useState<DailyRecord[]>([]);
-  const today = getTodayKey();
+  // Recalculé au passage de minuit / retour en foreground pour que la date "aujourd'hui",
+  // la fenêtre de 30 jours et la streak restent synchronisées sans reload manuel.
+  const [todayTick, setTodayTick] = useState(() => getTodayKey());
+  const today = todayTick;
   const formatDayI18n = (dateKey: string) => {
     const [y, m, d] = dateKey.split("-").map(Number);
     const monthKey = "months." + (m - 1);
@@ -128,14 +127,16 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
   const [calMonth, setCalMonth] = React.useState(new Date().getMonth());
   const [selectedDay, setSelectedDay] = React.useState<{ key: string; rec: DailyRecord | null } | null>(null);
 
-  // Streak : compte les jours consécutifs complétés (hors rattrapage) jusqu'à aujourd'hui
+  // Streak : compte les jours consécutifs complétés (hors rattrapage) jusqu'à aujourd'hui.
+  // Dépend de `today` pour se recalculer au passage de minuit.
   const streak = React.useMemo(() => {
     const isCompleted = (d: Date) => {
       const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
       return !!allRecords.find(r => r.dateKey === key && r.completed && !r.isCatchup);
     };
-    const todayDate = new Date();
-    const start = isCompleted(todayDate) ? todayDate : new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate() - 1);
+    const [ty, tm, td] = today.split("-").map(Number);
+    const todayDate = new Date(ty, tm - 1, td);
+    const start = isCompleted(todayDate) ? todayDate : new Date(ty, tm - 1, td - 1);
     let count = 0;
     const d = new Date(start);
     while (isCompleted(d)) {
@@ -143,11 +144,24 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
       d.setDate(d.getDate() - 1);
     }
     return count;
-  }, [allRecords]);
+  }, [allRecords, today]);
 
   useEffect(() => {
     loadTodayRecord().then(setTodayRecord);
     loadDailyRecords().then(setAllRecords);
+  }, []);
+
+  // Re-sync de la date courante : minuterie + retour en foreground.
+  useEffect(() => {
+    const refresh = () => {
+      const k = getTodayKey();
+      setTodayTick(prev => (prev !== k ? k : prev));
+    };
+    const id = setInterval(refresh, 60_000);
+    const sub = AppState.addEventListener("change", state => {
+      if (state === "active") refresh();
+    });
+    return () => { clearInterval(id); sub.remove(); };
   }, []);
 
   const alreadyPlayed = !!todayRecord || !!hasSavedGame;
@@ -157,7 +171,13 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
   // Détermine si on peut lancer un rattrapage (aucun défi actif en cours)
   const hasActiveGame = hasSavedGame || !!savedPastDateKey;
 
-  const thirtyDaysAgo = getThirtyDaysAgoKey();
+  // Dépend de `today` pour glisser au passage de minuit.
+  const thirtyDaysAgo = React.useMemo(() => {
+    const [y, m, d] = today.split("-").map(Number);
+    const dt = new Date(y, m - 1, d);
+    dt.setDate(dt.getDate() - 30);
+    return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,"0")}-${String(dt.getDate()).padStart(2,"0")}`;
+  }, [today]);
 
   return (
     <SafeAreaView style={[s.safe, { backgroundColor: colors.bg }]}>
@@ -253,14 +273,22 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
             </TouchableOpacity>
           </View>
           <View style={s.calLegend}>
-            <View style={[s.calLegendDot, { backgroundColor: COLORS.gold }]} />
-            <Text style={[s.calLegendText, { color: colors.textSecondary }]}>{t('daily.legend_done')}</Text>
-            <View style={[s.calLegendDot, { backgroundColor: '#E05040', marginLeft: 12 }]} />
-            <Text style={[s.calLegendText, { color: colors.textSecondary }]}>{t('daily.legend_failed')}</Text>
-            <View style={[s.calLegendDot, { backgroundColor: COLOR_CATCHUP, marginLeft: 12 }]} />
-            <Text style={[s.calLegendText, { color: colors.textSecondary }]}>{t('daily.legend_catchup')}</Text>
-            <View style={[s.calLegendDot, { backgroundColor: colors.borderThin, marginLeft: 12 }]} />
-            <Text style={[s.calLegendText, { color: colors.textSecondary }]}>{t('daily.legend_tried')}</Text>
+            <View style={s.calLegendItem}>
+              <View style={[s.calLegendDot, { backgroundColor: COLORS.gold }]} />
+              <Text style={[s.calLegendText, { color: colors.textSecondary }]}>{t('daily.legend_done')}</Text>
+            </View>
+            <View style={s.calLegendItem}>
+              <View style={[s.calLegendDot, { backgroundColor: '#E05040' }]} />
+              <Text style={[s.calLegendText, { color: colors.textSecondary }]}>{t('daily.legend_failed')}</Text>
+            </View>
+            <View style={s.calLegendItem}>
+              <View style={[s.calLegendDot, { backgroundColor: COLOR_CATCHUP }]} />
+              <Text style={[s.calLegendText, { color: colors.textSecondary }]}>{t('daily.legend_catchup')}</Text>
+            </View>
+            <View style={s.calLegendItem}>
+              <View style={[s.calLegendDot, { backgroundColor: colors.borderThin }]} />
+              <Text style={[s.calLegendText, { color: colors.textSecondary }]}>{t('daily.legend_tried')}</Text>
+            </View>
           </View>
           <MonthCalendar
             records={allRecords}
@@ -270,6 +298,8 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
             onDayPress={(key, rec) => setSelectedDay({ key, rec })}
             t={t}
             savedPastDateKey={savedPastDateKey}
+            today={today}
+            thirtyDaysAgo={thirtyDaysAgo}
           />
         </View>
 
@@ -347,6 +377,12 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
                       <Text style={[modal.value, { color: colors.textPrimary }]}>{rec.hints}</Text>
                     </View>
                   </>
+                )}
+                {/* Message "hors fenêtre de rattrapage" : jour > 30 jours, non joué ou tenté sans échec */}
+                {isPastKey && !isInWindow && !rec?.completed && !rec?.failed && !isCatchupInProgress && (
+                  <Text style={[modal.blockedMsg, { color: colors.textSecondary, marginTop: 4 }]}>
+                    {t('daily.out_of_window')}
+                  </Text>
                 )}
                 {/* Message + bouton abandon si un autre défi est en cours */}
                 {isInWindow && !rec?.completed && !rec?.failed && hasActiveGame && !isCatchupInProgress && (
@@ -465,7 +501,8 @@ const s = StyleSheet.create({
   calMonthLabel: { fontSize: 14, fontWeight: "600", letterSpacing: 1 },
   calArrow:   { padding: 8 },
   calArrowText: { fontSize: 22, fontWeight: "300", lineHeight: 22 },
-  calLegend:  { flexDirection: "row", alignItems: "center", justifyContent: "center", flexWrap: "wrap", gap: 6 },
+  calLegend:     { flexDirection: "row", alignItems: "center", justifyContent: "center", flexWrap: "wrap", columnGap: 12, rowGap: 4 },
+  calLegendItem: { flexDirection: "row", alignItems: "center", gap: 6 },
   calLegendDot:  { width: 10, height: 10, borderRadius: 5 },
   calLegendText: { fontSize: 12 },
 });

@@ -102,26 +102,20 @@ function AppContent({ onReady }: AppContentProps) {
   const handleGoDaily      = () => navigate("daily", "right");
   const handleBackDaily    = () => navigate("home", "left");
 
-  const handleStartPast = (dateKey: string) => {
-    const p = getDailyPuzzle(dateKey);
-    dailyGameRef.current = p;
-    setDailySaved(null);
+  // Lance un défi passé. `mode` :
+  //  - "start"   : nouveau rattrapage (aucune partie active)
+  //  - "resume"  : reprise d'un rattrapage en cours (savedGame conservé)
+  //  - "abandon" : efface la partie active avant de démarrer le rattrapage
+  const openPastDay = (dateKey: string, mode: "start" | "resume" | "abandon") => {
+    if (mode === "abandon") clearDailyGame();
+    if (mode !== "resume")  setDailySaved(null);
+    dailyGameRef.current = getDailyPuzzle(dateKey);
     navigate("daily-game", "right");
   };
 
-  const handleResumePast = (dateKey: string) => {
-    const p = getDailyPuzzle(dateKey);
-    dailyGameRef.current = p;
-    navigate("daily-game", "right");
-  };
-
-  const handleAbandonAndStartPast = (dateKey: string) => {
-    clearDailyGame();
-    setDailySaved(null);
-    const p = getDailyPuzzle(dateKey);
-    dailyGameRef.current = p;
-    navigate("daily-game", "right");
-  };
+  const handleStartPast             = (dateKey: string) => openPastDay(dateKey, "start");
+  const handleResumePast            = (dateKey: string) => openPastDay(dateKey, "resume");
+  const handleAbandonAndStartPast   = (dateKey: string) => openPastDay(dateKey, "abandon");
 
   // ── Geste retour Android ──────────────────────────────────────────────────
   React.useEffect(() => {

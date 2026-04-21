@@ -107,7 +107,8 @@
     "status_not_played": "Not played",
     "result_catchup": "Caught up",
     "catch_up_blocked": "A challenge is in progress. You can abandon it to play this one.",
-    "catch_up_abandon_btn": "ABANDON AND PLAY"
+    "catch_up_abandon_btn": "ABANDON AND PLAY",
+    "out_of_window": "This day is too old to be caught up (beyond 30 days)."
   },
   "stats": {
     "title_sub": "MY",
