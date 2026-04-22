@@ -37,8 +37,9 @@ interface Props {
   isDaily?:      boolean;
   dailyDateKey?: string; // dateKey figé au démarrage de la partie, indépendant de l'heure
   onBackToHome:  () => void;
+  onSettings?:   () => void;
 }
-export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, dailyDateKey, onBackToHome }: Props) {
+export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, dailyDateKey, onBackToHome, onSettings }: Props) {
   const { colors, settings, t } = useSettings();
   const { gridSize, isLandscape, isCompact, deviceType } = useResponsive();
   // Sur desktop/web, toujours le layout portrait centré (plus esthétique)
@@ -81,7 +82,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
     isFixed, isError,
     secondsRef, mistakesRef, hintsLeftRef,
     autoFillNotes,
-    freePlayErrors, clearFreePlayErrors,
+    freePlayErrors, clearFreePlayErrors, clearFreePlayErrorCells,
     canUndo, undo,
     hypothesisMode, hypothesisCells,
     enterHypothesis, validateHypothesis, cancelHypothesis,
@@ -152,6 +153,15 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
     }
     prevMistakesRef.current = mistakes;
   }, [mistakes]);
+
+  // Séparation entre l'affichage de l'overlay Free Play et la présence des erreurs.
+  // Fermer l'overlay ne doit plus effacer les cellules rouges — elles persistent
+  // jusqu'à correction manuelle ou clic sur le bouton "Retirer les erreurs".
+  const [freePlayOverlayDismissed, setFreePlayOverlayDismissed] = React.useState(false);
+  React.useEffect(() => {
+    // Quand de nouvelles erreurs sont détectées (ou effacées), l'overlay redevient éligible.
+    setFreePlayOverlayDismissed(false);
+  }, [freePlayErrors]);
 
   const [victoryReady,  setVictoryReady]  = React.useState(false);
   const [victoryStats,  setVictoryStats]  = React.useState<VictoryStats | null>(null);
@@ -382,6 +392,21 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         }
         hypothesisCells={hypothesisCells}
       />
+      {/* Bouton "Retirer les erreurs" — miroir du T, ancré au-dessus du coin supérieur gauche.
+          Visible uniquement en Jeu Libre tant que des cellules erronées subsistent. */}
+      {effectiveFreePlay && !!freePlayErrors && freePlayErrors.length > 0 && (
+        <View style={styles.freePlayEraseAnchor} pointerEvents="box-none">
+          <TouchableOpacity
+            onPress={clearFreePlayErrorCells}
+            style={[styles.hypothesisCircleBtn, { backgroundColor: colors.error }]}
+            activeOpacity={0.75}
+            accessibilityLabel={t('game.clear_errors')}
+          >
+            <Text style={styles.hypothesisCircleText}>⌫</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
       {/* Bouton Test — ancré juste au-dessus du coin supérieur droit de la grille */}
       {!completed && !defeatPending && settings.testModeEnabled && (
         <View style={styles.hypothesisAnchor} pointerEvents="box-none">
@@ -422,6 +447,30 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         >
           <Text style={[styles.pausedText, { color: colors.textPrimary }]}>{t('game.paused_text')}</Text>
           <Text style={[styles.pausedSub, { color: colors.textSecondary }]}>{t('game.paused_sub')}</Text>
+          <View style={styles.pausedActions}>
+            {onSettings && (
+              <TouchableOpacity
+                onPress={(e) => { e.stopPropagation(); setPaused(false); onSettings(); }}
+                style={[styles.pausedBtn, { borderColor: colors.borderBox }]}
+                activeOpacity={0.7}
+              >
+                <Text style={[styles.pausedBtnText, { color: colors.textPrimary }]}>
+                  {t('game.pause_settings')}
+                </Text>
+              </TouchableOpacity>
+            )}
+            {!isDaily && (
+              <TouchableOpacity
+                onPress={(e) => { e.stopPropagation(); setPaused(false); setBlitzNumber(null); newGame(); }}
+                style={[styles.pausedBtn, { borderColor: colors.borderBox }]}
+                activeOpacity={0.7}
+              >
+                <Text style={[styles.pausedBtnText, { color: colors.textPrimary }]}>
+                  {t('game.pause_restart')}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </TouchableOpacity>
       )}
     </TouchableOpacity>
@@ -512,7 +561,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
       />
 
       {/* Overlay jeu libre : grille remplie mais cases erronées */}
-      {!!freePlayErrors && freePlayErrors.length > 0 && (
+      {!!freePlayErrors && freePlayErrors.length > 0 && !freePlayOverlayDismissed && (
         <View style={[styles.freePlayOverlayWrap, { backgroundColor: colors.bg + "CC" }]}>
           <View style={[styles.freePlayCard, { backgroundColor: colors.bgCard, borderColor: colors.borderBox }]}>
             <Text style={[styles.freePlayTitle, { color: colors.textPrimary }]}>
@@ -524,7 +573,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
                 : t('game.free_play_msg_many').replace('{{n}}', String(freePlayErrors.length))}
             </Text>
             <TouchableOpacity
-              onPress={clearFreePlayErrors}
+              onPress={() => setFreePlayOverlayDismissed(true)}
               style={[styles.freePlayBtn, { borderColor: colors.borderBox }]}
               activeOpacity={0.7}
             >
@@ -623,6 +672,13 @@ const styles = StyleSheet.create({
     right: 8,
     zIndex: 10,
   },
+  // Bouton "Retirer les erreurs" — miroir à gauche du bouton Test
+  freePlayEraseAnchor: {
+    position: "absolute",
+    top: -40,
+    left: 8,
+    zIndex: 10,
+  },
   hypothesisCircleBtn: {
     width: 34,
     height: 34,
@@ -644,6 +700,21 @@ const styles = StyleSheet.create({
   },
   pausedText: { fontSize: 22, fontWeight: "800", letterSpacing: 8, color: COLORS.textPrimary },
   pausedSub:  { fontSize: 12, color: COLORS.textSecondary, letterSpacing: 1 },
+  pausedActions: {
+    marginTop: 24,
+    flexDirection: "row",
+    gap: 10,
+  },
+  pausedBtn: {
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderWidth: 1,
+  },
+  pausedBtnText: {
+    fontSize: 11,
+    fontWeight: "700",
+    letterSpacing: 2,
+  },
 
   // Pavé masqué (mais toujours dans le layout)
   padWrapper: { width: "100%" },

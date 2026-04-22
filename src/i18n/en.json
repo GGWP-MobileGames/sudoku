@@ -47,7 +47,10 @@
     "undo": "Undo",
     "hypothesis": "Test",
     "hypothesis_validate": "Confirm",
-    "hypothesis_cancel": "Cancel"
+    "hypothesis_cancel": "Cancel",
+    "clear_errors": "Clear errors",
+    "pause_settings": "SETTINGS",
+    "pause_restart": "RESTART"
   },
   "hint": {
     "title": "HINT",

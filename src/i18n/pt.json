@@ -47,7 +47,10 @@
     "undo": "Desfazer",
     "hypothesis": "Teste",
     "hypothesis_validate": "Confirmar",
-    "hypothesis_cancel": "Cancelar"
+    "hypothesis_cancel": "Cancelar",
+    "clear_errors": "Remover erros",
+    "pause_settings": "AJUSTES",
+    "pause_restart": "REINICIAR"
   },
   "hint": {
     "title": "DICA",

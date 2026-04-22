@@ -140,6 +140,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
   const secondsRef     = useRef<number>(seconds);
   const mistakesRef    = useRef<number>(mistakes);
   const hintsLeftRef   = useRef<number>(hintsLeft);
+  const freePlayErrorsRef = useRef<[number, number][] | null>(null);
   // Clés "r-c-n" des notes ajoutées automatiquement (appui long Notes)
   const autoNotesSetRef = useRef<Set<string>>(new Set());
   // Pile d'historique pour undo (max 100 entrées)
@@ -154,6 +155,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
   secondsRef.current    = seconds;
   mistakesRef.current   = mistakes;
   hintsLeftRef.current  = hintsLeft;
+  freePlayErrorsRef.current = freePlayErrors;
 
   const newGame = useCallback(() => {
     const { puzzle: p, solution: s } = getRandomPuzzle(difficulty);
@@ -546,6 +548,27 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
 
   const clearFreePlayErrors = useCallback(() => setFreePlayErrors(null), []);
 
+  // Efface toutes les cellules erronées en mode Jeu Libre (valeurs + notes),
+  // puis retire l'overlay. Undo possible via pushHistory.
+  const clearFreePlayErrorCells = useCallback(() => {
+    const errs = freePlayErrorsRef.current;
+    if (!errs || errs.length === 0) return;
+    pushHistory();
+    const currentGrid = gridRef.current;
+    const nextGrid = deepCopy(currentGrid);
+    for (const [r, c] of errs) nextGrid[r][c] = 0;
+    setGrid(nextGrid);
+    setNotes(prev => {
+      const next = prev.map(row => row.map(s => new Set(s)));
+      for (const [r, c] of errs) {
+        for (let n = 1; n <= 9; n++) autoNotesSetRef.current.delete(`${r}-${c}-${n}`);
+        next[r][c].clear();
+      }
+      return next;
+    });
+    setFreePlayErrors(null);
+  }, [pushHistory]);
+
   // ── Undo ────────────────────────────────────────────────────────────────────
   const canUndo = historyLength > 0 && !completed;
 
@@ -578,10 +601,52 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
 
   const validateHypothesis = useCallback(() => {
     if (!hypothesisMode) return;
-    // Les coups deviennent définitifs — on garde la pile telle quelle
+    const snap = hypothesisSnapshotRef.current;
+
+    // Mode normal (Free Play OFF) : les placements erronés du mode Test doivent
+    // être comptabilisés comme des erreurs et retirés de la grille (cohérence
+    // avec la saisie normale).
+    if (snap && !init.freePlayMode) {
+      const wrongCells: Array<[number, number, number]> = [];
+      const currentGrid = gridRef.current;
+      for (let r = 0; r < 9; r++) {
+        for (let c = 0; c < 9; c++) {
+          if (snap[r][c] === 0 && currentGrid[r][c] !== 0) {
+            const num = currentGrid[r][c];
+            if (num !== solution[r][c]) {
+              wrongCells.push([r, c, num]);
+            }
+          }
+        }
+      }
+      if (wrongCells.length > 0) {
+        // Retirer les valeurs incorrectes de la grille
+        const nextGrid = deepCopy(currentGrid);
+        for (const [r, c] of wrongCells) nextGrid[r][c] = 0;
+        setGrid(nextGrid);
+        // Les signaler comme erreurs (affichage rouge)
+        setCellErrors(prev => {
+          const next = prev.map(row => row.map(s => new Set(s)));
+          for (const [r, c, num] of wrongCells) next[r][c].add(num);
+          return next;
+        });
+        // Compter les erreurs (1 par nouvelle erreur non déjà tentée sur cette case)
+        let newMistakes = 0;
+        for (const [r, c, num] of wrongCells) {
+          const already = cellErrorsRef.current[r]?.[c]?.has(num) ?? false;
+          if (!already) newMistakes++;
+        }
+        if (newMistakes > 0) setMistakes(m => m + newMistakes);
+        // Feedback visuel sur la première cellule erronée
+        const [sr, sc] = wrongCells[0];
+        setShakeCell({ r: sr, c: sc, tick: Date.now() });
+      }
+    }
+
+    // Les coups (corrects) deviennent définitifs — on garde la pile telle quelle
     setHypothesisMode(false);
     hypothesisSnapshotRef.current = null;
-  }, [hypothesisMode]);
+  }, [hypothesisMode, solution, init.freePlayMode]);
 
   const cancelHypothesis = useCallback(() => {
     if (!hypothesisMode) return;
@@ -638,7 +703,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
     isFixed, isError,
     secondsRef, mistakesRef, hintsLeftRef,
     autoFillNotes,
-    freePlayErrors, clearFreePlayErrors,
+    freePlayErrors, clearFreePlayErrors, clearFreePlayErrorCells,
     canUndo, undo,
     hypothesisMode, hypothesisCells,
     enterHypothesis, validateHypothesis, cancelHypothesis,

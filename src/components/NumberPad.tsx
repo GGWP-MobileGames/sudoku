@@ -98,7 +98,7 @@ const NumberPad = React.memo(function NumberPad({
       <View style={styles.numRow}>
         {[1,2,3,4,5,6,7,8,9].map((n) => {
           const placed    = countInGrid(grid, n);
-          const remaining = 9 - placed;
+          const remaining = Math.max(0, 9 - placed);
           const done      = remaining === 0;
           const isBlitzSelected = blitzMode && localBlitzNumber === n;
           return (

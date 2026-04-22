@@ -47,7 +47,10 @@
     "undo": "元に戻す",
     "hypothesis": "テスト",
     "hypothesis_validate": "確定",
-    "hypothesis_cancel": "キャンセル"
+    "hypothesis_cancel": "キャンセル",
+    "clear_errors": "エラーを消す",
+    "pause_settings": "設定",
+    "pause_restart": "やり直す"
   },
   "hint": {
     "title": "ヒント",

@@ -143,6 +143,7 @@ function AppContent({ onReady }: AppContentProps) {
       <GameScreen
         difficulty={difficulty} savedGame={savedGame} prebuilt={prebuilt}
         onBackToHome={handleBackToHome}
+        onSettings={handleGoSettings}
       />
     );
     if (screen === "stats") return (
@@ -202,6 +203,7 @@ function AppContent({ onReady }: AppContentProps) {
           });
           navigate("home", "left");
         }}
+        onSettings={handleGoSettings}
       />
     );
     return (
