@@ -84,7 +84,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
     autoFillNotes,
     freePlayErrors, clearFreePlayErrors, clearFreePlayErrorCells,
     canUndo, undo,
-    hypothesisMode, hypothesisCells,
+    hypothesisMode, hypothesisCells, hypothesisNoteKeys,
     enterHypothesis, validateHypothesis, cancelHypothesis,
   } = useGameState(difficulty, {
     savedGame, prebuilt, hintsPerGame, t,
@@ -391,6 +391,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
             : undefined
         }
         hypothesisCells={hypothesisCells}
+        hypothesisNoteKeys={hypothesisNoteKeys}
       />
       {/* Bouton "Retirer les erreurs" — miroir du T, ancré au-dessus du coin supérieur gauche.
           Visible uniquement en Jeu Libre tant que des cellules erronées subsistent. */}

@@ -19,6 +19,7 @@ interface Props {
   isHintTarget?:     boolean; // case cible de l'indice actif
   isFreePlayError?:  boolean; // case erronée révélée en fin de partie (mode jeu libre)
   isHypothesis?:     boolean; // case posée pendant le mode hypothèse (bleu)
+  hypothesisNoteKeys?: Set<string>; // clés "r,c,n" des notes ajoutées en hypothèse
   highlightNoteValue?: number; // chiffre sélectionné → surligne les notes correspondantes
   onPress:       () => void;
   animValue?:    Animated.Value;
@@ -30,9 +31,9 @@ interface Props {
 const ROWS_3x3 = [[1,2,3],[4,5,6],[7,8,9]] as const;
 
 const SudokuCell = React.memo(function SudokuCell({
-  value, notes, errors,
+  value, notes, errors, row, col,
   isFixed, isSelected, isHighlighted, isMatchValue, isError, isHintHighlight, isHintTarget,
-  isFreePlayError, isHypothesis,
+  isFreePlayError, isHypothesis, hypothesisNoteKeys,
   highlightNoteValue,
   onPress, animValue, goldAnim, cellFontSize, noteFontSize,
 }: Props) {
@@ -84,7 +85,11 @@ const SudokuCell = React.memo(function SudokuCell({
                 const isNote     = noteNumbers.includes(n);
                 const isErr      = errorNumbers.includes(n);
                 const isNoteHit  = isNote && !!highlightNoteValue && n === highlightNoteValue;
+                const isHypoNote = isNote && !isErr && (hypothesisNoteKeys?.has(`${row},${col},${n}`) ?? false);
                 const badgeSize  = nfs + 5;
+                const noteColor  = isErr ? colors.error
+                  : isHypoNote ? "#3A6BC4"
+                  : colors.textSecondary;
                 return (
                   <View key={n} style={styles.noteCell}>
                     {(isNote || isErr) && (
@@ -94,7 +99,7 @@ const SudokuCell = React.memo(function SudokuCell({
                       }>
                         <Text style={[
                           isErr ? styles.errorDigit : styles.noteDigit,
-                          { fontSize: nfs, color: isErr ? colors.error : colors.textSecondary },
+                          { fontSize: nfs, color: noteColor },
                           onDark && (isErr ? styles.errorsOnDark : styles.notesOnDark),
                           isNoteHit && styles.noteHit,
                         ]}>
