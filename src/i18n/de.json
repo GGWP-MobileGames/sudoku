@@ -262,5 +262,29 @@
     "section_4_body": "Und schließlich: innerhalb jedes 3×3-Blocks müssen die neun Ziffern ebenfalls genau einmal auftauchen. Das ist die am wenigsten offensichtliche Einschränkung — denke immer daran, auch den Block zu prüfen, nicht nur Zeile und Spalte.",
     "section_5_title": "WO FÄNGST DU AN",
     "section_5_body": "Wähle eine Ziffer, zum Beispiel die 1. Suche alle Zeilen, Spalten und Blöcke, in denen sie bereits steht: dort kann sie nicht mehr hin. Wenn in einer Zeile, Spalte oder einem Block nur noch ein mögliches Feld übrig bleibt, gehört sie genau dorthin. Wiederhole das mit jeder Ziffer, und das Gitter enthüllt sich nach und nach."
+  },
+  "techniques": {
+    "tab_rules": "Rules",
+    "tab_techniques": "Techniques",
+    "title": "TECHNIQUES",
+    "subtitle": "DICTIONARY",
+    "back": "MENU",
+    "back_to_index": "← Back",
+    "prev": "◀ PREVIOUS",
+    "next": "NEXT ▶",
+    "definition_label": "DEFINITION",
+    "example_label": "EXAMPLE",
+    "aliases_label": "Also known as",
+    "intro": "The techniques below are sorted by difficulty. Start with the Beginner and Easy tiers before tackling the more advanced ones.",
+    "tiers": { "beginner": "Beginner", "easy": "Easy", "intermediate": "Intermediate", "advanced": "Advanced", "expert": "Expert" },
+    "cards": {
+      "last_free_cell":       { "title": "Last Free Cell",       "aliases": "", "definition": "When a row, column or block has eight cells already filled, the ninth cell can only contain the missing digit. This is the simplest technique: just identify which digit is absent.", "example": "On the highlighted row, eight cells are filled with 1, 2, 3, 4, 6, 7, 8 and 9. The empty cell can therefore only hold the 5." },
+      "last_possible_number": { "title": "Last Possible Number", "aliases": "", "definition": "For a given cell, look at its row, column and block. If together they eliminate eight of the nine digits, the remaining one must go in that cell.", "example": "For the target cell, the row already contains 4, 5, 6, 7, 8, 9 and the column contains 2, 3. Every digit from 2 to 9 is eliminated, so only 1 can be placed there." },
+      "last_remaining_cell":  { "title": "Last Remaining Cell",  "aliases": "", "definition": "Within a row, column or block, look for where a specific digit can still be placed. If every empty cell except one is blocked for that digit, then the digit must go in that single remaining cell.", "example": "On the highlighted row, we look for where the 5 can go. The other empty cells already have a 5 in their column or block. The only cell that can still hold the 5 is the target cell." },
+      "naked_single":         { "title": "Naked Single",         "aliases": "", "definition": "When you pencil-mark all candidates for a cell, sometimes only one digit remains. That cell has a single candidate, and this candidate is the answer.", "example": "The central cell has only one candidate left: 7. Every surrounding cell still has several possibilities, but this one is fully constrained." },
+      "hidden_single":        { "title": "Hidden Single",        "aliases": "", "definition": "Within a row, column or block, examine where a specific digit can still go. If this digit appears as a candidate in only one cell of the group, it must go there — even if that cell has other candidates.", "example": "In the highlighted column, the digit 7 appears as a candidate only in the target cell. The other empty cells of the column have other candidates, but none can hold the 7. So that's where it goes." },
+      "naked_pair":           { "title": "Naked Pair",           "aliases": "", "definition": "When two cells of the same group have exactly the same two candidates, those two digits are reserved for them. You can therefore eliminate those digits from the other cells of the group.", "example": "On the highlighted row, two cells have exactly the candidates {4, 7}. One will hold 4, the other 7. You can remove 4 and 7 from every other cell on the row." },
+      "pointing_pair":        { "title": "Pointing Pair",        "aliases": "", "definition": "Within a block, if all candidates for a digit lie on a single row (or column), that digit must sit on that row inside the block. You can therefore eliminate it from the rest of the row (or column) outside the block.", "example": "In the top-left block, the digit 3 has only two candidate cells, both on row 1. The block's 3 will sit on that row, so you can remove the 3 from the other cells of row 1 to the right of the block." }
+    }
   }
 }

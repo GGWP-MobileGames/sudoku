@@ -262,5 +262,70 @@
     "section_4_body": "Enfin, dans chaque bloc de 3×3 cases, les neuf chiffres doivent eux aussi apparaître une seule fois. C'est la contrainte la moins visible : pensez toujours à vérifier le bloc, pas seulement la ligne et la colonne.",
     "section_5_title": "PAR OÙ COMMENCER",
     "section_5_body": "Prenez un chiffre, par exemple le 1. Repérez toutes les lignes, colonnes et blocs où il est déjà placé : il ne peut plus y retourner. S'il ne reste qu'une seule case possible dans une ligne, une colonne ou un bloc, c'est forcément là qu'il va. Recommencez avec chaque chiffre, et la grille se dévoile peu à peu."
+  },
+  "techniques": {
+    "tab_rules": "Règles",
+    "tab_techniques": "Techniques",
+    "title": "TECHNIQUES",
+    "subtitle": "DICTIONNAIRE",
+    "back": "MENU",
+    "back_to_index": "← Retour",
+    "prev": "◀ PRÉCÉDENT",
+    "next": "SUIVANT ▶",
+    "definition_label": "DÉFINITION",
+    "example_label": "EXEMPLE",
+    "aliases_label": "Aussi appelé",
+    "intro": "Les techniques ci-dessous sont classées par difficulté. Commencez par les niveaux Débutant et Facile avant d'aborder les suivants.",
+    "tiers": {
+      "beginner": "Débutant",
+      "easy": "Facile",
+      "intermediate": "Intermédiaire",
+      "advanced": "Avancé",
+      "expert": "Expert"
+    },
+    "cards": {
+      "last_free_cell": {
+        "title": "Dernière case libre",
+        "aliases": "",
+        "definition": "Dans une ligne, une colonne ou un bloc où huit cases sont déjà remplies, la neuvième case ne peut contenir que le chiffre manquant. C'est la technique la plus simple : il suffit d'identifier le chiffre absent.",
+        "example": "Sur la ligne mise en évidence, huit cases sont remplies avec les chiffres 1, 2, 3, 4, 6, 7, 8 et 9. La case vide ne peut donc accueillir que le 5."
+      },
+      "last_possible_number": {
+        "title": "Dernier chiffre possible",
+        "aliases": "",
+        "definition": "Pour une case donnée, on examine sa ligne, sa colonne et son bloc. Si ensemble ils éliminent huit chiffres sur neuf, le dernier est forcément celui de la case.",
+        "example": "Pour la case cible, la ligne contient déjà 4, 5, 6, 7, 8, 9 et la colonne contient 2, 3. Les chiffres 2 à 9 étant tous éliminés, seul le 1 peut s'y placer."
+      },
+      "last_remaining_cell": {
+        "title": "Dernière case restante",
+        "aliases": "",
+        "definition": "Dans une ligne, une colonne ou un bloc, on cherche où placer un chiffre précis. Si toutes les cases vides sauf une sont bloquées par ce chiffre (déjà présent dans leur colonne, ligne ou bloc voisin), alors le chiffre va forcément dans cette unique case restante.",
+        "example": "Sur la ligne mise en évidence, on cherche où placer le 5. Les autres cases vides ont déjà un 5 dans leur colonne ou leur bloc. La seule case qui puisse encore accueillir le 5 est la case cible."
+      },
+      "naked_single": {
+        "title": "Singleton nu",
+        "aliases": "Naked Single",
+        "definition": "Lorsque l'on note les candidats (chiffres possibles) d'une case, il arrive qu'un seul chiffre reste. Cette case a donc un seul candidat, et ce candidat est la solution.",
+        "example": "La case centrale n'a plus qu'un seul candidat : 7. Toutes les autres cases autour ont plusieurs possibilités, mais celle-ci est entièrement contrainte."
+      },
+      "hidden_single": {
+        "title": "Singleton caché",
+        "aliases": "Hidden Single",
+        "definition": "Dans une ligne, une colonne ou un bloc, on examine où un chiffre précis peut encore aller. Si ce chiffre n'apparaît comme candidat que dans une seule case du groupe, il s'y place forcément — même si cette case a d'autres candidats.",
+        "example": "Dans la colonne mise en évidence, le chiffre 7 n'apparaît comme candidat que dans la case cible. Les autres cases vides de la colonne ont d'autres candidats, mais aucune ne peut accueillir le 7. C'est donc là qu'il va."
+      },
+      "naked_pair": {
+        "title": "Paire nue",
+        "aliases": "Naked Pair",
+        "definition": "Lorsque deux cases d'un même groupe (ligne, colonne ou bloc) ont exactement les mêmes deux candidats, ces deux chiffres leur sont réservés. On peut donc les éliminer des autres cases du groupe.",
+        "example": "Sur la ligne mise en évidence, deux cases ont exactement les candidats {4, 7}. L'un sera 4, l'autre 7 — on ne sait pas encore dans quel ordre. Mais on peut retirer les 4 et 7 de toutes les autres cases de la ligne."
+      },
+      "pointing_pair": {
+        "title": "Paire pointante",
+        "aliases": "Pointing Pair",
+        "definition": "Dans un bloc, si tous les candidats d'un chiffre sont alignés sur une même ligne (ou colonne), ce chiffre sera forcément sur cette ligne à l'intérieur du bloc. On peut donc l'éliminer du reste de la ligne (ou colonne), en dehors du bloc.",
+        "example": "Dans le bloc en haut à gauche, le chiffre 3 n'a que deux cases candidates, toutes deux sur la ligne 1. Le 3 du bloc sera donc sur cette ligne. On peut retirer le 3 des autres cases de la ligne, à droite du bloc."
+      }
+    }
   }
 }
