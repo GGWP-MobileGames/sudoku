@@ -299,8 +299,8 @@
       "last_remaining_cell": {
         "title": "Dernière case restante",
         "aliases": "",
-        "definition": "Dans une ligne, une colonne ou un bloc, on cherche où placer un chiffre précis. Si toutes les cases vides sauf une sont bloquées par ce chiffre (déjà présent dans leur colonne, ligne ou bloc voisin), alors le chiffre va forcément dans cette unique case restante.",
-        "example": "Sur la ligne mise en évidence, on cherche où placer le 5. Les autres cases vides ont déjà un 5 dans leur colonne ou leur bloc. La seule case qui puisse encore accueillir le 5 est la case cible."
+        "definition": "On choisit un chiffre et une unité (ligne, colonne ou bloc), puis on se demande : où ce chiffre peut-il encore se placer ? Pour chaque case vide de l'unité, si le chiffre est déjà présent dans la ligne, la colonne ou le bloc qui la traversent, cette case est éliminée. S'il n'en reste qu'une, c'est là que va le chiffre.",
+        "example": "On cherche où placer le 5 dans le bloc en haut à gauche. Trois cases du bloc sont encore vides. Un 5 est déjà posé sur la ligne 2 (à droite du bloc) : il élimine la case vide de cette ligne à l'intérieur du bloc. Un autre 5 est posé dans la colonne 3 (plus bas) : il élimine la case vide de cette colonne. Il ne reste qu'une seule case candidate — c'est forcément là que va le 5."
       },
       "naked_single": {
         "title": "Singleton nu",

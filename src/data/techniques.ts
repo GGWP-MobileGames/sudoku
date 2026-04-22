@@ -56,27 +56,36 @@ export const TECHNIQUES: Technique[] = [
     id:   "last_remaining_cell",
     tier: "beginner",
     diagram: {
-      // Ligne 4 : le chiffre 5 ne peut aller qu'en (4,4).
-      // Les autres cases vides de la ligne ont 5 éliminé (blocs/colonnes contiennent déjà 5).
+      // On veut placer le 5 dans le bloc (0,0). Givens remplissent 6 cases du bloc.
+      // Cases vides du bloc : (1,1), (2,1), (2,2).
+      // Un 5 en (1,5) bloque la ligne 1 → élimine (1,1).
+      // Un 5 en (5,2) bloque la colonne 2 → élimine (2,2).
+      // Seule case possible pour le 5 dans le bloc : (2,1).
       givens: [
-        { r: 0, c: 2, n: 5 },  // bloque col 2 et bloc (0,0)
-        { r: 1, c: 5, n: 5 },  // bloque col 5 et bloc (0,1)
-        { r: 7, c: 7, n: 5 },  // bloque col 7 et bloc (2,2)
-        { r: 4, c: 0, n: 1 }, { r: 4, c: 1, n: 2 },
-        { r: 4, c: 6, n: 7 }, { r: 4, c: 8, n: 9 },
+        // Remplissage du bloc top-left (sans 5)
+        { r: 0, c: 0, n: 1 }, { r: 0, c: 1, n: 2 }, { r: 0, c: 2, n: 3 },
+        { r: 1, c: 0, n: 4 },                       { r: 1, c: 2, n: 6 },
+        { r: 2, c: 0, n: 7 },
+        // Les deux 5 qui éliminent les candidates du bloc
+        { r: 1, c: 5, n: 5 },  // 5 sur la ligne 1 → élimine (1,1)
+        { r: 5, c: 2, n: 5 },  // 5 sur la colonne 2 → élimine (2,2)
       ],
       candidates: [
-        { r: 4, c: 3, ns: [3, 8] },           // 5 éliminé (rien ne le bloque ici directement… ajustons)
-        { r: 4, c: 4, ns: [5] },              // cible
-        { r: 4, c: 5, ns: [3, 4] },
-        { r: 4, c: 7, ns: [3, 4] },
+        { r: 1, c: 1, ns: [5] },  // éliminé par la ligne 1
+        { r: 2, c: 1, ns: [5] },  // cible
+        { r: 2, c: 2, ns: [5] },  // éliminé par la colonne 2
       ],
       highlights: [
-        { cells: rowCells(4),       role: "secondary" },
-        { cells: [[4, 4]],          role: "primary"   },
+        { cells: rowCells(1),       role: "secondary" },
+        { cells: colCells(2),       role: "secondary" },
+        { cells: boxCells(0, 0),    role: "secondary" },
+        { cells: [[1, 1], [2, 2]],  role: "eliminated" },
+        { cells: [[2, 1]],          role: "primary"   },
       ],
       candidateMarks: [
-        { r: 4, c: 4, n: 5, role: "target" },
+        { r: 1, c: 1, n: 5, role: "eliminated" },
+        { r: 2, c: 2, n: 5, role: "eliminated" },
+        { r: 2, c: 1, n: 5, role: "target"     },
       ],
     },
   },
