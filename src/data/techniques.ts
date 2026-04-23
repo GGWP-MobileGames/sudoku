@@ -22,9 +22,10 @@ export const TECHNIQUES: Technique[] = [
     tier: "beginner",
     diagram: {
       // Ligne 4 : 8 cellules remplies, la cellule (4,4) est libre → doit être 5.
+      // Le 5 est posé comme "case recherchée" (selected) pour montrer le résultat.
       givens: [
         { r: 4, c: 0, n: 1 }, { r: 4, c: 1, n: 2 }, { r: 4, c: 2, n: 3 },
-        { r: 4, c: 3, n: 4 },                       { r: 4, c: 5, n: 6 },
+        { r: 4, c: 3, n: 4 }, { r: 4, c: 4, n: 5 }, { r: 4, c: 5, n: 6 },
         { r: 4, c: 6, n: 7 }, { r: 4, c: 7, n: 8 }, { r: 4, c: 8, n: 9 },
       ],
       highlights: [
@@ -38,8 +39,9 @@ export const TECHNIQUES: Technique[] = [
     tier: "beginner",
     diagram: {
       // Cellule (0,0) cible. Ligne 0 élimine 4-9, colonne 0 élimine 2,3,
-      // bloc (0,0) neutre → seul 1 reste possible.
+      // bloc (0,0) neutre → seul 1 reste possible. On pose le 1 comme résultat.
       givens: [
+        { r: 0, c: 0, n: 1 },
         { r: 0, c: 3, n: 4 }, { r: 0, c: 4, n: 5 }, { r: 0, c: 5, n: 6 },
         { r: 0, c: 6, n: 7 }, { r: 0, c: 7, n: 8 }, { r: 0, c: 8, n: 9 },
         { r: 1, c: 0, n: 2 }, { r: 2, c: 0, n: 3 },
@@ -66,13 +68,14 @@ export const TECHNIQUES: Technique[] = [
         { r: 0, c: 0, n: 1 }, { r: 0, c: 1, n: 2 }, { r: 0, c: 2, n: 3 },
         { r: 1, c: 0, n: 4 },                       { r: 1, c: 2, n: 6 },
         { r: 2, c: 0, n: 7 },
+        // Case recherchée : le 5 trouvé en (2,1)
+        { r: 2, c: 1, n: 5 },
         // Les deux 5 qui éliminent les candidates du bloc
         { r: 1, c: 5, n: 5 },  // 5 sur la ligne 1 → élimine (1,1)
         { r: 5, c: 2, n: 5 },  // 5 sur la colonne 2 → élimine (2,2)
       ],
       candidates: [
         { r: 1, c: 1, ns: [5] },  // éliminé par la ligne 1
-        { r: 2, c: 1, ns: [5] },  // cible
         { r: 2, c: 2, ns: [5] },  // éliminé par la colonne 2
       ],
       highlights: [
@@ -85,7 +88,6 @@ export const TECHNIQUES: Technique[] = [
       candidateMarks: [
         { r: 1, c: 1, n: 5, role: "eliminated" },
         { r: 2, c: 2, n: 5, role: "eliminated" },
-        { r: 2, c: 1, n: 5, role: "target"     },
       ],
     },
   },
@@ -107,7 +109,8 @@ export const TECHNIQUES: Technique[] = [
         { r: 3, c: 4, n: 3 }, { r: 3, c: 7, n: 2 },
         // Row 4 (la ligne de notre cible) — remplit six des neuf cases
         { r: 4, c: 0, n: 1 }, { r: 4, c: 1, n: 2 }, { r: 4, c: 2, n: 3 },
-        { r: 4, c: 3, n: 4 }, { r: 4, c: 5, n: 8 }, { r: 4, c: 6, n: 9 },
+        { r: 4, c: 3, n: 4 }, { r: 4, c: 4, n: 7 },  // case recherchée (singleton nu)
+        { r: 4, c: 5, n: 8 }, { r: 4, c: 6, n: 9 },
         // Row 5
         { r: 5, c: 1, n: 9 }, { r: 5, c: 4, n: 6 },
         // Row 6
@@ -118,8 +121,8 @@ export const TECHNIQUES: Technique[] = [
         { r: 8, c: 2, n: 6 }, { r: 8, c: 5, n: 1 },
       ],
       candidates: [
-        { r: 4, c: 4, ns: [7]       },  // cible — un seul candidat
-        { r: 4, c: 7, ns: [5, 6]    },  // pour montrer le contraste
+        // Quelques voisines pour montrer le contraste : elles ont encore plusieurs candidats.
+        { r: 4, c: 7, ns: [5, 6]    },
         { r: 4, c: 8, ns: [5, 6, 7] },
       ],
       highlights: [
@@ -127,9 +130,6 @@ export const TECHNIQUES: Technique[] = [
         { cells: colCells(4),       role: "secondary" },
         { cells: boxCells(1, 1),    role: "secondary" },
         { cells: [[4, 4]],          role: "primary"   },
-      ],
-      candidateMarks: [
-        { r: 4, c: 4, n: 7, role: "target" },
       ],
     },
   },
@@ -149,8 +149,8 @@ export const TECHNIQUES: Technique[] = [
         { r: 1, c: 1, n: 9 }, { r: 1, c: 3, n: 7 }, { r: 1, c: 6, n: 2 },
         // Row 2
         { r: 2, c: 0, n: 5 }, { r: 2, c: 7, n: 1 },
-        // Row 3 — cible en (3,4)
-        { r: 3, c: 0, n: 2 }, { r: 3, c: 2, n: 6 }, { r: 3, c: 7, n: 8 },
+        // Row 3 — cible : 7 placé en (3,4) (singleton caché)
+        { r: 3, c: 0, n: 2 }, { r: 3, c: 2, n: 6 }, { r: 3, c: 4, n: 7 }, { r: 3, c: 7, n: 8 },
         // Row 4 — 7 en (4,0) élimine 7 de (4,4) via ligne
         { r: 4, c: 0, n: 7 }, { r: 4, c: 5, n: 6 }, { r: 4, c: 7, n: 4 },
         // Row 5 — 7 en (5,8) : dans le bloc (1,2)
@@ -163,11 +163,11 @@ export const TECHNIQUES: Technique[] = [
         { r: 8, c: 0, n: 4 }, { r: 8, c: 2, n: 1 }, { r: 8, c: 5, n: 7 }, { r: 8, c: 7, n: 3 },
       ],
       candidates: [
-        // Colonne 4 : aucune cellule sauf la cible n'a le 7.
+        // Colonne 4 : aucune autre cellule n'a le 7.
+        // (3,4) n'apparaît pas ici — c'est la case recherchée, posée comme chiffre normal.
         { r: 0, c: 4, ns: [2, 3, 9]    },
         { r: 1, c: 4, ns: [1, 3, 5]    },
         { r: 2, c: 4, ns: [3, 8, 9]    },
-        { r: 3, c: 4, ns: [1, 7, 9]    },  // cible — 7 caché parmi d'autres
         { r: 4, c: 4, ns: [2, 3, 5]    },
         { r: 5, c: 4, ns: [1, 2, 4]    },
         { r: 6, c: 4, ns: [2, 3, 4]    },
@@ -177,9 +177,6 @@ export const TECHNIQUES: Technique[] = [
       highlights: [
         { cells: colCells(4),       role: "secondary" },
         { cells: [[3, 4]],          role: "primary"   },
-      ],
-      candidateMarks: [
-        { r: 3, c: 4, n: 7, role: "target" },
       ],
     },
   },

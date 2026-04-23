@@ -73,12 +73,17 @@ export default function TechniqueDiagram({
   }, [candidateMarks]);
 
   // Couleurs des rôles
+  // `primary` reprend l'aspect d'une case sélectionnée dans le GameScreen
+  // (or plus foncé, adapté au thème) — c'est "la case recherchée".
   const roleBg = (role: CellHighlightRole | undefined): string => {
-    if (role === "primary")    return colors.bgGold;
+    if (role === "primary")    return colors.bgCellSelectedGrid;
     if (role === "secondary")  return colors.bgGold + "55"; // gold translucide
     if (role === "eliminated") return colors.error + "22";  // rouge très doux
     return "transparent";
   };
+
+  // Texte foncé fixe pour les contenus dans une case "primary" (comme dans le GameScreen)
+  const ON_PRIMARY = "#1A1A1A";
 
   return (
     <View style={{ width: size, height: size, alignSelf: "center" }}>
@@ -104,7 +109,7 @@ export default function TechniqueDiagram({
                 {given !== undefined ? (
                   <Text style={[
                     styles.given,
-                    { fontSize: cellFontSize, color: colors.textPrimary },
+                    { fontSize: cellFontSize, color: role === "primary" ? ON_PRIMARY : colors.textPrimary },
                   ]}>
                     {given}
                   </Text>
@@ -115,13 +120,14 @@ export default function TechniqueDiagram({
                         {row.map(n => {
                           const present = cellCandidates.has(n);
                           const mark = candidateMarkMap.get(`${r},${c},${n}`);
+                          const isOnPrimary = role === "primary";
                           return (
                             <View key={n} style={styles.noteCell}>
                               {present && (
                                 <Text style={[
                                   styles.note,
-                                  { fontSize: noteFontSize, color: colors.textSecondary },
-                                  mark === "target"     && { color: colors.textPrimary, fontWeight: "800" },
+                                  { fontSize: noteFontSize, color: isOnPrimary ? ON_PRIMARY : colors.textSecondary },
+                                  mark === "target"     && { color: isOnPrimary ? ON_PRIMARY : colors.textPrimary, fontWeight: "800" },
                                   mark === "eliminated" && { color: colors.error, textDecorationLine: "line-through" },
                                 ]}>
                                   {n}
