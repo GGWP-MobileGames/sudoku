@@ -178,22 +178,36 @@ export default function SettingsScreen({ onBack }: Props) {
           )}
         </View>
 
-        {/* Aide au jeu */}
+        {/* Affichage */}
         <View style={[s.section, { borderColor: colors.borderBox }]}>
           <View style={[s.sectionHead, { backgroundColor: colors.bgCard, borderBottomColor: colors.borderThin }]}>
-            <Text style={[s.sectionTitle, { color: colors.textSecondary }]}>{t('settings.section_gameplay')}</Text>
+            <Text style={[s.sectionTitle, { color: colors.textSecondary }]}>{t('settings.section_display')}</Text>
           </View>
           <Row label={t('settings.large_numbers')} desc={t('settings.large_numbers_desc')} value={settings.largeNumbers} onToggle={() => updateSettings({ largeNumbers: !settings.largeNumbers })} />
           <Row label={t('settings.highlight_identical')} desc={t('settings.highlight_identical_desc')} value={settings.highlightIdentical} onToggle={() => updateSettings({ highlightIdentical: !settings.highlightIdentical })} />
           <Row label={t('settings.highlight_group')} desc={t('settings.highlight_group_desc')} value={settings.highlightGroup} onToggle={() => updateSettings({ highlightGroup: !settings.highlightGroup })} />
+          <Row label={t('settings.highlight_notes')} desc={t('settings.highlight_notes_desc')} value={settings.highlightNotes} onToggle={() => updateSettings({ highlightNotes: !settings.highlightNotes })} last />
+        </View>
+
+        {/* Aides à la résolution */}
+        <View style={[s.section, { borderColor: colors.borderBox }]}>
+          <View style={[s.sectionHead, { backgroundColor: colors.bgCard, borderBottomColor: colors.borderThin }]}>
+            <Text style={[s.sectionTitle, { color: colors.textSecondary }]}>{t('settings.section_assists')}</Text>
+          </View>
           <Row label={t('settings.show_cell_errors')} desc={t('settings.show_cell_errors_desc')} value={settings.showCellErrors} onToggle={() => updateSettings({ showCellErrors: !settings.showCellErrors })} />
-          <Row label={t('settings.highlight_notes')} desc={t('settings.highlight_notes_desc')} value={settings.highlightNotes} onToggle={() => updateSettings({ highlightNotes: !settings.highlightNotes })} />
+          <Row label={t('settings.auto_notes')} desc={t('settings.auto_notes_desc')} value={settings.autoNotesEnabled ?? false} onToggle={() => updateSettings({ autoNotesEnabled: !(settings.autoNotesEnabled ?? false) })} />
+          <Row label={t('settings.test_mode')} desc={t('settings.test_mode_desc')} value={settings.testModeEnabled ?? false} onToggle={() => updateSettings({ testModeEnabled: !(settings.testModeEnabled ?? false) })} last />
+        </View>
+
+        {/* Saisie & retours */}
+        <View style={[s.section, { borderColor: colors.borderBox }]}>
+          <View style={[s.sectionHead, { backgroundColor: colors.bgCard, borderBottomColor: colors.borderThin }]}>
+            <Text style={[s.sectionTitle, { color: colors.textSecondary }]}>{t('settings.section_input')}</Text>
+          </View>
           <Row label={t('settings.blitz_mode')} desc={t('settings.blitz_mode_desc')} value={settings.blitzMode} onToggle={() => updateSettings({ blitzMode: !settings.blitzMode })} />
           {settings.blitzMode && (
             <Row label={t('settings.blitz_auto_select')} desc={t('settings.blitz_auto_select_desc')} value={settings.blitzAutoSelect ?? true} onToggle={() => updateSettings({ blitzAutoSelect: !(settings.blitzAutoSelect ?? true) })} />
           )}
-          <Row label={t('settings.auto_notes')} desc={t('settings.auto_notes_desc')} value={settings.autoNotesEnabled ?? false} onToggle={() => updateSettings({ autoNotesEnabled: !(settings.autoNotesEnabled ?? false) })} />
-          <Row label={t('settings.test_mode')} desc={t('settings.test_mode_desc')} value={settings.testModeEnabled ?? false} onToggle={() => updateSettings({ testModeEnabled: !(settings.testModeEnabled ?? false) })} />
           <Row label={t('settings.haptic_feedback')} desc={t('settings.haptic_feedback_desc')} value={settings.hapticFeedback} onToggle={() => updateSettings({ hapticFeedback: !settings.hapticFeedback })} last />
         </View>
 
