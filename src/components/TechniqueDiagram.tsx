@@ -145,7 +145,15 @@ export default function TechniqueDiagram({
                           const isOnPrimary = role === "primary";
                           return (
                             <View key={n} style={styles.noteCell}>
-                              {present && (
+                              {present && (mark === "target" && isOnPrimary ? (
+                                <Animated.Text style={[
+                                  styles.note,
+                                  { fontSize: noteFontSize, color: ON_PRIMARY, fontWeight: "800" },
+                                  { opacity: pulseAnim },
+                                ]}>
+                                  {n}
+                                </Animated.Text>
+                              ) : (
                                 <Text style={[
                                   styles.note,
                                   { fontSize: noteFontSize, color: isOnPrimary ? ON_PRIMARY : colors.textSecondary },
@@ -154,7 +162,7 @@ export default function TechniqueDiagram({
                                 ]}>
                                   {n}
                                 </Text>
-                              )}
+                              ))}
                             </View>
                           );
                         })}
