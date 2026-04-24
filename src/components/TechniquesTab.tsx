@@ -128,7 +128,7 @@ export default function TechniquesTab() {
         {t("techniques.example_label")}
       </Text>
       <View style={s.diagramWrap}>
-        <TechniqueDiagram {...tech.diagram} />
+        <TechniqueDiagram key={tech.id} {...tech.diagram} />
       </View>
       <Text style={[s.body, { color: colors.textPrimary }]}>
         {t(`techniques.cards.${tech.id}.example`)}
