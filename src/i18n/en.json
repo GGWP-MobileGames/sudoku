@@ -293,8 +293,14 @@
       "last_free_cell": {
         "title": "Last Free Cell",
         "aliases": "",
-        "definition": "When a row, column or block has eight cells already filled, the ninth cell can only contain the missing digit. This is the simplest technique: just identify which digit is absent.",
-        "example": "On the highlighted row, eight cells are filled with 1, 2, 3, 4, 6, 7, 8 and 9. The empty cell can therefore only hold the 5."
+        "definition": "This is the simplest technique in Sudoku, and the first one to look for systematically.",
+        "s1_label": "THE PRINCIPLE",
+        "s1_text": "You look for a row, column or block that has only one empty cell left. All the other cells are already filled.\n\nIn that case, you immediately know which digit to place there: it is the only one still missing from that row, column or block.",
+        "s2_label": "HOW TO SPOT IT",
+        "s2_text": "Quickly scan the grid for the most-filled rows, columns and blocks. As soon as you find one with a single empty cell, you have your digit.\n\nThis technique usually appears late in the game, when the grid is already mostly filled. But it can sometimes show up earlier, especially in blocks where the starting digits are concentrated.",
+        "s3_label": "KEY TAKEAWAY",
+        "s3_text": "This is a purely visual technique with no complex reasoning: you see a lone cell, you identify the missing digit, and you fill it in. Fast and reliable.",
+        "example": "On the highlighted row, eight cells are already filled with 1, 2, 3, 4, 6, 7, 8 and 9. The remaining empty cell can therefore only hold the 5."
       },
       "last_possible_number": {
         "title": "Last Possible Number",

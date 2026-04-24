@@ -106,6 +106,23 @@ export default function TechniquesTab() {
         {t(`techniques.cards.${tech.id}.definition`)}
       </Text>
 
+      {/* Sous-sections optionnelles (s1, s2, s3) — présentes uniquement pour les
+          techniques qui les définissent. Détection : si t() renvoie la clé elle-même,
+          la clé n'existe pas → on passe. */}
+      {(["s1", "s2", "s3"] as const).map(sk => {
+        const labelKey = `techniques.cards.${tech.id}.${sk}_label`;
+        const textKey  = `techniques.cards.${tech.id}.${sk}_text`;
+        const label = t(labelKey);
+        const text  = t(textKey);
+        if (label === labelKey) return null;
+        return (
+          <View key={sk} style={s.subsection}>
+            <Text style={[s.sectionLabel, { color: colors.textSecondary }]}>{label}</Text>
+            <Text style={[s.body, { color: colors.textPrimary }]}>{text}</Text>
+          </View>
+        );
+      })}
+
       {/* Example */}
       <Text style={[s.sectionLabel, { color: colors.textSecondary, marginTop: 18 }]}>
         {t("techniques.example_label")}
@@ -183,6 +200,7 @@ const s = StyleSheet.create({
   divider:      { height: 0.5, marginVertical: 16 },
   sectionLabel: { fontSize: 11, fontWeight: "700", letterSpacing: 2, marginBottom: 6 },
   body:         { fontSize: 14, lineHeight: 22, fontWeight: "300" },
+  subsection:   { marginTop: 18 },
   diagramWrap:  { alignItems: "center", paddingVertical: 12 },
 
   navRow:        { flexDirection: "row", justifyContent: "space-between", marginTop: 28, gap: 12 },

@@ -293,8 +293,14 @@
       "last_free_cell": {
         "title": "Dernière case libre",
         "aliases": "",
-        "definition": "Dans une ligne, une colonne ou un bloc où huit cases sont déjà remplies, la neuvième case ne peut contenir que le chiffre manquant. C'est la technique la plus simple : il suffit d'identifier le chiffre absent.",
-        "example": "Sur la ligne mise en évidence, huit cases sont remplies avec les chiffres 1, 2, 3, 4, 6, 7, 8 et 9. La case vide ne peut donc accueillir que le 5."
+        "definition": "C'est la technique la plus simple du Sudoku, et la première à rechercher systématiquement.",
+        "s1_label": "LE PRINCIPE",
+        "s1_text": "Tu cherches une ligne, une colonne ou un bloc dans lequel il ne reste qu'une seule case vide. Toutes les autres cases sont déjà remplies.\n\nDans ce cas, tu sais immédiatement quel chiffre y placer : c'est le seul qui manque encore dans cette ligne, cette colonne ou ce bloc.",
+        "s2_label": "COMMENT LA REPÉRER",
+        "s2_text": "Parcours rapidement la grille en cherchant les lignes, colonnes et blocs les plus remplis. Dès que tu en trouves un avec une seule case vide, tu as ton chiffre.\n\nCette technique intervient surtout en fin de partie, quand la grille est déjà bien avancée. Mais elle peut parfois apparaître plus tôt, notamment dans les blocs où les chiffres de départ sont concentrés.",
+        "s3_label": "À RETENIR",
+        "s3_text": "C'est une technique purement visuelle, sans raisonnement complexe : tu vois une case seule, tu identifies le chiffre manquant, et tu remplis. Rapide et fiable.",
+        "example": "Sur la ligne mise en évidence, huit cases sont déjà remplies avec les chiffres 1, 2, 3, 4, 6, 7, 8 et 9. La case restée vide ne peut donc accueillir que le 5."
       },
       "last_possible_number": {
         "title": "Dernier chiffre possible",
