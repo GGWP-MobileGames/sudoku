@@ -42,8 +42,8 @@ export default function TechniqueDiagram({
   useEffect(() => {
     const loop = Animated.loop(
       Animated.sequence([
-        Animated.timing(pulseAnim, { toValue: 0.12, duration: 850, useNativeDriver: Platform.OS !== "web" }),
-        Animated.timing(pulseAnim, { toValue: 1,    duration: 850, useNativeDriver: Platform.OS !== "web" }),
+        Animated.timing(pulseAnim, { toValue: 0, duration: 2500, useNativeDriver: Platform.OS !== "web" }),
+        Animated.timing(pulseAnim, { toValue: 1, duration: 2500, useNativeDriver: Platform.OS !== "web" }),
       ])
     );
     loop.start();
