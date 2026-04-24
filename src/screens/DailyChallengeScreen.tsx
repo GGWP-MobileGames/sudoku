@@ -13,9 +13,6 @@ import {
 } from "../utils/dailyChallenge";
 import { formatTime } from "../utils/storage";
 
-// Couleur du rattrapage (bleu-vert)
-const COLOR_CATCHUP = "#4A8C8C";
-
 interface Props {
   onStart:                () => void;
   onResume:               () => void;
@@ -78,18 +75,18 @@ function MonthCalendar({ records, year, month, colors, onDayPress, t, savedPastD
             style={[
               cal.cell,
               done         && { backgroundColor: COLORS.gold },
-              doneCatchup  && { backgroundColor: COLOR_CATCHUP },
+              doneCatchup  && { backgroundColor: colors.hintHighlight },
               failed       && { backgroundColor: '#E05040' },
               attempted    && { backgroundColor: colors.borderThin },
               isToday      && { borderWidth: 1.5, borderColor: colors.borderBox },
-              isCatchupActive && { borderWidth: 1.5, borderColor: COLOR_CATCHUP },
+              isCatchupActive && { borderWidth: 1.5, borderColor: colors.hintHighlight },
             ]}
           >
             <Text style={[
               cal.cellText,
               { color: isFuture ? colors.borderThin : (done || doneCatchup || failed) ? "#FFFFFF" : colors.textPrimary },
               done        && { color: "#1A1A1A" },
-              doneCatchup && { color: "#FFFFFF" },
+              doneCatchup && { color: colors.hintColor },
               isToday     && { fontWeight: "700" },
               !isTappable && !isFuture && { color: colors.borderThin }, // hors fenêtre, pas jouable
             ]}>{d}</Text>
@@ -282,7 +279,7 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
               <Text style={[s.calLegendText, { color: colors.textSecondary }]}>{t('daily.legend_failed')}</Text>
             </View>
             <View style={s.calLegendItem}>
-              <View style={[s.calLegendDot, { backgroundColor: COLOR_CATCHUP }]} />
+              <View style={[s.calLegendDot, { backgroundColor: colors.hintHighlight }]} />
               <Text style={[s.calLegendText, { color: colors.textSecondary }]}>{t('daily.legend_catchup')}</Text>
             </View>
             <View style={s.calLegendItem}>
@@ -346,8 +343,8 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
                 <View style={modal.row}>
                   <Text style={[modal.label, { color: colors.textSecondary }]}>{t('daily.result_label')}</Text>
                   <Text style={[modal.value, {
-                    color: !rec ? (isCatchupInProgress ? COLOR_CATCHUP : colors.textSecondary)
-                      : rec.completed && rec.isCatchup ? COLOR_CATCHUP
+                    color: !rec ? (isCatchupInProgress ? colors.hintColor : colors.textSecondary)
+                      : rec.completed && rec.isCatchup ? colors.hintColor
                       : rec.completed ? COLORS.gold
                       : rec.failed    ? '#E05040'
                       : colors.textSecondary
@@ -414,7 +411,7 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
                     if (canResumePast) onResumePast(key);
                     else onStartPast(key);
                   }}
-                  style={[modal.playBtn, { backgroundColor: COLOR_CATCHUP, borderColor: COLOR_CATCHUP }]}
+                  style={[modal.playBtn, { backgroundColor: colors.hintColor, borderColor: colors.hintColor }]}
                   activeOpacity={0.75}
                 >
                   <Text style={[modal.playTxt, { color: "#FFFFFF" }]}>
