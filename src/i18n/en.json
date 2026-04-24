@@ -317,8 +317,14 @@
       "last_remaining_cell": {
         "title": "Last Remaining Cell",
         "aliases": "",
-        "definition": "Pick a digit and a unit (row, column or block), then ask: where can this digit still go? For each empty cell of the unit, if the digit already appears in the row, column or block that crosses it, that cell is eliminated. If only one cell remains, that is where the digit goes.",
-        "example": "We look for where to place the 5 in the top-left block. Three cells of the block are still empty. A 5 is already placed on row 2 (to the right of the block): it rules out the empty cell on that row inside the block. Another 5 is placed in column C (further down): it rules out the empty cell on that column. Only one candidate cell remains — that is where the 5 must go."
+        "definition": "This blends the two previous techniques: you focus on a given block and hunt for where a missing digit can still go, accounting for the constraints of its rows and columns.",
+        "s1_label": "THE PRINCIPLE",
+        "s1_text": "Pick a digit — say the 5 — and examine a specific block. A few cells in that block are still empty.\n\nFor each empty cell, ask: can the 5 go there? Check two things:\n— Is the 5 already placed on the cell's row? If yes, ruled out.\n— Is the 5 already placed on the cell's column? If yes, ruled out.\n\nOnly one cell should survive all tests. That's where the 5 must go.",
+        "s2_label": "HOW TO SPOT IT",
+        "s2_text": "Start with digits that are missing — those appearing often have fewer possible placements.\n\nThen scan block by block. When you find one missing a digit with few empty cells, it's a good candidate. Check the rows and columns crossing that block: if they already hold the digit, they eliminate the matching cells in the block.",
+        "s3_label": "KEY TAKEAWAY",
+        "s3_text": "It's a blend of last_free_cell (examine a block to see what's missing) and last_possible_number (hunt for where a digit can go). You fix a digit and a block, then use all three constraints (row, column, block) to find the only possible spot.",
+        "example": "The top-left block contains 1, 2, 3, 4, 6 and 7. It's missing the 5, among others.\n\nThree cells in the block are still empty. But a 5 is already placed elsewhere on row 1 (to the right of the block) — it rules out the empty cell on that row inside the block. Another 5 sits elsewhere on column 2 (further down) — it rules out the empty cell on that column.\n\nOnly one cell in the block escapes all these constraints — that is where the 5 must go."
       },
       "naked_single": {
         "title": "Naked Single",

@@ -317,8 +317,14 @@
       "last_remaining_cell": {
         "title": "Dernière case restante",
         "aliases": "",
-        "definition": "On choisit un chiffre et une unité (ligne, colonne ou bloc), puis on se demande : où ce chiffre peut-il encore se placer ? Pour chaque case vide de l'unité, si le chiffre est déjà présent dans la ligne, la colonne ou le bloc qui la traversent, cette case est éliminée. S'il n'en reste qu'une, c'est là que va le chiffre.",
-        "example": "On cherche où placer le 5 dans le bloc en haut à gauche. Trois cases du bloc sont encore vides. Un 5 est déjà posé sur la ligne 2 (à droite du bloc) : il élimine la case vide de cette ligne à l'intérieur du bloc. Un autre 5 est posé dans la colonne C (plus bas) : il élimine la case vide de cette colonne. Il ne reste qu'une seule case candidate — c'est forcément là que va le 5."
+        "definition": "C'est l'union des deux techniques précédentes : on se concentre sur un bloc donné, et on cherche où un chiffre manquant peut se placer en tenant compte des contraintes de ses lignes et colonnes.",
+        "s1_label": "LE PRINCIPE",
+        "s1_text": "Tu choisis un chiffre — disons le 5 — et tu examines un bloc spécifique. Il te reste quelques cases vides dans ce bloc.\n\nPour chaque case vide, tu te demandes : le 5 peut-il y aller ? Tu vérifies deux choses :\n— Est-ce que le 5 est déjà placé sur la ligne de cette case ? Si oui, impossible.\n— Est-ce que le 5 est déjà placé sur la colonne de cette case ? Si oui, impossible.\n\nUne seule case devrait survivre à tous ces tests. C'est là que le 5 doit se placer.",
+        "s2_label": "COMMENT LA REPÉRER",
+        "s2_text": "Commence par les chiffres qui manquent — ceux qui apparaissent déjà beaucoup ont moins de places possibles.\n\nEnsuite, examine bloc par bloc. Quand tu en repères un où un chiffre manque et où il y a peu de cases vides, c'est un bon candidat. Vérifie les lignes et colonnes qui croisent ce bloc : si elles portent déjà ce chiffre, elles éliminent les cases correspondantes du bloc.",
+        "s3_label": "À RETENIR",
+        "s3_text": "C'est la fusion de last_free_cell (examiner un bloc pour voir quoi manque) et last_possible_number (chercher où un chiffre peut aller). Tu fixes un chiffre et un bloc, puis tu utilises les trois contraintes (ligne, colonne, bloc) pour trouver la seule place possible.",
+        "example": "Le bloc en haut à gauche contient 1, 2, 3, 4, 6 et 7. Il lui manque le 5, entre autres.\n\nTrois cases du bloc sont encore vides. Mais un 5 est déjà placé ailleurs sur la ligne 1 (à droite du bloc) — il élimine la case vide de cette ligne à l'intérieur du bloc. Un autre 5 est placé ailleurs sur la colonne 2 (plus bas) — il élimine la case vide de cette colonne.\n\nIl ne reste qu'une seule case du bloc qui échappe à ces contraintes — c'est là que le 5 doit aller."
       },
       "naked_single": {
         "title": "Singleton nu",
