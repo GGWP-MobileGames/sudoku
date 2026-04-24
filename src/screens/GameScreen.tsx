@@ -108,6 +108,11 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
   // Ref sur la grille courante pour accès sans stale closure dans handleSelect
   const gridRef = React.useRef(grid);
   gridRef.current = grid;
+  // Refs pour accès sans stale closure depuis le drag du mode Blitz
+  const notesModeRef = React.useRef(notesMode);
+  notesModeRef.current = notesMode;
+  const notesGridRef = React.useRef(notes);
+  notesGridRef.current = notes;
 
   // Réinitialiser le chiffre blitz quand on quitte le mode
   React.useEffect(() => {
@@ -146,6 +151,28 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
     }
     setSelected([r, c]);
   }, [setSelected, inputNumber]);
+
+  // Drag en mode Blitz : peint des notes (ou efface) au fil du glissement.
+  // - Déclenché uniquement par SudokuGrid quand Blitz + (Notes OU effacement) + chiffre sélectionné.
+  // - Les cases déjà notées du chiffre courant sont laissées inchangées (pas de toggle).
+  const handleBlitzDrag = React.useCallback((r: number, c: number) => {
+    if (pausedRef.current) return;
+    if (!blitzModeRef.current) return;
+    const bn = blitzNumberRef.current;
+    if (bn === null) return;
+
+    // Effacement : vide la case (valeur + notes) comme le tap en mode -1
+    if (bn === -1) {
+      inputNumber(0, r, c);
+      return;
+    }
+
+    // Pose de notes : uniquement si le mode Notes est actif
+    if (!notesModeRef.current) return;
+    // Skip si la note est déjà présente (comportement "peindre", pas "toggle")
+    if (notesGridRef.current[r]?.[c]?.has(bn)) return;
+    inputNumber(bn, r, c);
+  }, [inputNumber]);
 
   React.useEffect(() => {
     if (mistakes > prevMistakesRef.current) {
@@ -392,6 +419,12 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         }
         hypothesisCells={hypothesisCells}
         hypothesisNoteKeys={hypothesisNoteKeys}
+        onDragCell={handleBlitzDrag}
+        dragEnabled={
+          !!settings.blitzMode &&
+          blitzNumber !== null &&
+          (blitzNumber === -1 || notesMode)
+        }
       />
       {/* Bouton "Retirer les erreurs" — miroir du T, ancré au-dessus du coin supérieur gauche.
           Visible uniquement en Jeu Libre tant que des cellules erronées subsistent. */}

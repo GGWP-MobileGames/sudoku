@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useCallback } from "react";
-import { View, Text, StyleSheet, Animated, Platform } from "react-native";
+import React, { useEffect, useRef, useCallback, useMemo } from "react";
+import { View, Text, StyleSheet, Animated, Platform, PanResponder } from "react-native";
 import SudokuCell from "./SudokuCell";
 import { COLORS } from "../utils/theme";
 import { useSettings } from "../context/SettingsContext";
@@ -32,6 +32,8 @@ interface Props {
   freePlayErrorCells?:     Set<string>; // cases erronées révélées (mode jeu libre)
   hypothesisCells?:        Set<string>; // cases posées en mode hypothèse (bleu)
   hypothesisNoteKeys?:     Set<string>; // notes ajoutées en mode hypothèse, clés "r,c,n"
+  onDragCell?:             (r: number, c: number) => void; // Blitz : appelé pour chaque nouvelle case traversée par le glissement
+  dragEnabled?:            boolean; // Active le PanResponder (évite d'intercepter les gestes en mode normal)
 }
 
 function SudokuGrid({
@@ -39,9 +41,54 @@ function SudokuGrid({
   bounceCell, shakeCell, victoryWave, showCoords, hintHighlight, hintTarget, hintPreviewValue,
   highlightIdentical = true, highlightGroup = true, largeNumbers = true, highlightNotes = true,
   selectedValueOverride, freePlayErrorCells, hypothesisCells, hypothesisNoteKeys,
+  onDragCell, dragEnabled,
 }: Props) {
   const { colors } = useSettings();
   const CELL_SIZE = gridSize / 9;
+
+  // ── Drag Blitz : peindre des notes en glissant le doigt ────────────────────
+  // Refs pour éviter les stale closures dans le PanResponder (créé une seule fois)
+  const cellSizeRef     = useRef(CELL_SIZE);
+  cellSizeRef.current   = CELL_SIZE;
+  const dragEnabledRef  = useRef(false);
+  dragEnabledRef.current = !!dragEnabled;
+  const onDragCellRef   = useRef(onDragCell);
+  onDragCellRef.current = onDragCell;
+  const visitedCellsRef = useRef<Set<string>>(new Set());
+
+  const emitCellAt = useCallback((x: number, y: number) => {
+    const cs = cellSizeRef.current;
+    if (!cs) return;
+    const r = Math.max(0, Math.min(8, Math.floor(y / cs)));
+    const c = Math.max(0, Math.min(8, Math.floor(x / cs)));
+    const key = `${r},${c}`;
+    if (visitedCellsRef.current.has(key)) return;
+    visitedCellsRef.current.add(key);
+    onDragCellRef.current?.(r, c);
+  }, []);
+
+  const panResponder = useMemo(() => PanResponder.create({
+    // Ne pas voler le tap : seul un mouvement > seuil capture le responder
+    onStartShouldSetPanResponder: () => false,
+    onStartShouldSetPanResponderCapture: () => false,
+    onMoveShouldSetPanResponder: (_, gs) =>
+      dragEnabledRef.current && (Math.abs(gs.dx) > 4 || Math.abs(gs.dy) > 4),
+    onMoveShouldSetPanResponderCapture: (_, gs) =>
+      dragEnabledRef.current && (Math.abs(gs.dx) > 4 || Math.abs(gs.dy) > 4),
+    onPanResponderGrant: (e) => {
+      visitedCellsRef.current.clear();
+      const { locationX, locationY } = e.nativeEvent;
+      emitCellAt(locationX, locationY);
+    },
+    onPanResponderMove: (e) => {
+      const { locationX, locationY } = e.nativeEvent;
+      emitCellAt(locationX, locationY);
+    },
+    onPanResponderRelease:   () => { visitedCellsRef.current.clear(); },
+    onPanResponderTerminate: () => { visitedCellsRef.current.clear(); },
+  }), [emitCellAt]);
+
+
   const cellFontSize = largeNumbers ? Math.floor(CELL_SIZE * 0.76) : 19;
   const noteFontSize = largeNumbers
     ? Math.max(Math.floor(CELL_SIZE / 3 * 0.72), 9)
@@ -272,7 +319,7 @@ const hintHighlightSet = React.useMemo(() => {
       )}
 
       {/* Cellules */}
-      <View style={styles.cellsContainer}>
+      <View style={styles.cellsContainer} {...panResponder.panHandlers}>
         {grid.map((row: number[], r: number) => (
           <View key={r} style={styles.row}>
             {row.map((_: number, c: number) => {
