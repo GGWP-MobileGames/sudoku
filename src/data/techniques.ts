@@ -50,8 +50,8 @@ export const TECHNIQUES: Technique[] = [
         { r: 2, c: 0, n: 6 },
         // 1s qui bloquent 3 des 4 cases vides
         { r: 0, c: 5, n: 1 },  // ligne 0 → élimine (0,0)
-        { r: 5, c: 2, n: 1 },  // col 2 → élimine (1,2)
-        { r: 2, c: 6, n: 1 },  // ligne 2 → élimine (2,1)
+        { r: 1, c: 6, n: 1 },  // ligne 1 → élimine (1,2)
+        { r: 5, c: 1, n: 1 },  // col 1 → élimine (2,1)
         // Case solution
         { r: 2, c: 2, n: 1 },
       ],
