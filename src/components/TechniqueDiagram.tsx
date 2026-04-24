@@ -136,39 +136,61 @@ export default function TechniqueDiagram({
                     </Text>
                   )
                 ) : cellCandidates && cellCandidates.size > 0 ? (
-                  <View style={styles.notesGrid}>
-                    {ROWS_3x3.map((row, ri) => (
-                      <View key={ri} style={styles.notesRow}>
-                        {row.map(n => {
-                          const present = cellCandidates.has(n);
-                          const mark = candidateMarkMap.get(`${r},${c},${n}`);
-                          const isOnPrimary = role === "primary";
-                          return (
-                            <View key={n} style={styles.noteCell}>
-                              {present && (mark === "target" && isOnPrimary ? (
-                                <Animated.Text style={[
-                                  styles.note,
-                                  { fontSize: noteFontSize, color: ON_PRIMARY, fontWeight: "800" },
-                                  { opacity: pulseAnim },
-                                ]}>
-                                  {n}
-                                </Animated.Text>
-                              ) : (
-                                <Text style={[
-                                  styles.note,
-                                  { fontSize: noteFontSize, color: isOnPrimary ? ON_PRIMARY : colors.textSecondary },
-                                  mark === "target"     && { color: isOnPrimary ? ON_PRIMARY : colors.textPrimary, fontWeight: "800" },
-                                  mark === "eliminated" && { color: colors.error, textDecorationLine: "line-through" },
-                                ]}>
-                                  {n}
-                                </Text>
-                              ))}
-                            </View>
-                          );
-                        })}
+                  (() => {
+                    // Check if all candidates are marked as eliminated
+                    const allEliminated = Array.from(cellCandidates).every(n =>
+                      candidateMarkMap.get(`${r},${c},${n}`) === "eliminated"
+                    );
+
+                    if (allEliminated) {
+                      // Render eliminated candidates as large struck-through digits
+                      return Array.from(cellCandidates).map(n => (
+                        <Text key={n} style={[
+                          styles.given,
+                          { fontSize: cellFontSize, color: colors.error, textDecorationLine: "line-through" },
+                        ]}>
+                          {n}
+                        </Text>
+                      ));
+                    }
+
+                    // Otherwise render normal notesGrid
+                    return (
+                      <View style={styles.notesGrid}>
+                        {ROWS_3x3.map((row, ri) => (
+                          <View key={ri} style={styles.notesRow}>
+                            {row.map(n => {
+                              const present = cellCandidates.has(n);
+                              const mark = candidateMarkMap.get(`${r},${c},${n}`);
+                              const isOnPrimary = role === "primary";
+                              return (
+                                <View key={n} style={styles.noteCell}>
+                                  {present && (mark === "target" && isOnPrimary ? (
+                                    <Animated.Text style={[
+                                      styles.note,
+                                      { fontSize: noteFontSize, color: ON_PRIMARY, fontWeight: "800" },
+                                      { opacity: pulseAnim },
+                                    ]}>
+                                      {n}
+                                    </Animated.Text>
+                                  ) : (
+                                    <Text style={[
+                                      styles.note,
+                                      { fontSize: noteFontSize, color: isOnPrimary ? ON_PRIMARY : colors.textSecondary },
+                                      mark === "target"     && { color: isOnPrimary ? ON_PRIMARY : colors.textPrimary, fontWeight: "800" },
+                                      mark === "eliminated" && { color: colors.error, textDecorationLine: "line-through" },
+                                    ]}>
+                                      {n}
+                                    </Text>
+                                  ))}
+                                </View>
+                              );
+                            })}
+                          </View>
+                        ))}
                       </View>
-                    ))}
-                  </View>
+                    );
+                  })()
                 ) : null}
               </View>
             );
