@@ -305,8 +305,14 @@
       "last_possible_number": {
         "title": "Dernier chiffre possible",
         "aliases": "",
-        "definition": "Pour une case donnée, on examine sa ligne, sa colonne et son bloc. Si ensemble ils éliminent huit chiffres sur neuf, le dernier est forcément celui de la case.",
-        "example": "Pour la case cible, la ligne contient déjà 4, 5, 6, 7, 8, 9 et la colonne contient 2, 3. Les chiffres 2 à 9 étant tous éliminés, seul le 1 peut s'y placer."
+        "definition": "Là où la technique précédente s'intéresse aux cases presque remplies, celle-ci s'intéresse aux chiffres qui n'ont plus qu'un seul endroit possible où se placer.",
+        "s1_label": "LE PRINCIPE",
+        "s1_text": "Tu choisis un chiffre — disons le 1 — et tu examines un bloc, une ligne ou une colonne. Tu te poses une seule question : dans cette unité, où ce chiffre peut-il encore se placer ?\n\nTu élimines les cases déjà occupées, puis celles dont la ligne, la colonne ou le bloc portent déjà ce chiffre. Si la réponse est une seule case, alors c'est là que le 1 doit aller, même si d'autres chiffres auraient pu théoriquement s'y glisser.",
+        "s2_label": "COMMENT LA REPÉRER",
+        "s2_text": "Commence par les chiffres qui apparaissent déjà beaucoup dans la grille : ils ont moins de cases possibles, donc moins d'endroits à analyser. Parcours ensuite les blocs, lignes et colonnes où ce chiffre est absent, et cherche celui où il ne peut se placer qu'à un seul endroit.\n\nAvec l'habitude, l'œil repère vite les croisements où deux lignes ou deux colonnes portant ce chiffre réduisent les possibilités à zéro dans presque toutes les cases d'un bloc.",
+        "s3_label": "À RETENIR",
+        "s3_text": "On ne cherche pas ce qu'on peut mettre dans une case — on cherche où un chiffre donné peut encore aller. C'est un changement de perspective simple mais essentiel pour progresser au Sudoku.",
+        "example": "Le bloc en haut à gauche contient déjà les chiffres 2, 3, 4, 5 et 6, mais pas le 1. Il reste quatre cases vides dans ce bloc.\n\nUn 1 est posé sur la première ligne (hors du bloc) : il élimine la case vide de cette ligne. Un 1 se trouve sur la troisième colonne (plus bas) : il élimine la case vide de cette colonne. Un dernier 1 sur la troisième ligne (à droite du bloc) élimine la case vide de cette ligne.\n\nUne seule case échappe à toutes ces contraintes — c'est là que le 1 doit se placer."
       },
       "last_remaining_cell": {
         "title": "Dernière case restante",

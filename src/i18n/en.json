@@ -305,8 +305,14 @@
       "last_possible_number": {
         "title": "Last Possible Number",
         "aliases": "",
-        "definition": "For a given cell, look at its row, column and block. If together they eliminate eight of the nine digits, the remaining one must go in that cell.",
-        "example": "For the target cell, the row already contains 4, 5, 6, 7, 8, 9 and the column contains 2, 3. Every digit from 2 to 9 is eliminated, so only 1 can be placed there."
+        "definition": "While the previous technique focuses on nearly-full cells, this one focuses on digits that have only one possible place left to go.",
+        "s1_label": "THE PRINCIPLE",
+        "s1_text": "Pick a digit — say the 1 — and examine a block, row or column. Ask yourself one question: in this unit, where can this digit still be placed?\n\nEliminate already-filled cells, then those whose row, column or block already contains that digit. If only one cell survives, that's where the 1 must go — even if other digits could theoretically fit there too.",
+        "s2_label": "HOW TO SPOT IT",
+        "s2_text": "Start with digits that already appear often in the grid: they have fewer possible placements, making analysis quicker. Then scan the blocks, rows and columns where that digit is missing, and look for the one where it can only go in a single cell.\n\nWith practice, your eye quickly picks up the crossings where two rows or columns containing that digit eliminate almost every empty cell in a block.",
+        "s3_label": "KEY TAKEAWAY",
+        "s3_text": "You're not looking for what fits in a cell — you're looking for where a given digit can still go. It's a simple but essential shift in perspective for making progress at Sudoku.",
+        "example": "The top-left block already contains the digits 2, 3, 4, 5 and 6, but not the 1. Four empty cells remain in the block.\n\nA 1 is placed on the first row (outside the block): it eliminates the empty cell on that row. A 1 appears on the third column (further down): it eliminates the empty cell on that column. A final 1 on the third row (to the right of the block) eliminates that row's empty cell.\n\nOnly one cell escapes all these constraints — that is where the 1 must go."
       },
       "last_remaining_cell": {
         "title": "Last Remaining Cell",

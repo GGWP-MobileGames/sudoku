@@ -38,19 +38,37 @@ export const TECHNIQUES: Technique[] = [
     id:   "last_possible_number",
     tier: "beginner",
     diagram: {
-      // Cellule (0,0) cible. Ligne 0 élimine 4-9, colonne 0 élimine 2,3,
-      // bloc (0,0) neutre → seul 1 reste possible. On pose le 1 comme résultat.
+      // Bloc (0,0) : on cherche où placer le 1. 4 cases vides dans le bloc.
+      // (0,0) bloquée par un 1 sur sa ligne (row 0, col 5).
+      // (1,2) bloquée par un 1 sur sa colonne (col 2, row 5).
+      // (2,1) bloquée par un 1 sur sa ligne (row 2, col 6).
+      // Seule (2,2) est libre de toute contrainte → c'est là que le 1 doit aller.
       givens: [
-        { r: 0, c: 0, n: 1 },
-        { r: 0, c: 3, n: 4 }, { r: 0, c: 4, n: 5 }, { r: 0, c: 5, n: 6 },
-        { r: 0, c: 6, n: 7 }, { r: 0, c: 7, n: 8 }, { r: 0, c: 8, n: 9 },
-        { r: 1, c: 0, n: 2 }, { r: 2, c: 0, n: 3 },
+        // Contenu du bloc top-left (2,3,4,5,6 — pas de 1)
+        { r: 0, c: 1, n: 2 }, { r: 0, c: 2, n: 3 },
+        { r: 1, c: 0, n: 4 }, { r: 1, c: 1, n: 5 },
+        { r: 2, c: 0, n: 6 },
+        // 1s qui bloquent 3 des 4 cases vides
+        { r: 0, c: 5, n: 1 },  // ligne 0 → élimine (0,0)
+        { r: 5, c: 2, n: 1 },  // col 2 → élimine (1,2)
+        { r: 2, c: 6, n: 1 },  // ligne 2 → élimine (2,1)
+        // Case solution
+        { r: 2, c: 2, n: 1 },
+      ],
+      candidates: [
+        { r: 0, c: 0, ns: [1] },
+        { r: 1, c: 2, ns: [1] },
+        { r: 2, c: 1, ns: [1] },
       ],
       highlights: [
-        { cells: rowCells(0),       role: "secondary" },
-        { cells: colCells(0),       role: "secondary" },
-        { cells: boxCells(0, 0),    role: "secondary" },
-        { cells: [[0, 0]],          role: "primary"   },
+        { cells: boxCells(0, 0),                    role: "secondary"  },
+        { cells: [[0, 0], [1, 2], [2, 1]],          role: "eliminated" },
+        { cells: [[2, 2]],                           role: "primary"    },
+      ],
+      candidateMarks: [
+        { r: 0, c: 0, n: 1, role: "eliminated" },
+        { r: 1, c: 2, n: 1, role: "eliminated" },
+        { r: 2, c: 1, n: 1, role: "eliminated" },
       ],
     },
   },
