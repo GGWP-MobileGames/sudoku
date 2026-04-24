@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { useEffect, useRef } from "react";
+import { View, Text, StyleSheet, Animated, Platform } from "react-native";
 import { useSettings } from "../context/SettingsContext";
 
 // ───────────────────────────────────────────────────────────────────────────────
@@ -36,6 +36,19 @@ export default function TechniqueDiagram({
 }: Props) {
   const { colors } = useSettings();
   const cell = size / 9;
+
+  // Pulsation lente et continue sur la case "primary" (le chiffre à trouver)
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, { toValue: 0.12, duration: 850, useNativeDriver: Platform.OS !== "web" }),
+        Animated.timing(pulseAnim, { toValue: 1,    duration: 850, useNativeDriver: Platform.OS !== "web" }),
+      ])
+    );
+    loop.start();
+    return () => loop.stop();
+  }, []);
   const cellFontSize = Math.floor(cell * 0.62);
   const noteFontSize = Math.max(Math.floor(cell / 3 * 0.62), 8);
 
@@ -107,12 +120,21 @@ export default function TechniqueDiagram({
                 }}
               >
                 {given !== undefined ? (
-                  <Text style={[
-                    styles.given,
-                    { fontSize: cellFontSize, color: role === "primary" ? ON_PRIMARY : colors.textPrimary },
-                  ]}>
-                    {given}
-                  </Text>
+                  role === "primary" ? (
+                    <Animated.Text style={[
+                      styles.given,
+                      { fontSize: cellFontSize, color: ON_PRIMARY, opacity: pulseAnim },
+                    ]}>
+                      {given}
+                    </Animated.Text>
+                  ) : (
+                    <Text style={[
+                      styles.given,
+                      { fontSize: cellFontSize, color: colors.textPrimary },
+                    ]}>
+                      {given}
+                    </Text>
+                  )
                 ) : cellCandidates && cellCandidates.size > 0 ? (
                   <View style={styles.notesGrid}>
                     {ROWS_3x3.map((row, ri) => (
