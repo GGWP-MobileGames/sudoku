@@ -11,19 +11,30 @@ import TechniquesTab from "../components/TechniquesTab";
 
 interface Props { onBack: () => void; }
 
+type Bullet = { bodyKey: string; diagram?: RuleHighlight };
 type Section = {
   key:        string;
   titleKey:   string;
-  bodyKey:    string;
-  diagram?:   RuleHighlight;
+  bodyKey?:   string;
+  bullets?:   Bullet[];
+  footerKey?: string;
 };
 
 const SECTIONS: Section[] = [
-  { key: "1", titleKey: "rules.section_1_title", bodyKey: "rules.section_1_body" },
-  { key: "2", titleKey: "rules.section_2_title", bodyKey: "rules.section_2_body", diagram: "row"   },
-  { key: "3", titleKey: "rules.section_3_title", bodyKey: "rules.section_3_body", diagram: "col"   },
-  { key: "4", titleKey: "rules.section_4_title", bodyKey: "rules.section_4_body", diagram: "block" },
-  { key: "5", titleKey: "rules.section_5_title", bodyKey: "rules.section_5_body" },
+  { key: "1", titleKey: "rules.s1_title", bodyKey: "rules.s1_body" },
+  { key: "2", titleKey: "rules.s2_title", bodyKey: "rules.s2_body",
+    bullets: [
+      { bodyKey: "rules.s2_bullet_row",   diagram: "row"   },
+      { bodyKey: "rules.s2_bullet_col",   diagram: "col"   },
+      { bodyKey: "rules.s2_bullet_block", diagram: "block" },
+    ],
+    footerKey: "rules.s2_footer" },
+  { key: "3", titleKey: "rules.s3_title", bodyKey: "rules.s3_body" },
+  { key: "4", titleKey: "rules.s4_title",
+    bullets: [
+      { bodyKey: "rules.s4_bullet_notes" },
+      { bodyKey: "rules.s4_bullet_hints" },
+    ] },
 ];
 
 type TabKey = "rules" | "techniques";
@@ -104,17 +115,33 @@ export default function RulesScreen({ onBack }: Props) {
           {SECTIONS.map((sec, idx) => (
             <View key={sec.key} style={s.section}>
               <Text style={[s.sectionTitle, { color: colors.textSecondary }]}>{t(sec.titleKey)}</Text>
-              <Text style={[s.sectionBody,  { color: colors.textPrimary }]}>{t(sec.bodyKey)}</Text>
-              {sec.diagram && (
-                <View style={s.diagramWrap}>
-                  <RuleDiagram highlight={sec.diagram} />
+              {sec.bodyKey && (
+                <Text style={[s.sectionBody, { color: colors.textPrimary }]}>{t(sec.bodyKey)}</Text>
+              )}
+              {sec.bullets && sec.bullets.map((b, i) => (
+                <View key={i} style={s.bulletRow}>
+                  <Text style={[s.bulletDot, { color: colors.textSecondary }]}>•</Text>
+                  <View style={s.bulletContent}>
+                    <Text style={[s.sectionBody, { color: colors.textPrimary }]}>{t(b.bodyKey)}</Text>
+                    {b.diagram && (
+                      <View style={s.diagramWrap}>
+                        <RuleDiagram highlight={b.diagram} />
+                      </View>
+                    )}
+                  </View>
                 </View>
+              ))}
+              {sec.footerKey && (
+                <Text style={[s.sectionFooter, { color: colors.textPrimary }]}>{t(sec.footerKey)}</Text>
               )}
               {idx < SECTIONS.length - 1 && (
                 <View style={[s.divider, { backgroundColor: colors.borderThin }]} />
               )}
             </View>
           ))}
+
+          {/* Ligne de clôture */}
+          <Text style={[s.closing, { color: colors.textSecondary }]}>{t("rules.closing")}</Text>
 
           {/* Ornement de fermeture */}
           <View style={s.ornamentClose}>
@@ -157,6 +184,11 @@ const s = StyleSheet.create({
   section:      { gap: 10, paddingVertical: 16 },
   sectionTitle: { fontSize: 12, fontWeight: "700", letterSpacing: 2 },
   sectionBody:  { fontSize: 14, lineHeight: 22, fontWeight: "300" },
+  sectionFooter:{ fontSize: 14, lineHeight: 22, fontWeight: "400", fontStyle: "italic", marginTop: 4 },
+  bulletRow:    { flexDirection: "row", gap: 10, paddingLeft: 4, marginTop: 2 },
+  bulletDot:    { fontSize: 16, lineHeight: 22, fontWeight: "700" },
+  bulletContent:{ flex: 1, gap: 8 },
   diagramWrap:  { alignItems: "center", paddingVertical: 8 },
   divider:      { height: 0.5, marginTop: 8 },
+  closing:      { textAlign: "center", fontStyle: "italic", fontSize: 14, letterSpacing: 1, marginTop: 8, marginBottom: 4 },
 });
