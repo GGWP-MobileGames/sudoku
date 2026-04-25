@@ -1,6 +1,5 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
 import { Animated, useWindowDimensions, StyleSheet, View, Easing, Platform } from "react-native";
-import { COLORS } from "../utils/theme";
 import { useSettings } from "../context/SettingsContext";
 
 export type TransitionDirection = "right" | "left" | "up" | "down" | "fade";

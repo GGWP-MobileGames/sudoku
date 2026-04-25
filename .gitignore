@@ -42,4 +42,3 @@ yarn-error.*
 
 # local tooling (not needed in repo)
 .claude/
-audit_puzzles.js

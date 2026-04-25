@@ -1,6 +1,5 @@
 import React from "react";
 import { TouchableOpacity, Text, View, StyleSheet, Animated } from "react-native";
-import { COLORS } from "../utils/theme";
 import { useSettings } from "../context/SettingsContext";
 import type { CellNotes, CellErrors } from "../hooks/useGameState";
 

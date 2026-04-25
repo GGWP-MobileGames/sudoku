@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from "react";
 import { loadSettings, saveSettings, DEFAULT_SETTINGS, type AppSettings } from "../utils/settings";
 import { getColors, type ColorTheme, type ThemeKey } from "../utils/theme";
-import { createT, DEVICE_LANGUAGE, type Language, SUPPORTED_LANGUAGES } from "../i18n";
+import { createT, DEVICE_LANGUAGE, type Language } from "../i18n";
 
 interface SettingsContextValue {
   settings:       AppSettings;
