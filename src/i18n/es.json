@@ -222,13 +222,13 @@
       "2,2": "bloque inferior derecho"
     },
     "technique": {
-      "naked_single":  "NAKED SINGLE",
+      "naked_single": "NAKED SINGLE",
       "hidden_single": "HIDDEN SINGLE",
-      "naked_pair":    "NAKED PAIR",
-      "hidden_pair":   "HIDDEN PAIR",
+      "naked_pair": "NAKED PAIR",
+      "hidden_pair": "HIDDEN PAIR",
       "pointing_pair": "POINTING PAIR",
-      "naked_triple":  "NAKED TRIPLE",
-      "fallback":      "ANALYSIS NEEDED"
+      "naked_triple": "NAKED TRIPLE",
+      "fallback": "ANALYSIS NEEDED"
     },
     "naked_single": "La celda {{cell}} solo tiene un candidato posible. Mira lo que su {{row}}, su {{col}} y su {{box}} ya tienen colocado: juntos eliminan todos los dígitos menos uno. Encuentra cuál.",
     "hidden_single_row": "Recorre la {{row}} celda por celda: solo un dígito faltante puede ir en la celda {{cell}}. Para cada dígito ausente de la fila, cuenta cuántas celdas aún pueden contenerlo — uno de ellos solo tiene una opción.",
@@ -270,60 +270,11 @@
     "closing": "¡Buenas partidas!"
   },
   "techniques": {
-    "tab_rules": "Rules",
-    "tab_techniques": "Techniques",
-    "title": "TECHNIQUES",
-    "subtitle": "DICTIONARY",
-    "back": "MENU",
-    "back_to_index": "← Back",
-    "prev": "◀ PREVIOUS",
-    "next": "NEXT ▶",
-    "definition_label": "DEFINITION",
-    "example_label": "EXAMPLE",
-    "aliases_label": "Also known as",
-    "intro": "The techniques below are sorted by difficulty. Start with the Beginner and Easy tiers before tackling the more advanced ones.",
-    "tiers": { "beginner": "Beginner", "easy": "Easy", "intermediate": "Intermediate", "advanced": "Advanced", "expert": "Expert" },
-    "cards": {
-      "last_free_cell": {
-        "title": "Última casilla libre",
-        "aliases": "",
-        "definition": "Es la técnica más sencilla del Sudoku, y la primera que debes buscar de forma sistemática.",
-        "s1_label": "EL PRINCIPIO",
-        "s1_text": "Buscas una fila, columna o bloque en el que solo quede una casilla vacía. Todas las demás ya están rellenas.\n\nEn ese caso, sabes inmediatamente qué cifra colocar: es la única que falta todavía en esa fila, columna o bloque.",
-        "s2_label": "CÓMO RECONOCERLA",
-        "s2_text": "Recorre rápidamente la cuadrícula buscando las filas, columnas y bloques más rellenos. En cuanto encuentres uno con una sola casilla vacía, tienes tu cifra.\n\nEsta técnica aparece sobre todo al final de la partida, cuando la cuadrícula ya está muy avanzada. Pero a veces puede surgir antes, especialmente en los bloques donde las cifras iniciales están concentradas.",
-        "s3_label": "PARA RECORDAR",
-        "s3_text": "Es una técnica puramente visual, sin razonamiento complejo: ves una casilla sola, identificas la cifra que falta y la rellenas. Rápida y fiable.",
-        "example": "En la fila destacada, ocho casillas ya están rellenas con los dígitos 1, 2, 3, 4, 6, 7, 8 y 9. La casilla vacía restante solo puede contener el 5."
-      },
-      "last_possible_number": {
-        "title": "Último número posible",
-        "aliases": "",
-        "definition": "Mientras la técnica anterior se fija en las casillas casi llenas, esta se fija en los dígitos que solo tienen un lugar posible donde ir.",
-        "s1_label": "EL PRINCIPIO",
-        "s1_text": "Elige un dígito — digamos el 1 — y examina un bloque, una fila o una columna. Hazte una sola pregunta: en esta unidad, ¿dónde puede colocarse todavía este dígito?\n\nElimina las casillas ya ocupadas y luego aquellas cuya fila, columna o bloque ya contienen ese dígito. Si solo sobrevive una casilla, ahí debe ir el 1, aunque otros dígitos también pudieran caber en ella.",
-        "s2_label": "CÓMO RECONOCERLA",
-        "s2_text": "Comienza por los dígitos que ya aparecen mucho en la cuadrícula: tienen menos ubicaciones posibles, así que hay menos sitios que analizar. Luego recorre los bloques, filas y columnas donde ese dígito está ausente y busca aquel en el que solo puede colocarse en una casilla.\n\nCon la práctica, el ojo detecta rápidamente los cruces donde dos filas o columnas con ese dígito eliminan casi todas las casillas vacías de un bloque.",
-        "s3_label": "PARA RECORDAR",
-        "s3_text": "No buscas qué puede ir en una casilla — buscas dónde puede ir todavía un dígito determinado. Es un cambio de perspectiva sencillo pero esencial para avanzar en el Sudoku.",
-        "example": "El bloque superior izquierdo ya contiene los dígitos 2, 3, 4, 5 y 6, pero no el 1. Quedan cuatro casillas vacías en el bloque.\n\nHay un 1 en la primera fila (fuera del bloque): elimina la casilla vacía de esa fila. Otro 1 está en la segunda fila (a la derecha del bloque): elimina la casilla vacía de esa fila. Un último 1 en la segunda columna (más abajo) elimina la casilla vacía de esa columna.\n\nSolo una casilla escapa a todas estas restricciones — ahí es donde debe ir el 1."
-      },
-      "last_remaining_cell": {
-        "title": "Última casilla restante",
-        "aliases": "",
-        "definition": "Mezcla las dos técnicas anteriores: te enfocas en un bloque dado y buscas dónde puede ir un dígito faltante, considerando las restricciones de sus filas y columnas.",
-        "s1_label": "EL PRINCIPIO",
-        "s1_text": "Elige un dígito — digamos el 5 — y examina un bloque específico. Quedan algunas casillas vacías en ese bloque.\n\nPara cada casilla vacía, pregúntate: ¿puede ir el 5 allí? Verifica dos cosas:\n— ¿Ya está el 5 colocado en la fila de esa casilla? Si sí, imposible.\n— ¿Ya está el 5 colocado en la columna de esa casilla? Si sí, imposible.\n\nSolo una casilla debería sobrevivir a todas las pruebas. Ahí es donde debe ir el 5.",
-        "s2_label": "CÓMO RECONOCERLA",
-        "s2_text": "Comienza con dígitos que faltan — los que ya aparecen mucho tienen menos ubicaciones posibles.\n\nLuego examina bloque por bloque. Cuando encuentres uno que le falte un dígito y tenga pocas casillas vacías, es un buen candidato. Verifica las filas y columnas que cruzan ese bloque: si ya contienen el dígito, eliminan las casillas correspondientes del bloque.",
-        "s3_label": "PARA RECORDAR",
-        "s3_text": "Es una mezcla de last_free_cell (examinar un bloque para ver qué falta) y last_possible_number (buscar dónde puede ir un dígito). Fijas un dígito y un bloque, luego usas las tres restricciones (fila, columna, bloque) para encontrar el único lugar posible.",
-        "example": "El bloque superior izquierdo contiene 1, 2, 3, 4, 6 y 7. Le falta el 5, entre otros.\n\nTres casillas en el bloque aún están vacías. Pero un 5 ya está colocado en otro lugar de la fila 1 (a la derecha del bloque) — elimina la casilla vacía de esa fila dentro del bloque. Otro 5 está en otro lugar de la columna 2 (más abajo) — elimina la casilla vacía de esa columna.\n\nSolo una casilla del bloque escapa a todas estas restricciones — ahí es donde debe ir el 5."
-      },
-      "naked_single":         { "title": "Naked Single",         "aliases": "", "definition": "A naked single is a cell in which eight of the nine digits have been eliminated by the combined constraints of its row, column and block. Only one candidate remains — that digit must be the answer. The technique requires pencil-marked candidates: the single then stands out at a glance.", "example": "Look at the target cell on row 5, column E (the centre of the grid). Row 5 already contains 1, 2, 3, 4, 8 and 9 — six digits eliminated. Column E adds 3, 5 and 6; the 3 is already excluded by the row, so the new eliminations are 5 and 6. The central block contains 3, 4, 6 and 8, all already excluded by the row or the column. Altogether, eight digits are impossible: 1, 2, 3, 4, 5, 6, 8, 9. The only digit that can still go in the cell is 7. That is the single candidate: place 7." },
-      "hidden_single":        { "title": "Hidden Single",        "aliases": "", "definition": "A hidden single is a digit that has only one possible cell left in a unit (row, column or block), even when that cell still carries other candidates. Unlike the naked single (which you spot by fixing a cell), the hidden single is found by fixing a digit and a unit, then looking for where the digit can still go. If only one option remains, place the digit — even if the cell looks ambiguous on its own.", "example": "Focus on column E and look for where the digit 7 can still go. In the top-centre block, a 7 is already placed at (row 2, column D) — it rules out the top three cells of the column. In the bottom-centre block, a 7 sits at (row 9, column F) — it rules out the bottom three cells. On row 5, a 7 is already present in column A — that row is excluded for column E. On row 6, a 7 sits in column I — also excluded. After all these eliminations, only one cell of the column can still host the 7: the target cell, on row 4. Even though the cell could in theory accept other digits, along the column 7 has no other possible location — that is what makes it hidden." },
-      "naked_pair":           { "title": "Naked Pair",           "aliases": "", "definition": "Two cells of the same unit (row, column or block) hold exactly the same two candidates, and nothing else. Since those two digits must distribute between those two cells, they are reserved for the pair. You can therefore remove both digits from every other cell of the unit — which often triggers fresh singles in cascade.", "example": "On row 4, two cells contain exactly the candidates {4, 7}: the cell in column B and the cell in column E. One will hold 4, the other 7 — the order is unknown, but both digits are locked to this pair. Consequence: neither 4 nor 7 can appear elsewhere on the row. Remove them from the candidates of the other empty cells. In column A, {4, 5, 7} collapses to {5} — a naked single appears. In column H, {4, 8} collapses to {8} — another single. The pair unlocks several cells at once." },
-      "pointing_pair":        { "title": "Pointing Pair",        "aliases": "", "definition": "Inside a block, all candidates for a digit lie on a single row (or column). Since that digit must go somewhere in the block, it must go on that row (or column) — inside the block. You can therefore eliminate it from the rest of the row (or column), outside the block. The technique bridges two units: it uses a block constraint to free up a row/column constraint.", "example": "Focus on the top-left block and look for where the digit 3 can go inside it. The third row of the block is already filled (three givens). The middle row of the block has three empty cells, but row 2 of the grid already carries a 3 in column H — so those three cells lose 3 as a candidate. Only the first row of the block remains, with two possible cells: columns B and C. That is a pointing pair — we don't know which cell holds the 3, but the block's 3 must sit on row 1. Consequence: 3 can no longer appear elsewhere on row 1, outside the block. Remove it from the candidates at column E and column F — two more cells freed." }
-    }
+    "tab_rules": "Reglas",
+    "tab_techniques": "Técnicas",
+    "title": "TÉCNICAS",
+    "subtitle": "RECOMENDACIÓN",
+    "intro": "El sitio web Sudoku Coach ofrece excelentes explicaciones de las diferentes técnicas de Sudoku. Recomiendo su campaña de aprendizaje progresiva, que cubre todas las técnicas desde principiante hasta experto.",
+    "open_link": "ABRIR SUDOKU COACH"
   }
 }

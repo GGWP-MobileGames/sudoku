@@ -222,13 +222,13 @@
       "2,2": "右下のブロック"
     },
     "technique": {
-      "naked_single":  "NAKED SINGLE",
+      "naked_single": "NAKED SINGLE",
       "hidden_single": "HIDDEN SINGLE",
-      "naked_pair":    "NAKED PAIR",
-      "hidden_pair":   "HIDDEN PAIR",
+      "naked_pair": "NAKED PAIR",
+      "hidden_pair": "HIDDEN PAIR",
       "pointing_pair": "POINTING PAIR",
-      "naked_triple":  "NAKED TRIPLE",
-      "fallback":      "ANALYSIS NEEDED"
+      "naked_triple": "NAKED TRIPLE",
+      "fallback": "ANALYSIS NEEDED"
     },
     "naked_single": "マス{{cell}}には候補が1つしかありません。{{row}}、{{col}}、{{box}}がすでに置いた数字を見てください：それらを合わせると、1つを除いてすべての数字が除外されます。どれか探してみましょう。",
     "hidden_single_row": "{{row}}をマスごとに確認してください：マス{{cell}}にしか入れない数字が1つあります。行に不足している各数字について、まだ入れるマスがいくつあるか数えてみましょう — 1つだけしか選択肢がないものがあるはずです。",
@@ -270,60 +270,11 @@
     "closing": "良い一局を！"
   },
   "techniques": {
-    "tab_rules": "Rules",
-    "tab_techniques": "Techniques",
-    "title": "TECHNIQUES",
-    "subtitle": "DICTIONARY",
-    "back": "MENU",
-    "back_to_index": "← Back",
-    "prev": "◀ PREVIOUS",
-    "next": "NEXT ▶",
-    "definition_label": "DEFINITION",
-    "example_label": "EXAMPLE",
-    "aliases_label": "Also known as",
-    "intro": "The techniques below are sorted by difficulty. Start with the Beginner and Easy tiers before tackling the more advanced ones.",
-    "tiers": { "beginner": "Beginner", "easy": "Easy", "intermediate": "Intermediate", "advanced": "Advanced", "expert": "Expert" },
-    "cards": {
-      "last_free_cell": {
-        "title": "最後の空きマス",
-        "aliases": "",
-        "definition": "数独で最もシンプルなテクニックで、最初に体系的に探すべきものです。",
-        "s1_label": "考え方",
-        "s1_text": "空きマスが1つだけ残っている行・列・ブロックを探します。他のマスはすべて埋まっています。\n\nその場合、入れるべき数字はすぐにわかります：その行・列・ブロックでまだ足りていない唯一の数字です。",
-        "s2_label": "見つけ方",
-        "s2_text": "盤面をざっと見渡し、最も埋まっている行・列・ブロックを探しましょう。空きマスが1つだけのものを見つけたら、答えはそこにあります。\n\nこのテクニックは主に終盤、盤面がかなり進んだ段階で現れます。ただし、初期の数字が集中しているブロックでは、もっと早い段階で使えることもあります。",
-        "s3_label": "ポイント",
-        "s3_text": "複雑な推理は不要な、純粋に視覚的なテクニックです。孤立したマスを見つけ、足りない数字を特定して埋めるだけ。速くて確実です。",
-        "example": "ハイライトされた行では、8つのマスにすでに1・2・3・4・6・7・8・9が入っています。残った空きマスに入れられるのは5だけです。"
-      },
-      "last_possible_number": {
-        "title": "最後に置ける数字",
-        "aliases": "",
-        "definition": "前のテクニックがほぼ埋まっているマスに注目するのに対し、このテクニックは置ける場所が一箇所しか残っていない数字に注目します。",
-        "s1_label": "考え方",
-        "s1_text": "ある数字——たとえば1——を選び、ブロック・行・列のいずれかを調べます。問いかけはひとつだけ：このグループの中で、この数字を置ける場所はどこか？\n\n埋まっているマスを除外し、次にその行・列・ブロックにすでに同じ数字があるマスを除外します。残ったマスが一箇所だけなら、たとえ他の数字も置けるとしても、そこが1の答えです。",
-        "s2_label": "見つけ方",
-        "s2_text": "すでに盤面に多く登場している数字から始めましょう。候補の場所が少ないので、分析が楽になります。次に、その数字がまだ入っていないブロック・行・列を順に見て、候補が一箇所しかない場所を探します。\n\n慣れてくると、ある数字を含む二つの行や列が交差することで、ブロック内のほぼ全マスが除外される「交差点」をすぐ見つけられるようになります。",
-        "s3_label": "まとめ",
-        "s3_text": "マスに何が入るかを探すのではなく、ある数字がまだどこに入れるかを探す——これがシンプルでも本質的な視点の転換です。Sudokuが上達するための大切な一歩です。",
-        "example": "左上のブロックにはすでに2・3・4・5・6が入っていますが、1はありません。このブロックには空きマスが4つあります。\n\n1行目（ブロック外）に1が置かれており、その行のブロック内の空きマスが除外されます。2行目（ブロック右側）にも1があり、その行の空きマスが除外されます。2列目（下方）の1によって、その列の空きマスも除外されます。\n\nすべての制約をすり抜ける空きマスは一つだけ——そこが1の答えです。"
-      },
-      "last_remaining_cell": {
-        "title": "最後の候補マス",
-        "aliases": "",
-        "definition": "前の2つのテクニックを組み合わせたもので、特定のブロックに着目し、行と列の制約を考慮しながら、不足している数字が置ける場所を探します。",
-        "s1_label": "考え方",
-        "s1_text": "ある数字——たとえば5——を選び、特定のブロックを調べます。そのブロックにはまだいくつかの空きマスがあります。\n\n各空きマスについて、自問します：5はそこに置けるか？2つのことをチェックします：\n— その行にすでに5が置かれているか？はいなら、不可。\n— その列にすでに5が置かれているか？はいなら、不可。\n\n全てのテストを生き残るマスは1つだけのはず。それが5の置き場所です。",
-        "s2_label": "見つけ方",
-        "s2_text": "不足している数字から始めましょう——頻繁に出現する数字は可能な配置が少なくなります。\n\n次にブロックごとに調べます。不足している数字がありながら、空きマスが少ないブロックを見つけたら、それは良い候補です。そのブロックを横切る行と列をチェック：もし数字を含んでいれば、ブロック内の対応するマスを消去します。",
-        "s3_label": "まとめ",
-        "s3_text": "last_free_cell（ブロックを調べて何が不足しているか見る）とlast_possible_number（数字がどこに置けるか探す）の混合です。数字とブロックを固定し、3つの制約（行・列・ブロック）を使って唯一の場所を見つけます。",
-        "example": "左上のブロックには1・2・3・4・6・7が入っています。他に5が不足しています。\n\nブロック内にはまだ3つの空きマスがあります。しかし5は1行目の別の場所（ブロック右側）にすでに置かれており——ブロック内のその行の空きマスを除外します。別の5が2列目の別の場所（下方）にあり——その列の空きマスを除外します。\n\nブロック内で全ての制約から逃れるマスは1つだけ——そこが5の置き場所です。"
-      },
-      "naked_single":         { "title": "Naked Single",         "aliases": "", "definition": "A naked single is a cell in which eight of the nine digits have been eliminated by the combined constraints of its row, column and block. Only one candidate remains — that digit must be the answer. The technique requires pencil-marked candidates: the single then stands out at a glance.", "example": "Look at the target cell on row 5, column E (the centre of the grid). Row 5 already contains 1, 2, 3, 4, 8 and 9 — six digits eliminated. Column E adds 3, 5 and 6; the 3 is already excluded by the row, so the new eliminations are 5 and 6. The central block contains 3, 4, 6 and 8, all already excluded by the row or the column. Altogether, eight digits are impossible: 1, 2, 3, 4, 5, 6, 8, 9. The only digit that can still go in the cell is 7. That is the single candidate: place 7." },
-      "hidden_single":        { "title": "Hidden Single",        "aliases": "", "definition": "A hidden single is a digit that has only one possible cell left in a unit (row, column or block), even when that cell still carries other candidates. Unlike the naked single (which you spot by fixing a cell), the hidden single is found by fixing a digit and a unit, then looking for where the digit can still go. If only one option remains, place the digit — even if the cell looks ambiguous on its own.", "example": "Focus on column E and look for where the digit 7 can still go. In the top-centre block, a 7 is already placed at (row 2, column D) — it rules out the top three cells of the column. In the bottom-centre block, a 7 sits at (row 9, column F) — it rules out the bottom three cells. On row 5, a 7 is already present in column A — that row is excluded for column E. On row 6, a 7 sits in column I — also excluded. After all these eliminations, only one cell of the column can still host the 7: the target cell, on row 4. Even though the cell could in theory accept other digits, along the column 7 has no other possible location — that is what makes it hidden." },
-      "naked_pair":           { "title": "Naked Pair",           "aliases": "", "definition": "Two cells of the same unit (row, column or block) hold exactly the same two candidates, and nothing else. Since those two digits must distribute between those two cells, they are reserved for the pair. You can therefore remove both digits from every other cell of the unit — which often triggers fresh singles in cascade.", "example": "On row 4, two cells contain exactly the candidates {4, 7}: the cell in column B and the cell in column E. One will hold 4, the other 7 — the order is unknown, but both digits are locked to this pair. Consequence: neither 4 nor 7 can appear elsewhere on the row. Remove them from the candidates of the other empty cells. In column A, {4, 5, 7} collapses to {5} — a naked single appears. In column H, {4, 8} collapses to {8} — another single. The pair unlocks several cells at once." },
-      "pointing_pair":        { "title": "Pointing Pair",        "aliases": "", "definition": "Inside a block, all candidates for a digit lie on a single row (or column). Since that digit must go somewhere in the block, it must go on that row (or column) — inside the block. You can therefore eliminate it from the rest of the row (or column), outside the block. The technique bridges two units: it uses a block constraint to free up a row/column constraint.", "example": "Focus on the top-left block and look for where the digit 3 can go inside it. The third row of the block is already filled (three givens). The middle row of the block has three empty cells, but row 2 of the grid already carries a 3 in column H — so those three cells lose 3 as a candidate. Only the first row of the block remains, with two possible cells: columns B and C. That is a pointing pair — we don't know which cell holds the 3, but the block's 3 must sit on row 1. Consequence: 3 can no longer appear elsewhere on row 1, outside the block. Remove it from the candidates at column E and column F — two more cells freed." }
-    }
+    "tab_rules": "ルール",
+    "tab_techniques": "テクニック",
+    "title": "テクニック",
+    "subtitle": "おすすめ",
+    "intro": "Sudoku Coachのウェブサイトでは、さまざまな数独テクニックについて優れた解説が提供されています。初心者から上級者まで、すべてのテクニックをカバーする段階的な学習キャンペーンをおすすめします。",
+    "open_link": "SUDOKU COACHを開く"
   }
 }

@@ -222,13 +222,13 @@
       "2,2": "Block unten rechts"
     },
     "technique": {
-      "naked_single":  "NAKED SINGLE",
+      "naked_single": "NAKED SINGLE",
       "hidden_single": "HIDDEN SINGLE",
-      "naked_pair":    "NAKED PAIR",
-      "hidden_pair":   "HIDDEN PAIR",
+      "naked_pair": "NAKED PAIR",
+      "hidden_pair": "HIDDEN PAIR",
       "pointing_pair": "POINTING PAIR",
-      "naked_triple":  "NAKED TRIPLE",
-      "fallback":      "ANALYSIS NEEDED"
+      "naked_triple": "NAKED TRIPLE",
+      "fallback": "ANALYSIS NEEDED"
     },
     "naked_single": "Feld {{cell}} hat nur einen möglichen Kandidaten. Schau, was {{row}}, {{col}} und {{box}} bereits gesetzt haben: Zusammen eliminieren sie alle Ziffern bis auf eine. Finde welche.",
     "hidden_single_row": "Geh {{row}} Feld für Feld durch: Nur eine fehlende Ziffer kann in Feld {{cell}}. Zähle für jede fehlende Ziffer der Zeile, wie viele Felder sie noch aufnehmen können — eine hat nur noch eine Option.",
@@ -270,60 +270,11 @@
     "closing": "Viel Spaß beim Spielen!"
   },
   "techniques": {
-    "tab_rules": "Rules",
-    "tab_techniques": "Techniques",
-    "title": "TECHNIQUES",
-    "subtitle": "DICTIONARY",
-    "back": "MENU",
-    "back_to_index": "← Back",
-    "prev": "◀ PREVIOUS",
-    "next": "NEXT ▶",
-    "definition_label": "DEFINITION",
-    "example_label": "EXAMPLE",
-    "aliases_label": "Also known as",
-    "intro": "The techniques below are sorted by difficulty. Start with the Beginner and Easy tiers before tackling the more advanced ones.",
-    "tiers": { "beginner": "Beginner", "easy": "Easy", "intermediate": "Intermediate", "advanced": "Advanced", "expert": "Expert" },
-    "cards": {
-      "last_free_cell": {
-        "title": "Letztes freies Feld",
-        "aliases": "",
-        "definition": "Dies ist die einfachste Technik im Sudoku und die erste, nach der du systematisch suchen solltest.",
-        "s1_label": "DAS PRINZIP",
-        "s1_text": "Du suchst eine Zeile, Spalte oder einen Block, in dem nur noch ein Feld leer ist. Alle anderen Felder sind bereits ausgefüllt.\n\nIn diesem Fall weißt du sofort, welche Ziffer dort einzutragen ist: Es ist die einzige, die in dieser Zeile, Spalte oder diesem Block noch fehlt.",
-        "s2_label": "WIE MAN SIE ERKENNT",
-        "s2_text": "Scanne das Gitter schnell nach den am stärksten gefüllten Zeilen, Spalten und Blöcken. Sobald du eine mit nur einem leeren Feld findest, hast du deine Ziffer.\n\nDiese Technik tritt meist am Ende einer Partie auf, wenn das Gitter schon weit fortgeschritten ist. Manchmal erscheint sie aber auch früher, besonders in Blöcken, in denen die Startziffern konzentriert sind.",
-        "s3_label": "ZUM MERKEN",
-        "s3_text": "Es ist eine rein visuelle Technik ohne komplexes Denken: Du siehst ein einzelnes Feld, erkennst die fehlende Ziffer und trägst sie ein. Schnell und zuverlässig.",
-        "example": "In der markierten Zeile sind bereits acht Felder mit den Ziffern 1, 2, 3, 4, 6, 7, 8 und 9 belegt. Das verbleibende leere Feld kann daher nur die 5 enthalten."
-      },
-      "last_possible_number": {
-        "title": "Letzte mögliche Zahl",
-        "aliases": "",
-        "definition": "Während die vorherige Technik fast volle Felder betrachtet, befasst sich diese mit Ziffern, die nur noch einen einzigen möglichen Platz haben.",
-        "s1_label": "DAS PRINZIP",
-        "s1_text": "Wähle eine Ziffer — sagen wir die 1 — und untersuche einen Block, eine Zeile oder eine Spalte. Stelle dir eine einzige Frage: Wo kann diese Ziffer in dieser Einheit noch gesetzt werden?\n\nElimiere die bereits ausgefüllten Felder und dann jene, deren Zeile, Spalte oder Block diese Ziffer bereits enthalten. Überlebt nur ein Feld, muss die 1 dort hin — auch wenn andere Ziffern theoretisch auch dort passen würden.",
-        "s2_label": "WIE MAN SIE ERKENNT",
-        "s2_text": "Beginne mit Ziffern, die im Gitter schon oft vorkommen: Sie haben weniger mögliche Plätze, also weniger Stellen zu analysieren. Gehe dann die Blöcke, Zeilen und Spalten durch, in denen diese Ziffer fehlt, und suche jene, wo sie nur in ein einziges Feld gesetzt werden kann.\n\nMit Übung erkennt das Auge schnell die Kreuzungen, an denen zwei Zeilen oder Spalten mit dieser Ziffer fast alle leeren Felder eines Blocks eliminieren.",
-        "s3_label": "ZUM MERKEN",
-        "s3_text": "Man sucht nicht, was in ein Feld passt — man sucht, wo eine bestimmte Ziffer noch hingehen kann. Das ist ein einfacher, aber grundlegender Perspektivwechsel für den Fortschritt im Sudoku.",
-        "example": "Der Block oben links enthält bereits die Ziffern 2, 3, 4, 5 und 6, aber nicht die 1. Im Block verbleiben vier leere Felder.\n\nEine 1 steht in der ersten Zeile (außerhalb des Blocks): Sie eliminiert das leere Feld in dieser Zeile. Eine weitere 1 befindet sich in der zweiten Zeile (rechts vom Block): Sie eliminiert das leere Feld in dieser Zeile. Eine letzte 1 in der zweiten Spalte (weiter unten) eliminiert das leere Feld in dieser Spalte.\n\nNur ein einziges Feld entgeht all diesen Einschränkungen — genau dort muss die 1 hin."
-      },
-      "last_remaining_cell": {
-        "title": "Letztes verbleibendes Feld",
-        "aliases": "",
-        "definition": "Dies verbindet die beiden vorherigen Techniken: Du konzentrierst dich auf einen bestimmten Block und suchst, wo eine fehlende Ziffer noch gehen kann, unter Berücksichtigung der Einschränkungen ihrer Zeilen und Spalten.",
-        "s1_label": "DAS PRINZIP",
-        "s1_text": "Wähle eine Ziffer — sagen wir die 5 — und untersuche einen bestimmten Block. Einige Felder in diesem Block sind noch leer.\n\nFür jedes leere Feld fragst du: kann die 5 dort hingehen? Überprüfe zwei Dinge:\n— Ist die 5 bereits in der Reihe dieses Feldes gesetzt? Wenn ja, ausgeschlossen.\n— Ist die 5 bereits in der Spalte dieses Feldes gesetzt? Wenn ja, ausgeschlossen.\n\nNur ein Feld sollte alle Tests überstehen. Das ist, wo die 5 hingehen muss.",
-        "s2_label": "WIE MAN SIE ERKENNT",
-        "s2_text": "Beginne mit Ziffern, die fehlen — die, die oft vorkommen, haben weniger mögliche Platzierungen.\n\nScanne dann Block für Block. Wenn du einen findest, dem eine Ziffer fehlt und der nur wenige leere Felder hat, ist er ein guter Kandidat. Überprüfe die Zeilen und Spalten, die diesen Block kreuzen: Wenn sie bereits die Ziffer enthalten, eliminieren sie die entsprechenden Felder im Block.",
-        "s3_label": "ZUM MERKEN",
-        "s3_text": "Es ist eine Mischung aus last_free_cell (einen Block untersuchen, um zu sehen, was fehlt) und last_possible_number (suchen, wo eine Ziffer hingehen kann). Du fixierst eine Ziffer und einen Block, dann nutzt du alle drei Einschränkungen (Reihe, Spalte, Block), um die einzige mögliche Stelle zu finden.",
-        "example": "Der Block oben links enthält 1, 2, 3, 4, 6 und 7. Die 5 fehlt, unter anderem.\n\nDrei Felder im Block sind noch leer. Aber eine 5 ist bereits an anderer Stelle in Reihe 1 gesetzt (rechts vom Block) — sie eliminiert das leere Feld dieser Reihe im Block. Eine weitere 5 sitzt an anderer Stelle in Spalte 2 (weiter unten) — sie eliminiert das leere Feld dieser Spalte.\n\nNur ein Feld im Block entgeht all diesen Einschränkungen — das ist, wo die 5 hingehen muss."
-      },
-      "naked_single":         { "title": "Naked Single",         "aliases": "", "definition": "A naked single is a cell in which eight of the nine digits have been eliminated by the combined constraints of its row, column and block. Only one candidate remains — that digit must be the answer. The technique requires pencil-marked candidates: the single then stands out at a glance.", "example": "Look at the target cell on row 5, column E (the centre of the grid). Row 5 already contains 1, 2, 3, 4, 8 and 9 — six digits eliminated. Column E adds 3, 5 and 6; the 3 is already excluded by the row, so the new eliminations are 5 and 6. The central block contains 3, 4, 6 and 8, all already excluded by the row or the column. Altogether, eight digits are impossible: 1, 2, 3, 4, 5, 6, 8, 9. The only digit that can still go in the cell is 7. That is the single candidate: place 7." },
-      "hidden_single":        { "title": "Hidden Single",        "aliases": "", "definition": "A hidden single is a digit that has only one possible cell left in a unit (row, column or block), even when that cell still carries other candidates. Unlike the naked single (which you spot by fixing a cell), the hidden single is found by fixing a digit and a unit, then looking for where the digit can still go. If only one option remains, place the digit — even if the cell looks ambiguous on its own.", "example": "Focus on column E and look for where the digit 7 can still go. In the top-centre block, a 7 is already placed at (row 2, column D) — it rules out the top three cells of the column. In the bottom-centre block, a 7 sits at (row 9, column F) — it rules out the bottom three cells. On row 5, a 7 is already present in column A — that row is excluded for column E. On row 6, a 7 sits in column I — also excluded. After all these eliminations, only one cell of the column can still host the 7: the target cell, on row 4. Even though the cell could in theory accept other digits, along the column 7 has no other possible location — that is what makes it hidden." },
-      "naked_pair":           { "title": "Naked Pair",           "aliases": "", "definition": "Two cells of the same unit (row, column or block) hold exactly the same two candidates, and nothing else. Since those two digits must distribute between those two cells, they are reserved for the pair. You can therefore remove both digits from every other cell of the unit — which often triggers fresh singles in cascade.", "example": "On row 4, two cells contain exactly the candidates {4, 7}: the cell in column B and the cell in column E. One will hold 4, the other 7 — the order is unknown, but both digits are locked to this pair. Consequence: neither 4 nor 7 can appear elsewhere on the row. Remove them from the candidates of the other empty cells. In column A, {4, 5, 7} collapses to {5} — a naked single appears. In column H, {4, 8} collapses to {8} — another single. The pair unlocks several cells at once." },
-      "pointing_pair":        { "title": "Pointing Pair",        "aliases": "", "definition": "Inside a block, all candidates for a digit lie on a single row (or column). Since that digit must go somewhere in the block, it must go on that row (or column) — inside the block. You can therefore eliminate it from the rest of the row (or column), outside the block. The technique bridges two units: it uses a block constraint to free up a row/column constraint.", "example": "Focus on the top-left block and look for where the digit 3 can go inside it. The third row of the block is already filled (three givens). The middle row of the block has three empty cells, but row 2 of the grid already carries a 3 in column H — so those three cells lose 3 as a candidate. Only the first row of the block remains, with two possible cells: columns B and C. That is a pointing pair — we don't know which cell holds the 3, but the block's 3 must sit on row 1. Consequence: 3 can no longer appear elsewhere on row 1, outside the block. Remove it from the candidates at column E and column F — two more cells freed." }
-    }
+    "tab_rules": "Regeln",
+    "tab_techniques": "Techniken",
+    "title": "TECHNIKEN",
+    "subtitle": "EMPFEHLUNG",
+    "intro": "Die Website Sudoku Coach bietet hervorragende Erklärungen zu den verschiedenen Sudoku-Techniken. Ich empfehle ihre progressive Lernkampagne, die alle Techniken vom Anfänger bis zum Experten abdeckt.",
+    "open_link": "SUDOKU COACH ÖFFNEN"
   }
 }

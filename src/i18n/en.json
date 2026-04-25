@@ -222,13 +222,13 @@
       "2,2": "bottom-right box"
     },
     "technique": {
-      "naked_single":  "NAKED SINGLE",
+      "naked_single": "NAKED SINGLE",
       "hidden_single": "HIDDEN SINGLE",
-      "naked_pair":    "NAKED PAIR",
-      "hidden_pair":   "HIDDEN PAIR",
+      "naked_pair": "NAKED PAIR",
+      "hidden_pair": "HIDDEN PAIR",
       "pointing_pair": "POINTING PAIR",
-      "naked_triple":  "NAKED TRIPLE",
-      "fallback":      "ANALYSIS NEEDED"
+      "naked_triple": "NAKED TRIPLE",
+      "fallback": "ANALYSIS NEEDED"
     },
     "naked_single": "Cell {{cell}} has only one possible candidate. Look at what its {{row}}, {{col}} and {{box}} have already placed: together, they eliminate every digit except one. Find which one.",
     "hidden_single_row": "Scan {{row}} cell by cell: only one missing digit can go in cell {{cell}}. For each digit not yet in the row, count how many cells can still hold it — one of them has only one option left.",
@@ -273,83 +273,8 @@
     "tab_rules": "Rules",
     "tab_techniques": "Techniques",
     "title": "TECHNIQUES",
-    "subtitle": "DICTIONARY",
-    "back": "MENU",
-    "back_to_index": "← Back",
-    "prev": "◀ PREVIOUS",
-    "next": "NEXT ▶",
-    "definition_label": "DEFINITION",
-    "example_label": "EXAMPLE",
-    "aliases_label": "Also known as",
-    "intro": "The techniques below are sorted by difficulty. Start with the Beginner and Easy tiers before tackling the more advanced ones.",
-    "tiers": {
-      "beginner": "Beginner",
-      "easy": "Easy",
-      "intermediate": "Intermediate",
-      "advanced": "Advanced",
-      "expert": "Expert"
-    },
-    "cards": {
-      "last_free_cell": {
-        "title": "Last Free Cell",
-        "aliases": "",
-        "definition": "This is the simplest technique in Sudoku, and the first one to look for systematically.",
-        "s1_label": "THE PRINCIPLE",
-        "s1_text": "You look for a row, column or block that has only one empty cell left. All the other cells are already filled.\n\nIn that case, you immediately know which digit to place there: it is the only one still missing from that row, column or block.",
-        "s2_label": "HOW TO SPOT IT",
-        "s2_text": "Quickly scan the grid for the most-filled rows, columns and blocks. As soon as you find one with a single empty cell, you have your digit.\n\nThis technique usually appears late in the game, when the grid is already mostly filled. But it can sometimes show up earlier, especially in blocks where the starting digits are concentrated.",
-        "s3_label": "KEY TAKEAWAY",
-        "s3_text": "This is a purely visual technique with no complex reasoning: you see a lone cell, you identify the missing digit, and you fill it in. Fast and reliable.",
-        "example": "On the highlighted row, eight cells are already filled with 1, 2, 3, 4, 6, 7, 8 and 9. The remaining empty cell can therefore only hold the 5."
-      },
-      "last_possible_number": {
-        "title": "Last Possible Number",
-        "aliases": "",
-        "definition": "While the previous technique focuses on nearly-full cells, this one focuses on digits that have only one possible place left to go.",
-        "s1_label": "THE PRINCIPLE",
-        "s1_text": "Pick a digit — say the 1 — and examine a block, row or column. Ask yourself one question: in this unit, where can this digit still be placed?\n\nEliminate already-filled cells, then those whose row, column or block already contains that digit. If only one cell survives, that's where the 1 must go — even if other digits could theoretically fit there too.",
-        "s2_label": "HOW TO SPOT IT",
-        "s2_text": "Start with digits that already appear often in the grid: they have fewer possible placements, making analysis quicker. Then scan the blocks, rows and columns where that digit is missing, and look for the one where it can only go in a single cell.\n\nWith practice, your eye quickly picks up the crossings where two rows or columns containing that digit eliminate almost every empty cell in a block.",
-        "s3_label": "KEY TAKEAWAY",
-        "s3_text": "You're not looking for what fits in a cell — you're looking for where a given digit can still go. It's a simple but essential shift in perspective for making progress at Sudoku.",
-        "example": "The top-left block already contains the digits 2, 3, 4, 5 and 6, but not the 1. Four empty cells remain in the block.\n\nA 1 is placed on the first row (outside the block): it eliminates the empty cell on that row. Another 1 sits on the second row (to the right of the block): it eliminates the empty cell on that row. A final 1 in the second column (further down) eliminates the empty cell on that column.\n\nOnly one cell escapes all these constraints — that is where the 1 must go."
-      },
-      "last_remaining_cell": {
-        "title": "Last Remaining Cell",
-        "aliases": "",
-        "definition": "This blends the two previous techniques: you focus on a given block and hunt for where a missing digit can still go, accounting for the constraints of its rows and columns.",
-        "s1_label": "THE PRINCIPLE",
-        "s1_text": "Pick a digit — say the 5 — and examine a specific block. A few cells in that block are still empty.\n\nFor each empty cell, ask: can the 5 go there? Check two things:\n— Is the 5 already placed on the cell's row? If yes, ruled out.\n— Is the 5 already placed on the cell's column? If yes, ruled out.\n\nOnly one cell should survive all tests. That's where the 5 must go.",
-        "s2_label": "HOW TO SPOT IT",
-        "s2_text": "Start with digits that are missing — those appearing often have fewer possible placements.\n\nThen scan block by block. When you find one missing a digit with few empty cells, it's a good candidate. Check the rows and columns crossing that block: if they already hold the digit, they eliminate the matching cells in the block.",
-        "s3_label": "KEY TAKEAWAY",
-        "s3_text": "It's a blend of last_free_cell (examine a block to see what's missing) and last_possible_number (hunt for where a digit can go). You fix a digit and a block, then use all three constraints (row, column, block) to find the only possible spot.",
-        "example": "The top-left block contains 1, 2, 3, 4, 6 and 7. It's missing the 5, among others.\n\nThree cells in the block are still empty. But a 5 is already placed elsewhere on row 1 (to the right of the block) — it rules out the empty cell on that row inside the block. Another 5 sits elsewhere on column 2 (further down) — it rules out the empty cell on that column.\n\nOnly one cell in the block escapes all these constraints — that is where the 5 must go."
-      },
-      "naked_single": {
-        "title": "Naked Single",
-        "aliases": "",
-        "definition": "A naked single is a cell in which eight of the nine digits have been eliminated by the combined constraints of its row, column and block. Only one candidate remains — that digit must be the answer. The technique requires pencil-marked candidates: the single then stands out at a glance.",
-        "example": "Look at the target cell on row 5, column E (the centre of the grid). Row 5 already contains 1, 2, 3, 4, 8 and 9 — six digits eliminated. Column E adds 3, 5 and 6; the 3 is already excluded by the row, so the new eliminations are 5 and 6. The central block contains 3, 4, 6 and 8, all already excluded by the row or the column. Altogether, eight digits are impossible: 1, 2, 3, 4, 5, 6, 8, 9. The only digit that can still go in the cell is 7. That is the single candidate: place 7."
-      },
-      "hidden_single": {
-        "title": "Hidden Single",
-        "aliases": "",
-        "definition": "A hidden single is a digit that has only one possible cell left in a unit (row, column or block), even when that cell still carries other candidates. Unlike the naked single (which you spot by fixing a cell), the hidden single is found by fixing a digit and a unit, then looking for where the digit can still go. If only one option remains, place the digit — even if the cell looks ambiguous on its own.",
-        "example": "Focus on column E and look for where the digit 7 can still go. In the top-centre block, a 7 is already placed at (row 2, column D) — it rules out the top three cells of the column. In the bottom-centre block, a 7 sits at (row 9, column F) — it rules out the bottom three cells. On row 5, a 7 is already present in column A — that row is excluded for column E. On row 6, a 7 sits in column I — also excluded. After all these eliminations, only one cell of the column can still host the 7: the target cell, on row 4. Even though the cell could in theory accept other digits, along the column 7 has no other possible location — that is what makes it hidden."
-      },
-      "naked_pair": {
-        "title": "Naked Pair",
-        "aliases": "",
-        "definition": "Two cells of the same unit (row, column or block) hold exactly the same two candidates, and nothing else. Since those two digits must distribute between those two cells, they are reserved for the pair. You can therefore remove both digits from every other cell of the unit — which often triggers fresh singles in cascade.",
-        "example": "On row 4, two cells contain exactly the candidates {4, 7}: the cell in column B and the cell in column E. One will hold 4, the other 7 — the order is unknown, but both digits are locked to this pair. Consequence: neither 4 nor 7 can appear elsewhere on the row. Remove them from the candidates of the other empty cells. In column A, {4, 5, 7} collapses to {5} — a naked single appears. In column H, {4, 8} collapses to {8} — another single. The pair unlocks several cells at once."
-      },
-      "pointing_pair": {
-        "title": "Pointing Pair",
-        "aliases": "",
-        "definition": "Inside a block, all candidates for a digit lie on a single row (or column). Since that digit must go somewhere in the block, it must go on that row (or column) — inside the block. You can therefore eliminate it from the rest of the row (or column), outside the block. The technique bridges two units: it uses a block constraint to free up a row/column constraint.",
-        "example": "Focus on the top-left block and look for where the digit 3 can go inside it. The third row of the block is already filled (three givens). The middle row of the block has three empty cells, but row 2 of the grid already carries a 3 in column H — so those three cells lose 3 as a candidate. Only the first row of the block remains, with two possible cells: columns B and C. That is a pointing pair — we don't know which cell holds the 3, but the block's 3 must sit on row 1. Consequence: 3 can no longer appear elsewhere on row 1, outside the block. Remove it from the candidates at column E and column F — two more cells freed."
-      }
-    }
+    "subtitle": "RECOMMENDATION",
+    "intro": "The Sudoku Coach website offers excellent explanations of the different Sudoku techniques. I recommend their progressive learning campaign, which covers every technique from beginner to expert.",
+    "open_link": "OPEN SUDOKU COACH"
   }
 }

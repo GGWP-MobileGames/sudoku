@@ -222,13 +222,13 @@
       "2,2": "bloc bas droite"
     },
     "technique": {
-      "naked_single":  "NAKED SINGLE",
+      "naked_single": "NAKED SINGLE",
       "hidden_single": "HIDDEN SINGLE",
-      "naked_pair":    "NAKED PAIR",
-      "hidden_pair":   "HIDDEN PAIR",
+      "naked_pair": "NAKED PAIR",
+      "hidden_pair": "HIDDEN PAIR",
       "pointing_pair": "POINTING PAIR",
-      "naked_triple":  "NAKED TRIPLE",
-      "fallback":      "ANALYSIS NEEDED"
+      "naked_triple": "NAKED TRIPLE",
+      "fallback": "ANALYSIS NEEDED"
     },
     "naked_single": "La case {{cell}} n'a qu'un seul candidat possible. Regardez ce que sa {{row}}, sa {{col}} et son {{box}} ont déjà placé : ensemble, ils éliminent tous les chiffres sauf un. Trouvez lequel.",
     "hidden_single_row": "Parcourez la {{row}} case par case : un seul chiffre manquant ne peut se placer que dans la case {{cell}}. Pour chaque chiffre absent de la ligne, comptez combien de cases peuvent encore l'accueillir — l'un d'eux n'en a qu'une seule.",
@@ -273,83 +273,8 @@
     "tab_rules": "Règles",
     "tab_techniques": "Techniques",
     "title": "TECHNIQUES",
-    "subtitle": "DICTIONNAIRE",
-    "back": "MENU",
-    "back_to_index": "← Retour",
-    "prev": "◀ PRÉCÉDENT",
-    "next": "SUIVANT ▶",
-    "definition_label": "DÉFINITION",
-    "example_label": "EXEMPLE",
-    "aliases_label": "Aussi appelé",
-    "intro": "Les techniques ci-dessous sont classées par difficulté. Commencez par les niveaux Débutant et Facile avant d'aborder les suivants.",
-    "tiers": {
-      "beginner": "Débutant",
-      "easy": "Facile",
-      "intermediate": "Intermédiaire",
-      "advanced": "Avancé",
-      "expert": "Expert"
-    },
-    "cards": {
-      "last_free_cell": {
-        "title": "Dernière case libre",
-        "aliases": "",
-        "definition": "C'est la technique la plus simple du Sudoku, et la première à rechercher systématiquement.",
-        "s1_label": "LE PRINCIPE",
-        "s1_text": "Tu cherches une ligne, une colonne ou un bloc dans lequel il ne reste qu'une seule case vide. Toutes les autres cases sont déjà remplies.\n\nDans ce cas, tu sais immédiatement quel chiffre y placer : c'est le seul qui manque encore dans cette ligne, cette colonne ou ce bloc.",
-        "s2_label": "COMMENT LA REPÉRER",
-        "s2_text": "Parcours rapidement la grille en cherchant les lignes, colonnes et blocs les plus remplis. Dès que tu en trouves un avec une seule case vide, tu as ton chiffre.\n\nCette technique intervient surtout en fin de partie, quand la grille est déjà bien avancée. Mais elle peut parfois apparaître plus tôt, notamment dans les blocs où les chiffres de départ sont concentrés.",
-        "s3_label": "À RETENIR",
-        "s3_text": "C'est une technique purement visuelle, sans raisonnement complexe : tu vois une case seule, tu identifies le chiffre manquant, et tu remplis. Rapide et fiable.",
-        "example": "Sur la ligne mise en évidence, huit cases sont déjà remplies avec les chiffres 1, 2, 3, 4, 6, 7, 8 et 9. La case restée vide ne peut donc accueillir que le 5."
-      },
-      "last_possible_number": {
-        "title": "Dernier chiffre possible",
-        "aliases": "",
-        "definition": "Là où la technique précédente s'intéresse aux cases presque remplies, celle-ci s'intéresse aux chiffres qui n'ont plus qu'un seul endroit possible où se placer.",
-        "s1_label": "LE PRINCIPE",
-        "s1_text": "Tu choisis un chiffre — disons le 1 — et tu examines un bloc, une ligne ou une colonne. Tu te poses une seule question : dans cette unité, où ce chiffre peut-il encore se placer ?\n\nTu élimines les cases déjà occupées, puis celles dont la ligne, la colonne ou le bloc portent déjà ce chiffre. Si la réponse est une seule case, alors c'est là que le 1 doit aller, même si d'autres chiffres auraient pu théoriquement s'y glisser.",
-        "s2_label": "COMMENT LA REPÉRER",
-        "s2_text": "Commence par les chiffres qui apparaissent déjà beaucoup dans la grille : ils ont moins de cases possibles, donc moins d'endroits à analyser. Parcours ensuite les blocs, lignes et colonnes où ce chiffre est absent, et cherche celui où il ne peut se placer qu'à un seul endroit.\n\nAvec l'habitude, l'œil repère vite les croisements où deux lignes ou deux colonnes portant ce chiffre réduisent les possibilités à zéro dans presque toutes les cases d'un bloc.",
-        "s3_label": "À RETENIR",
-        "s3_text": "On ne cherche pas ce qu'on peut mettre dans une case — on cherche où un chiffre donné peut encore aller. C'est un changement de perspective simple mais essentiel pour progresser au Sudoku.",
-        "example": "Le bloc en haut à gauche contient déjà les chiffres 2, 3, 4, 5 et 6, mais pas le 1. Il reste quatre cases vides dans ce bloc.\n\nUn 1 est posé sur la première ligne (hors du bloc) : il élimine la case vide de cette ligne. Un autre 1 se trouve sur la deuxième ligne (à droite du bloc) : il élimine la case vide de cette ligne. Un dernier 1 dans la deuxième colonne (plus bas) élimine la case vide de cette colonne.\n\nUne seule case échappe à toutes ces contraintes — c'est là que le 1 doit se placer."
-      },
-      "last_remaining_cell": {
-        "title": "Dernière case restante",
-        "aliases": "",
-        "definition": "C'est l'union des deux techniques précédentes : on se concentre sur un bloc donné, et on cherche où un chiffre manquant peut se placer en tenant compte des contraintes de ses lignes et colonnes.",
-        "s1_label": "LE PRINCIPE",
-        "s1_text": "Tu choisis un chiffre — disons le 5 — et tu examines un bloc spécifique. Il te reste quelques cases vides dans ce bloc.\n\nPour chaque case vide, tu te demandes : le 5 peut-il y aller ? Tu vérifies deux choses :\n— Est-ce que le 5 est déjà placé sur la ligne de cette case ? Si oui, impossible.\n— Est-ce que le 5 est déjà placé sur la colonne de cette case ? Si oui, impossible.\n\nUne seule case devrait survivre à tous ces tests. C'est là que le 5 doit se placer.",
-        "s2_label": "COMMENT LA REPÉRER",
-        "s2_text": "Commence par les chiffres qui manquent — ceux qui apparaissent déjà beaucoup ont moins de places possibles.\n\nEnsuite, examine bloc par bloc. Quand tu en repères un où un chiffre manque et où il y a peu de cases vides, c'est un bon candidat. Vérifie les lignes et colonnes qui croisent ce bloc : si elles portent déjà ce chiffre, elles éliminent les cases correspondantes du bloc.",
-        "s3_label": "À RETENIR",
-        "s3_text": "C'est la fusion de last_free_cell (examiner un bloc pour voir quoi manque) et last_possible_number (chercher où un chiffre peut aller). Tu fixes un chiffre et un bloc, puis tu utilises les trois contraintes (ligne, colonne, bloc) pour trouver la seule place possible.",
-        "example": "Le bloc en haut à gauche contient 1, 2, 3, 4, 6 et 7. Il lui manque le 5, entre autres.\n\nTrois cases du bloc sont encore vides. Mais un 5 est déjà placé ailleurs sur la ligne 1 (à droite du bloc) — il élimine la case vide de cette ligne à l'intérieur du bloc. Un autre 5 est placé ailleurs sur la colonne 2 (plus bas) — il élimine la case vide de cette colonne.\n\nIl ne reste qu'une seule case du bloc qui échappe à ces contraintes — c'est là que le 5 doit aller."
-      },
-      "naked_single": {
-        "title": "Singleton nu",
-        "aliases": "Naked Single",
-        "definition": "Un singleton nu est une case dont huit des neuf chiffres ont été éliminés par analyse combinée de sa ligne, de sa colonne et de son bloc. Il ne reste qu'un seul candidat possible — ce chiffre est donc forcément la solution. La technique exige d'avoir noté les candidats au préalable : le singleton devient alors visible d'un coup d'œil.",
-        "example": "Regardez la case cible en ligne 5, colonne E (au centre de la grille). La ligne 5 contient déjà les chiffres 1, 2, 3, 4, 8 et 9 — six candidats éliminés. La colonne E ajoute 3, 5 et 6 ; le 3 est déjà éliminé par la ligne, restent donc 5 et 6 en plus. Le bloc central contient 3, 4, 6 et 8 — tous déjà exclus par la ligne ou la colonne. Au total, huit chiffres sont impossibles : 1, 2, 3, 4, 5, 6, 8, 9. Le seul chiffre qui peut encore se placer dans la case est le 7. C'est le candidat unique : on pose le 7."
-      },
-      "hidden_single": {
-        "title": "Singleton caché",
-        "aliases": "Hidden Single",
-        "definition": "Un singleton caché est un chiffre qui n'a plus qu'une seule case possible dans une unité (ligne, colonne ou bloc), même si cette case garde d'autres candidats. Contrairement au singleton nu (qui se repère en fixant une case), le singleton caché se découvre en fixant un chiffre et une unité, puis en cherchant où ce chiffre peut encore aller. S'il ne reste qu'une option, on la pose — même si la case a l'air d'avoir plusieurs possibilités.",
-        "example": "Concentrez-vous sur la colonne E et cherchez où le chiffre 7 peut encore se placer. Dans le bloc haut-centre, le 7 est déjà posé en (ligne 2, colonne D) — il condamne les trois cases du haut de la colonne. Dans le bloc bas-centre, le 7 est posé en (ligne 9, colonne F) — il condamne les trois cases du bas. Dans la ligne 5, un 7 est déjà présent en colonne A — cette ligne est donc exclue pour la colonne E. Dans la ligne 6, un 7 est présent en colonne I — exclu aussi. Après toutes ces éliminations, il ne reste qu'une seule case de la colonne où le 7 peut aller : la case cible, en ligne 4. Même si la case pourrait en théorie accueillir d'autres chiffres, sur l'axe de la colonne le 7 n'a aucune autre destination possible — c'est ce qui le rend caché."
-      },
-      "naked_pair": {
-        "title": "Paire nue",
-        "aliases": "Naked Pair",
-        "definition": "Deux cases d'une même unité (ligne, colonne ou bloc) contiennent exactement les mêmes deux candidats, et rien d'autre. Puisque ces deux chiffres devront se répartir entre ces deux cases, ils y sont réservés. On peut donc les éliminer des candidats de toutes les autres cases de l'unité — ce qui fait souvent apparaître de nouveaux singletons en cascade.",
-        "example": "Sur la ligne 4, deux cases ont exactement les candidats {4, 7} : la case en colonne B et celle en colonne E. L'une contiendra le 4, l'autre le 7 — on ne sait pas encore dans quel ordre, mais ces deux chiffres sont verrouillés sur cette paire. Conséquence : ni le 4 ni le 7 ne peuvent se placer ailleurs sur la ligne. On les retire donc des candidats des autres cases vides de la ligne. En colonne A, la case {4, 5, 7} se réduit à {5} — un singleton nu apparaît. En colonne H, {4, 8} se réduit à {8} — un autre singleton. De proche en proche, la paire débloque plusieurs cases."
-      },
-      "pointing_pair": {
-        "title": "Paire pointante",
-        "aliases": "Pointing Pair",
-        "definition": "Dans un bloc, tous les candidats d'un chiffre sont alignés sur une même ligne (ou colonne). Puisque ce chiffre doit forcément se placer dans le bloc, il sera donc sur cette ligne (ou colonne) — à l'intérieur du bloc. On peut donc l'éliminer du reste de la ligne (ou colonne), hors du bloc. La technique fait le pont entre deux unités : elle utilise une contrainte de bloc pour libérer une contrainte de ligne/colonne.",
-        "example": "Concentrez-vous sur le bloc en haut à gauche et cherchez où le chiffre 3 peut s'y placer. La ligne 3 du bloc est remplie (trois givens). La ligne 2 du bloc contient trois cases vides, mais la ligne 2 de la grille a déjà un 3 en colonne H — les trois cases du milieu perdent donc le 3 comme candidat. Il ne reste que la ligne 1, avec deux cases possibles : colonnes B et C. C'est une paire pointante : on ne sait pas laquelle contient le 3, mais le 3 du bloc est forcément sur la ligne 1. Conséquence : le 3 ne peut pas se placer ailleurs sur la ligne 1, hors du bloc. On l'élimine donc des candidats en colonne E et colonne F — deux cases libérées."
-      }
-    }
+    "subtitle": "RECOMMANDATION",
+    "intro": "Le site Sudoku Coach propose d'excellentes explications sur les différentes techniques de Sudoku. Je vous conseille leur campagne d'apprentissage progressive, qui couvre toutes les techniques du débutant à l'expert.",
+    "open_link": "OUVRIR SUDOKU COACH"
   }
 }
