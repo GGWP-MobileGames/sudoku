@@ -1,5 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { Difficulty } from "./puzzles";
+import database from "./puzzleDatabase.json";
+import type { Grid } from "./sudoku";
 import { addHistory, type SavedGame } from "./storage";
 
 export type DailySavedGame = Omit<SavedGame, "savedAt"> & { dateKey: string; isCatchup?: boolean };
@@ -20,6 +22,16 @@ export function getTodayKey(): string {
   const m = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
+}
+
+export function getDailyPuzzle(dateKey?: string): { puzzle: Grid; solution: Grid; dateKey: string } {
+  const key = dateKey ?? getTodayKey();
+  const [y, m, d] = key.split("-").map(Number);
+  const db = database as Record<string, { puzzle: Grid; solution: Grid }[]>;
+  const hardPuzzles = db["hard"];
+  const seed = y * 10000 + m * 100 + d;
+  const idx = seed % hardPuzzles.length;
+  return { ...hardPuzzles[idx], dateKey: key };
 }
 
 const KEY = "daily_records";

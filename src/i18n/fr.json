@@ -54,7 +54,6 @@
     "pause_restart": "RECOMMENCER"
   },
   "hint": {
-    "title": "INDICE",
     "understood": "JE CHERCHE",
     "reveal": "RÉVÉLER LA SOLUTION"
   },
@@ -125,7 +124,6 @@
     "col_games": "PARTIES",
     "col_avg_time": "TEMPS MOYEN",
     "col_avg_errors": "NB\nD'ERREURS",
-    "col_best_time": "MEILLEUR TEMPS",
     "col_errors": "ERREURS",
     "col_hints": "INDICES",
     "col_date": "DATE",

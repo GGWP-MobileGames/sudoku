@@ -9,7 +9,7 @@ import { loadTodayRecord, getTodayKey } from "../utils/dailyChallenge";
 import { useSettings } from "../context/SettingsContext";
 import { useResponsive } from "../hooks/useResponsive";
 import { Ionicons } from "@expo/vector-icons";
-import { loadGame, clearSavedGame, convertOngoingToAbandoned, clearOngoing, type SavedGame } from "../utils/storage";
+import { loadGame, clearSavedGame, clearOngoing, type SavedGame } from "../utils/storage";
 import { getRandomPuzzle } from "../utils/puzzles";
 import type { Difficulty } from "../utils/puzzles";
 import type { Grid } from "../utils/sudoku";
@@ -75,7 +75,7 @@ export default function HomeScreen({ initialDifficulty, onStart, onResume, onSta
     const entry = getRandomPuzzle(selected);
     onStart(selected, entry);
     // Nettoyage en arrière-plan, sans bloquer la navigation
-    convertOngoingToAbandoned().catch(() => {});
+    clearOngoing().catch(() => {});
   };
 
   const handleStart = () => {
@@ -221,7 +221,7 @@ export default function HomeScreen({ initialDifficulty, onStart, onResume, onSta
 
       {/* Modale d'abandon de partie */}
       <Modal visible={showDiscardConfirm} transparent animationType="fade">
-        <View style={confirmStyles.overlay}>
+        <View style={[confirmStyles.overlay, { backgroundColor: colors.overlay }]}>
           <View style={[confirmStyles.card, { backgroundColor: colors.bg, borderColor: colors.borderBox }]}>
             <Text style={[confirmStyles.title, { color: colors.textPrimary }]}>{t("home.discard_title")}</Text>
             <Text style={[confirmStyles.message, { color: colors.textSecondary }]}>{t("home.discard_message")}</Text>
@@ -247,7 +247,7 @@ export default function HomeScreen({ initialDifficulty, onStart, onResume, onSta
 
       {/* Modale de confirmation — remplace Alert.alert (non supporté sur web) */}
       <Modal visible={showConfirm} transparent animationType="fade">
-        <View style={confirmStyles.overlay}>
+        <View style={[confirmStyles.overlay, { backgroundColor: colors.overlay }]}>
           <View style={[confirmStyles.card, { backgroundColor: colors.bg, borderColor: colors.borderBox }]}>
             <Text style={[confirmStyles.title, { color: colors.textPrimary }]}>{t("home.confirm_title")}</Text>
             <Text style={[confirmStyles.message, { color: colors.textSecondary }]}>{t("home.confirm_message")}</Text>
@@ -275,7 +275,7 @@ export default function HomeScreen({ initialDifficulty, onStart, onResume, onSta
 }
 
 const confirmStyles = StyleSheet.create({
-  overlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.4)", alignItems: "center", justifyContent: "center", padding: 32 },
+  overlay: { flex: 1, alignItems: "center", justifyContent: "center", padding: 32 },
   card:    { width: "100%", maxWidth: 400, padding: 24, borderWidth: 1, gap: 16 },
   title:   { fontSize: 16, fontWeight: "700", letterSpacing: 2, textAlign: "center" },
   message: { fontSize: 14, lineHeight: 20, textAlign: "center" },

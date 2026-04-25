@@ -30,6 +30,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
           loaded.theme = "dark";
         }
       }
+      delete (loaded as any).darkMode;
       // Migration : remplacer 'auto' par la langue détectée du système
       if (!loaded.language || loaded.language === 'auto') {
         loaded.language = DEVICE_LANGUAGE;

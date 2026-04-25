@@ -54,7 +54,6 @@
     "pause_restart": "RESTART"
   },
   "hint": {
-    "title": "HINT",
     "understood": "I'LL LOOK",
     "reveal": "REVEAL THE SOLUTION"
   },
@@ -125,7 +124,6 @@
     "col_games": "GAMES",
     "col_avg_time": "AVG TIME",
     "col_avg_errors": "AVG\nERRORS",
-    "col_best_time": "BEST TIME",
     "col_errors": "ERRORS",
     "col_hints": "HINTS",
     "col_date": "DATE",

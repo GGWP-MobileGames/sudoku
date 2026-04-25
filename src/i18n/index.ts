@@ -1,6 +1,6 @@
 // src/i18n/index.ts
 // Système de traduction léger sans dépendance externe.
-// Détecte la langue de l'appareil, supporte FR/EN/ES/DE/PT.
+// Détecte la langue de l'appareil, supporte FR/EN/ES/DE/PT/JA.
 
 import { NativeModules, Platform } from "react-native";
 import fr from "./fr.json";

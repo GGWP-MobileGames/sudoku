@@ -54,7 +54,6 @@
     "pause_restart": "やり直す"
   },
   "hint": {
-    "title": "ヒント",
     "understood": "自分で探す",
     "reveal": "答えを見る"
   },
@@ -125,7 +124,6 @@
     "col_games": "ゲーム数",
     "col_avg_time": "平均タイム",
     "col_avg_errors": "平均\nミス数",
-    "col_best_time": "最速タイム",
     "col_errors": "ミス",
     "col_hints": "ヒント",
     "col_date": "日付",

@@ -148,6 +148,7 @@ const NumberPad = React.memo(function NumberPad({
               !canUndo && styles.disabledBtn,
             ]}
             activeOpacity={0.6}
+            accessibilityLabel={t('game.undo')}
           >
             <Text style={[
               styles.undoIcon, secColor,

@@ -54,7 +54,6 @@
     "pause_restart": "REINICIAR"
   },
   "hint": {
-    "title": "PISTA",
     "understood": "VOY A BUSCAR",
     "reveal": "REVELAR LA SOLUCIÓN"
   },
@@ -125,7 +124,6 @@
     "col_games": "PARTIDAS",
     "col_avg_time": "TIEMPO MEDIO",
     "col_avg_errors": "ERRORES\nMEDIOS",
-    "col_best_time": "MEJOR TIEMPO",
     "col_errors": "ERRORES",
     "col_hints": "PISTAS",
     "col_date": "FECHA",

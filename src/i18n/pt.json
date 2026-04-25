@@ -54,7 +54,6 @@
     "pause_restart": "REINICIAR"
   },
   "hint": {
-    "title": "DICA",
     "understood": "VOU PROCURAR",
     "reveal": "REVELAR A SOLUÇÃO"
   },
@@ -125,7 +124,6 @@
     "col_games": "JOGOS",
     "col_avg_time": "TEMPO MÉDIO",
     "col_avg_errors": "ERROS\nMÉDIOS",
-    "col_best_time": "MELHOR TEMPO",
     "col_errors": "ERROS",
     "col_hints": "DICAS",
     "col_date": "DATA",

@@ -23,6 +23,8 @@ if (Platform.OS !== "web") {
   SplashScreen.preventAutoHideAsync();
 }
 
+const SPLASH_MIN_MS = 2000;
+
 type Screen = "home" | "game" | "stats" | "settings" | "daily" | "daily-game" | "welcome" | "rules";
 
 interface AppContentProps {
@@ -36,7 +38,7 @@ function AppContent({ onReady }: AppContentProps) {
   const [difficulty, setDifficulty] = React.useState<Difficulty>("easy");
   const [savedGame,  setSavedGame]  = React.useState<SavedGame | null>(null);
   const [prebuilt,   setPrebuilt]   = React.useState<{ puzzle: Grid; solution: Grid } | undefined>();
-  const dailyGameRef = React.useRef<{ puzzle: Grid; solution: Grid; label: string; dateKey: string } | null>(null);
+  const dailyGameRef = React.useRef<{ puzzle: Grid; solution: Grid; dateKey: string } | null>(null);
   const [dailySaved, setDailySaved] = React.useState<DailySavedGame | null>(null);
 
   const navigate = (s: Screen, dir: TransitionDirection) => {
@@ -53,7 +55,7 @@ function AppContent({ onReady }: AppContentProps) {
     Promise.all([
       AsyncStorage.getItem("has_seen_welcome"),
       loadDailyGame(),
-      Platform.OS !== "web" ? new Promise(resolve => setTimeout(resolve, 2000)) : Promise.resolve(),
+      Platform.OS !== "web" ? new Promise(resolve => setTimeout(resolve, SPLASH_MIN_MS)) : Promise.resolve(),
     ]).then(([welcomed, saved]) => {
       const today = getTodayKey();
       if (saved && saved.dateKey !== today && !saved.isCatchup) {
@@ -75,8 +77,9 @@ function AppContent({ onReady }: AppContentProps) {
       setScreenKey(initialScreen + "-0");
       setDirection("fade");
       onReady();
-    }).catch(() => {
+    }).catch((e) => {
       // Si AsyncStorage échoue au démarrage, on atterrit sur l'accueil sans données daily
+      console.warn("App init failed", e);
       setScreen("home");
       setScreenKey("home-0");
       onReady();

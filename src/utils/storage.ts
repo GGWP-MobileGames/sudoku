@@ -173,10 +173,6 @@ export async function clearOngoing(): Promise<void> {
   } catch (e) { console.warn("clearOngoing error", e); }
 }
 
-export async function convertOngoingToAbandoned(): Promise<void> {
-  await clearOngoing();
-}
-
 // ─── Historique (20 dernières parties) ───────────────────────────────────────
 
 export async function addHistory(entry: HistoryEntry): Promise<void> {

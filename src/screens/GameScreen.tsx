@@ -10,17 +10,21 @@ import NumberPad from "../components/NumberPad";
 import VictoryModal from "../components/VictoryModal";
 import DefeatModal from "../components/DefeatModal";
 import HintModal from "../components/HintModal";
-import { COLORS, SPACING } from "../utils/theme";
+import { SPACING } from "../utils/theme";
 import { useSettings } from "../context/SettingsContext";
 import { useResponsive } from "../hooks/useResponsive";
 import { useKeyboard } from "../hooks/useKeyboard";
-import { clearOngoing, clearSavedGame, serializeNotes, serializeCellErrors, loadStats, calcAdjustedTime } from "../utils/storage";
+import { clearOngoing, serializeNotes, serializeCellErrors, loadStats, calcAdjustedTime } from "../utils/storage";
 import type { VictoryStats } from "../components/VictoryModal";
 import { saveDailyRecord, getTodayKey, saveDailyGame, clearDailyGame, recordDailyInHistory, recordDailyFailureInHistory } from "../utils/dailyChallenge";
 import type { Difficulty } from "../utils/puzzles";
 import type { Grid } from "../utils/sudoku";
 import type { SavedGame } from "../utils/storage";
 import { lightImpact, mediumImpact, errorNotification, successNotification } from "../utils/haptics";
+
+const VICTORY_DELAY_MS  = 3200;
+const DEFEAT_DELAY_MS   = 1200;
+const SAVE_DEBOUNCE_MS  = 2000;
 
 const EMPTY_GRID: Grid = Array.from({ length: 9 }, () => Array(9).fill(0));
 const EMPTY_NOTES  = Array.from({ length: 9 }, () =>
@@ -264,7 +268,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
           isCatchup,
         });
       } catch (e) { console.warn("saveDailyGame failed", e); }
-    }, 2000);
+    }, SAVE_DEBOUNCE_MS);
     return () => { if (dailySaveTimerRef.current) clearTimeout(dailySaveTimerRef.current); };
   }, [grid, notes, mistakes]);
 
@@ -311,7 +315,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
           });
         });
       }
-      victoryTimerRef.current = setTimeout(() => setVictoryReady(true), 3200);
+      victoryTimerRef.current = setTimeout(() => setVictoryReady(true), VICTORY_DELAY_MS);
     }
     return () => { if (victoryTimerRef.current) clearTimeout(victoryTimerRef.current); };
   }, [completed]);
@@ -326,10 +330,8 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         saveDailyRecord({ dateKey: gameDateKey, seconds: secondsRef.current, mistakes: mistakesRef.current, hints: hintsUsed, completed: false, failed: true, isCatchup }).catch(() => {});
         recordDailyFailureInHistory(secondsRef.current, mistakesRef.current, hintsUsed);
         clearDailyGame();
-      } else {
-        clearSavedGame();
       }
-      defeatTimerRef.current = setTimeout(() => setDefeatReady(true), 1200);
+      defeatTimerRef.current = setTimeout(() => setDefeatReady(true), DEFEAT_DELAY_MS);
     }
     return () => { if (defeatTimerRef.current) clearTimeout(defeatTimerRef.current); };
   }, [isDefeated]);
@@ -349,7 +351,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         <Text style={[styles.chevron, { color: colors.textPrimary }]}>‹</Text>
         <Text numberOfLines={1} adjustsFontSizeToFit style={[styles.backText, { color: colors.textPrimary }]}>{t('game.menu')}</Text>
       </TouchableOpacity>
-      <View style={[styles.diffPill, { backgroundColor: isDaily ? COLORS.gold : colors.bgCellSelected }]}>
+      <View style={[styles.diffPill, { backgroundColor: isDaily ? colors.gold : colors.bgCellSelected }]}>
         <Text numberOfLines={1} adjustsFontSizeToFit style={[styles.diffText, { color: isDaily ? '#1A1A1A' : colors.textOnSelected }]}>
           {isDaily ? t('game.daily_badge') : t(`home.difficulties.${difficulty}`).toUpperCase()}
         </Text>
@@ -368,8 +370,8 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
           <View style={[styles.playIcon, { borderLeftColor: colors.textOnSelected }]} />
         ) : (
           <View style={styles.pauseIconShape}>
-            <View style={styles.pauseBar} />
-            <View style={styles.pauseBar} />
+            <View style={[styles.pauseBar, { backgroundColor: colors.gold }]} />
+            <View style={[styles.pauseBar, { backgroundColor: colors.gold }]} />
           </View>
         )}
       </TouchableOpacity>
@@ -453,6 +455,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
                 onPress={cancelHypothesis}
                 style={[styles.hypothesisCircleBtn, { backgroundColor: colors.error }]}
                 activeOpacity={0.75}
+                accessibilityLabel={t('game.hypothesis_cancel')}
               >
                 <Text style={styles.hypothesisCircleText}>✕</Text>
               </TouchableOpacity>
@@ -460,6 +463,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
                 onPress={validateHypothesis}
                 style={[styles.hypothesisCircleBtn, { backgroundColor: colors.hypothesis }]}
                 activeOpacity={0.75}
+                accessibilityLabel={t('game.hypothesis_validate')}
               >
                 <Text style={styles.hypothesisCircleText}>✓</Text>
               </TouchableOpacity>
@@ -469,6 +473,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
               onPress={enterHypothesis}
               style={[styles.hypothesisCircleBtn, { borderWidth: 1.5, borderColor: colors.borderBox, backgroundColor: "transparent" }]}
               activeOpacity={0.75}
+              accessibilityLabel={t('game.hypothesis')}
             >
               <Text style={[styles.hypothesisCircleText, { color: colors.textSecondary }]}>T</Text>
             </TouchableOpacity>
@@ -626,7 +631,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
 }
 
 const styles = StyleSheet.create({
-  safe:   { flex: 1, backgroundColor: COLORS.bg },
+  safe:   { flex: 1 },
   screen: { flex: 1, alignItems: "center", justifyContent: "space-evenly", paddingVertical: SPACING.md, maxWidth: 520, alignSelf: "center", width: "100%" },
   screenLandscape: { flex: 1, flexDirection: "row", paddingHorizontal: SPACING.md, maxWidth: 960, alignSelf: "center", width: "100%" },
   landscapeLeft:  { flex: 1, alignItems: "center", justifyContent: "center" },
@@ -641,19 +646,18 @@ const styles = StyleSheet.create({
   backBtn: {
     flexDirection: "row", alignItems: "center", gap: 6,
     paddingVertical: 8, paddingHorizontal: 14,
-    borderWidth: 1, borderColor: COLORS.borderBox,
+    borderWidth: 1,
   },
   chevron: {
     fontSize: 15,
-    color: COLORS.textPrimary,
     fontWeight: "700",
     lineHeight: 15,
     includeFontPadding: false,
     marginRight: 3,
   },
-  backText:  { fontSize: 12, color: COLORS.textPrimary, fontWeight: "700", letterSpacing: 2.5 },
-  diffPill:  { paddingVertical: 8, paddingHorizontal: 14, backgroundColor: COLORS.bgCellSelected, flexShrink: 1 },
-  diffText:  { fontSize: 12, color: COLORS.textOnSelected, fontWeight: "700", letterSpacing: 2 },
+  backText:  { fontSize: 12, fontWeight: "700", letterSpacing: 2.5 },
+  diffPill:  { paddingVertical: 8, paddingHorizontal: 14, flexShrink: 1 },
+  diffText:  { fontSize: 12, fontWeight: "700", letterSpacing: 2 },
 
   // Barre de stats
   statsBar: {
@@ -679,7 +683,6 @@ const styles = StyleSheet.create({
     width: 4,
     height: 16,
     borderRadius: 1,
-    backgroundColor: COLORS.gold,
   },
   // Icône play : triangle CSS
   playIcon: {
@@ -690,14 +693,13 @@ const styles = StyleSheet.create({
     borderLeftWidth: 15,
     borderTopColor: "transparent",
     borderBottomColor: "transparent",
-    borderLeftColor: COLORS.textOnSelected,
     marginLeft: 3, // compenser l'asymétrie visuelle du triangle
   },
 
   statItem:  { alignItems: "center", gap: 2 },
-  statLabel: { color: COLORS.textSecondary, fontSize: 11, letterSpacing: 1.5, fontWeight: "600" },
-  statValue: { color: COLORS.textPrimary, fontSize: 20, fontWeight: "300", letterSpacing: 1 },
-  statSep:   { width: 1, height: 32, backgroundColor: COLORS.borderThin },
+  statLabel: { fontSize: 11, letterSpacing: 1.5, fontWeight: "600" },
+  statValue: { fontSize: 20, fontWeight: "300", letterSpacing: 1 },
+  statSep:   { width: 1, height: 32 },
 
   // Grille avec overlay pause
   gridWrapper: { position: "relative", overflow: "visible" },
@@ -730,13 +732,12 @@ const styles = StyleSheet.create({
   },
   pausedOverlay: {
     position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
-    backgroundColor: COLORS.bg,
     alignItems: "center", justifyContent: "center",
-    borderWidth: 2, borderColor: COLORS.borderBox,
+    borderWidth: 2,
     gap: 10,
   },
-  pausedText: { fontSize: 22, fontWeight: "800", letterSpacing: 8, color: COLORS.textPrimary },
-  pausedSub:  { fontSize: 12, color: COLORS.textSecondary, letterSpacing: 1 },
+  pausedText: { fontSize: 22, fontWeight: "800", letterSpacing: 8 },
+  pausedSub:  { fontSize: 12, letterSpacing: 1 },
   pausedActions: {
     marginTop: 24,
     flexDirection: "row",

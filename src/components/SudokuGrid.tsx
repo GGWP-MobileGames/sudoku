@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useCallback, useMemo } from "react";
 import { View, Text, StyleSheet, Animated, Platform, PanResponder } from "react-native";
 import SudokuCell from "./SudokuCell";
-import { COLORS } from "../utils/theme";
 import { useSettings } from "../context/SettingsContext";
 import type { Grid } from "../utils/sudoku";
 import type { NotesGrid, ErrorsGrid } from "../hooks/useGameState";
+
+const WAVE_STEP_MS = 1000;
 
 interface Props {
   grid:          Grid;
@@ -174,8 +175,8 @@ const maxDist = Math.sqrt(32); // dist max ≈ 5.66
     };
 
     runWave(0);
-    const t1 = setTimeout(() => runWave(1), 1000);
-    const t2 = setTimeout(() => runWave(2), 2000);
+    const t1 = setTimeout(() => runWave(1), WAVE_STEP_MS);
+    const t2 = setTimeout(() => runWave(2), WAVE_STEP_MS * 2);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [victoryWave]);
 
@@ -411,6 +412,6 @@ const styles = StyleSheet.create({
   row:            { flexDirection: "row" },
   outerBorder:    {
     position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
-    borderWidth: 2, borderColor: COLORS.borderBox,
+    borderWidth: 2,
   },
 });

@@ -54,7 +54,6 @@
     "pause_restart": "NEU STARTEN"
   },
   "hint": {
-    "title": "TIPP",
     "understood": "ICH SUCHE",
     "reveal": "LÖSUNG ANZEIGEN"
   },
@@ -125,7 +124,6 @@
     "col_games": "SPIELE",
     "col_avg_time": "DURCHSCH. ZEIT",
     "col_avg_errors": "DURCHSCH.\nFEHLER",
-    "col_best_time": "BESTE ZEIT",
     "col_errors": "FEHLER",
     "col_hints": "TIPPS",
     "col_date": "DATUM",

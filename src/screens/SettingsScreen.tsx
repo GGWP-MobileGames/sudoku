@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import {
   View, Text, TouchableOpacity, StyleSheet,
   StatusBar, ScrollView, Switch, TextInput,
@@ -7,15 +7,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useSettings } from "../context/SettingsContext";
 import { SUPPORTED_LANGUAGES, type Language } from "../i18n";
 import { useResponsive } from "../hooks/useResponsive";
-import { THEME_LIST, type ThemeKey } from "../utils/theme";
+import { THEME_LIST, type ThemeKey, type ColorTheme } from "../utils/theme";
 
-interface Props { onBack: () => void; }
+interface RowProps {
+  label: string; desc?: string; value: boolean;
+  onToggle: () => void; last?: boolean; colors: ColorTheme;
+}
 
-export default function SettingsScreen({ onBack }: Props) {
-  const { settings, colors, updateSettings, t, language } = useSettings();
-  const { isTablet } = useResponsive();
-
-  const Row = ({ label, desc, value, onToggle, last = false }: { label: string; desc?: string; value: boolean; onToggle: () => void; last?: boolean }) => (
+function Row({ label, desc, value, onToggle, last = false, colors }: RowProps) {
+  return (
     <View style={[s.row, last && s.rowLast, { borderBottomColor: colors.borderThin }]}>
       <View style={{ flex: 1, marginRight: 12 }}>
         <Text style={[s.rowLabel, { color: colors.textPrimary }]}>{label}</Text>
@@ -26,30 +26,37 @@ export default function SettingsScreen({ onBack }: Props) {
         onValueChange={onToggle}
         trackColor={{ false: colors.borderThin, true: colors.hintColor }}
         thumbColor={value ? colors.bg : colors.bgCard}
-      />
+      colors={colors} />
     </View>
   );
+}
+
+interface Props { onBack: () => void; }
+
+export default function SettingsScreen({ onBack }: Props) {
+  const { settings, colors, updateSettings, t, language } = useSettings();
+  const { isTablet } = useResponsive();
 
   return (
     <SafeAreaView style={[s.safe, { backgroundColor: colors.bg }]}>
-      <StatusBar barStyle={colors.isDark ? "light-content" : "dark-content"} backgroundColor={colors.bg} />
+      <StatusBar barStyle={colors.isDark ? "light-content" : "dark-content"} backgroundColor={colors.bg} colors={colors} />
 
       <View style={[s.header, isTablet && { maxWidth: 520 }]}>
         <View style={s.titleBlock}>
           <Text style={[s.titleSub, { color: colors.textSecondary }]}>{t('settings.title_sub')}</Text>
           <View style={s.titleRow}>
-            <View style={[s.titleLine, { backgroundColor: colors.borderBox }]} />
+            <View style={[s.titleLine, { backgroundColor: colors.borderBox }]} colors={colors} />
             <Text style={[s.title, { color: colors.textPrimary }]}>{t('settings.title')}</Text>
-            <View style={[s.titleLine, { backgroundColor: colors.borderBox }]} />
+            <View style={[s.titleLine, { backgroundColor: colors.borderBox }]} colors={colors} />
           </View>
         </View>
         <TouchableOpacity onPress={onBack} style={[s.backBtn, { borderColor: colors.borderBox }]} activeOpacity={0.7}>
           <Text style={[s.backText, { color: colors.textPrimary }]}>{t('settings.back')}</Text>
         </TouchableOpacity>
         <View style={s.ornament}>
-          <View style={[s.ornamentLine, { backgroundColor: colors.borderThin }]} />
+          <View style={[s.ornamentLine, { backgroundColor: colors.borderThin }]} colors={colors} />
           <Text style={[s.ornamentDot, { color: colors.textSecondary }]}>◆</Text>
-          <View style={[s.ornamentLine, { backgroundColor: colors.borderThin }]} />
+          <View style={[s.ornamentLine, { backgroundColor: colors.borderThin }]} colors={colors} />
         </View>
       </View>
 
@@ -148,14 +155,14 @@ export default function SettingsScreen({ onBack }: Props) {
             desc={t('settings.free_play_desc')}
             value={settings.freePlayMode ?? false}
             onToggle={() => updateSettings({ freePlayMode: !(settings.freePlayMode ?? false) })}
-          />
+          colors={colors} />
           <Row
             label={t('settings.limit_errors')}
             desc={t('settings.limit_errors_desc')}
             value={settings.limitErrors}
             onToggle={() => updateSettings({ limitErrors: !settings.limitErrors })}
             last={!settings.limitErrors}
-          />
+          colors={colors} />
           {settings.limitErrors && (
             <View style={[s.row, s.rowLast, { borderBottomColor: colors.borderThin }]}>
               <View style={{ flex: 1 }}>
@@ -173,7 +180,7 @@ export default function SettingsScreen({ onBack }: Props) {
                 keyboardType="number-pad"
                 maxLength={2}
                 selectTextOnFocus
-              />
+              colors={colors} />
             </View>
           )}
         </View>
@@ -183,10 +190,10 @@ export default function SettingsScreen({ onBack }: Props) {
           <View style={[s.sectionHead, { backgroundColor: colors.bgCard, borderBottomColor: colors.borderThin }]}>
             <Text style={[s.sectionTitle, { color: colors.textSecondary }]}>{t('settings.section_display')}</Text>
           </View>
-          <Row label={t('settings.large_numbers')} desc={t('settings.large_numbers_desc')} value={settings.largeNumbers} onToggle={() => updateSettings({ largeNumbers: !settings.largeNumbers })} />
-          <Row label={t('settings.highlight_identical')} desc={t('settings.highlight_identical_desc')} value={settings.highlightIdentical} onToggle={() => updateSettings({ highlightIdentical: !settings.highlightIdentical })} />
-          <Row label={t('settings.highlight_group')} desc={t('settings.highlight_group_desc')} value={settings.highlightGroup} onToggle={() => updateSettings({ highlightGroup: !settings.highlightGroup })} />
-          <Row label={t('settings.highlight_notes')} desc={t('settings.highlight_notes_desc')} value={settings.highlightNotes} onToggle={() => updateSettings({ highlightNotes: !settings.highlightNotes })} last />
+          <Row label={t('settings.large_numbers')} desc={t('settings.large_numbers_desc')} value={settings.largeNumbers} onToggle={() => updateSettings({ largeNumbers: !settings.largeNumbers })} colors={colors} />
+          <Row label={t('settings.highlight_identical')} desc={t('settings.highlight_identical_desc')} value={settings.highlightIdentical} onToggle={() => updateSettings({ highlightIdentical: !settings.highlightIdentical })} colors={colors} />
+          <Row label={t('settings.highlight_group')} desc={t('settings.highlight_group_desc')} value={settings.highlightGroup} onToggle={() => updateSettings({ highlightGroup: !settings.highlightGroup })} colors={colors} />
+          <Row label={t('settings.highlight_notes')} desc={t('settings.highlight_notes_desc')} value={settings.highlightNotes} onToggle={() => updateSettings({ highlightNotes: !settings.highlightNotes })} last colors={colors} />
         </View>
 
         {/* Aides à la résolution */}
@@ -194,9 +201,9 @@ export default function SettingsScreen({ onBack }: Props) {
           <View style={[s.sectionHead, { backgroundColor: colors.bgCard, borderBottomColor: colors.borderThin }]}>
             <Text style={[s.sectionTitle, { color: colors.textSecondary }]}>{t('settings.section_assists')}</Text>
           </View>
-          <Row label={t('settings.show_cell_errors')} desc={t('settings.show_cell_errors_desc')} value={settings.showCellErrors} onToggle={() => updateSettings({ showCellErrors: !settings.showCellErrors })} />
-          <Row label={t('settings.auto_notes')} desc={t('settings.auto_notes_desc')} value={settings.autoNotesEnabled ?? false} onToggle={() => updateSettings({ autoNotesEnabled: !(settings.autoNotesEnabled ?? false) })} />
-          <Row label={t('settings.test_mode')} desc={t('settings.test_mode_desc')} value={settings.testModeEnabled ?? false} onToggle={() => updateSettings({ testModeEnabled: !(settings.testModeEnabled ?? false) })} last />
+          <Row label={t('settings.show_cell_errors')} desc={t('settings.show_cell_errors_desc')} value={settings.showCellErrors} onToggle={() => updateSettings({ showCellErrors: !settings.showCellErrors })} colors={colors} />
+          <Row label={t('settings.auto_notes')} desc={t('settings.auto_notes_desc')} value={settings.autoNotesEnabled ?? false} onToggle={() => updateSettings({ autoNotesEnabled: !(settings.autoNotesEnabled ?? false) })} colors={colors} />
+          <Row label={t('settings.test_mode')} desc={t('settings.test_mode_desc')} value={settings.testModeEnabled ?? false} onToggle={() => updateSettings({ testModeEnabled: !(settings.testModeEnabled ?? false) })} last colors={colors} />
         </View>
 
         {/* Saisie & retours */}
@@ -204,11 +211,11 @@ export default function SettingsScreen({ onBack }: Props) {
           <View style={[s.sectionHead, { backgroundColor: colors.bgCard, borderBottomColor: colors.borderThin }]}>
             <Text style={[s.sectionTitle, { color: colors.textSecondary }]}>{t('settings.section_input')}</Text>
           </View>
-          <Row label={t('settings.blitz_mode')} desc={t('settings.blitz_mode_desc')} value={settings.blitzMode} onToggle={() => updateSettings({ blitzMode: !settings.blitzMode })} />
+          <Row label={t('settings.blitz_mode')} desc={t('settings.blitz_mode_desc')} value={settings.blitzMode} onToggle={() => updateSettings({ blitzMode: !settings.blitzMode })} colors={colors} />
           {settings.blitzMode && (
-            <Row label={t('settings.blitz_auto_select')} desc={t('settings.blitz_auto_select_desc')} value={settings.blitzAutoSelect ?? true} onToggle={() => updateSettings({ blitzAutoSelect: !(settings.blitzAutoSelect ?? true) })} />
+            <Row label={t('settings.blitz_auto_select')} desc={t('settings.blitz_auto_select_desc')} value={settings.blitzAutoSelect ?? true} onToggle={() => updateSettings({ blitzAutoSelect: !(settings.blitzAutoSelect ?? true) })} colors={colors} />
           )}
-          <Row label={t('settings.haptic_feedback')} desc={t('settings.haptic_feedback_desc')} value={settings.hapticFeedback} onToggle={() => updateSettings({ hapticFeedback: !settings.hapticFeedback })} last />
+          <Row label={t('settings.haptic_feedback')} desc={t('settings.haptic_feedback_desc')} value={settings.hapticFeedback} onToggle={() => updateSettings({ hapticFeedback: !settings.hapticFeedback })} last colors={colors} />
         </View>
 
       </ScrollView>
@@ -245,3 +252,5 @@ const s = StyleSheet.create({
   langBtn:      { paddingVertical: 6, paddingHorizontal: 14, borderWidth: 1 },
   langText:     { fontSize: 12 },
 });
+
+
