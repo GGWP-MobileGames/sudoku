@@ -26,7 +26,7 @@ function Row({ label, desc, value, onToggle, last = false, colors }: RowProps) {
         onValueChange={onToggle}
         trackColor={{ false: colors.borderThin, true: colors.hintColor }}
         thumbColor={value ? colors.bg : colors.bgCard}
-      colors={colors} />
+      />
     </View>
   );
 }
@@ -39,24 +39,24 @@ export default function SettingsScreen({ onBack }: Props) {
 
   return (
     <SafeAreaView style={[s.safe, { backgroundColor: colors.bg }]}>
-      <StatusBar barStyle={colors.isDark ? "light-content" : "dark-content"} backgroundColor={colors.bg} colors={colors} />
+      <StatusBar barStyle={colors.isDark ? "light-content" : "dark-content"} backgroundColor={colors.bg} />
 
       <View style={[s.header, isTablet && { maxWidth: 520 }]}>
         <View style={s.titleBlock}>
           <Text style={[s.titleSub, { color: colors.textSecondary }]}>{t('settings.title_sub')}</Text>
           <View style={s.titleRow}>
-            <View style={[s.titleLine, { backgroundColor: colors.borderBox }]} colors={colors} />
+            <View style={[s.titleLine, { backgroundColor: colors.borderBox }]} />
             <Text style={[s.title, { color: colors.textPrimary }]}>{t('settings.title')}</Text>
-            <View style={[s.titleLine, { backgroundColor: colors.borderBox }]} colors={colors} />
+            <View style={[s.titleLine, { backgroundColor: colors.borderBox }]} />
           </View>
         </View>
         <TouchableOpacity onPress={onBack} style={[s.backBtn, { borderColor: colors.borderBox }]} activeOpacity={0.7}>
           <Text style={[s.backText, { color: colors.textPrimary }]}>{t('settings.back')}</Text>
         </TouchableOpacity>
         <View style={s.ornament}>
-          <View style={[s.ornamentLine, { backgroundColor: colors.borderThin }]} colors={colors} />
+          <View style={[s.ornamentLine, { backgroundColor: colors.borderThin }]} />
           <Text style={[s.ornamentDot, { color: colors.textSecondary }]}>◆</Text>
-          <View style={[s.ornamentLine, { backgroundColor: colors.borderThin }]} colors={colors} />
+          <View style={[s.ornamentLine, { backgroundColor: colors.borderThin }]} />
         </View>
       </View>
 
@@ -180,7 +180,7 @@ export default function SettingsScreen({ onBack }: Props) {
                 keyboardType="number-pad"
                 maxLength={2}
                 selectTextOnFocus
-              colors={colors} />
+              />
             </View>
           )}
         </View>
