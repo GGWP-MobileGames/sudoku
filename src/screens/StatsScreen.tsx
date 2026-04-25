@@ -6,7 +6,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { loadStats, loadHistory, formatTime, formatDate, calcAdjustedTime, type AllStats, type HistoryEntry } from "../utils/storage";
 import { useSettings } from "../context/SettingsContext";
-import { COLORS, type ColorTheme } from "../utils/theme";
+import { type ColorTheme } from "../utils/theme";
 import { useResponsive } from "../hooks/useResponsive";
 
 interface Props { onBack: () => void; }
@@ -18,12 +18,12 @@ const LEVELS = [
   { key: "diabolical" as const },
 ];
 
-function getResultLabels(t: (k: string) => string): Record<string, { label: string; color: string }> {
+function getResultLabels(t: (k: string) => string, colors: ColorTheme): Record<string, { label: string; color: string }> {
   return {
-    win:         { label: t("stats.result_win"),    color: "#4A7A41" },
-    "daily-win": { label: t("stats.result_daily"),  color: "#C9963A" },
-    failed:      { label: t("stats.result_failed"), color: "#B5281C" },
-    ongoing:     { label: t("stats.result_ongoing"),color: "#C9963A" },
+    win:         { label: t("stats.result_win"),    color: colors.success },
+    "daily-win": { label: t("stats.result_daily"),  color: colors.gold },
+    failed:      { label: t("stats.result_failed"), color: colors.error },
+    ongoing:     { label: t("stats.result_ongoing"),color: colors.gold },
   };
 }
 
@@ -47,7 +47,7 @@ export default function StatsScreen({ onBack }: Props) {
   }, []);
 
   const isDark = colors.isDark;
-  const RESULT_LABELS = getResultLabels(t);
+  const RESULT_LABELS = getResultLabels(t, colors);
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.bg }]}>
@@ -124,7 +124,7 @@ export default function StatsScreen({ onBack }: Props) {
               return (
                 <View key={key} style={[tbl.row, i < LEVELS.length - 1 && { borderBottomWidth: 0.5, borderBottomColor: colors.borderThin }]}>
                   <Text style={[tbl.cell, tbl.wide, tbl.bold, { color: colors.textPrimary }]}>{t(`home.difficulties.${key}`)}</Text>
-                  <Text style={[tbl.cell, { color: adjTime !== null ? COLORS.gold : colors.textPrimary, fontWeight: adjTime !== null ? "700" : "400" }]}>
+                  <Text style={[tbl.cell, { color: adjTime !== null ? colors.gold : colors.textPrimary, fontWeight: adjTime !== null ? "700" : "400" }]}>
                     {adjTime !== null ? formatTime(Math.round(adjTime)) : "—"}
                   </Text>
                   <Text style={[tbl.cell, { color: colors.textPrimary }]}>
@@ -169,16 +169,16 @@ export default function StatsScreen({ onBack }: Props) {
                 const levelLabel = (isDailyWin || isDailyFailed)
                   ? t("stats.result_daily_short")
                   : t(`home.difficulties.${h.difficulty}`);
-                const levelColor = isDailyWin   ? COLORS.gold
-                  : isFailed     ? "#B5281C"
-                  : isWin        ? "#4A7A41"
+                const levelColor = isDailyWin   ? colors.gold
+                  : isFailed     ? colors.error
+                  : isWin        ? colors.success
                   : colors.textPrimary;
                 return (
                   <View key={i} style={[tbl.row, i < history.length - 1 && { borderBottomWidth: 0.5, borderBottomColor: colors.borderThin }]}>
                     <Text style={[tbl.cell, tbl.wide, { fontSize: 12, color: colors.textPrimary }]}>{formatDate(h.date)}</Text>
                     <Text style={[tbl.cell, { fontSize: 12, color: levelColor, fontWeight: (isDailyWin || isDailyFailed) ? "700" : isFailed || isWin ? "600" : "400" }]}>{levelLabel}</Text>
                     <Text style={[tbl.cell, { fontSize: 12, color: colors.textPrimary }]}>{formatTime(h.seconds)}</Text>
-                    <Text style={[tbl.cell, { fontSize: 12, color: isFailed ? "#B5281C" : colors.textPrimary }]}>{h.mistakes}</Text>
+                    <Text style={[tbl.cell, { fontSize: 12, color: isFailed ? colors.error : colors.textPrimary }]}>{h.mistakes}</Text>
                   </View>
                 );
               })}

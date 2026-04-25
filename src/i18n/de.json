@@ -21,6 +21,7 @@
     "confirm_message": "Du hast ein laufendes Spiel. Ein neues Spiel zu starten löscht deinen Fortschritt. Fortfahren?",
     "confirm_ok": "Neues Spiel",
     "confirm_cancel": "Abbrechen",
+    "rules_label": "Spielregeln",
     "difficulties": {
       "easy": "Leicht",
       "medium": "Mittel",

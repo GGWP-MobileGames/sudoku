@@ -21,6 +21,7 @@
     "confirm_message": "You have a game in progress. Starting a new game will erase your progress. Continue?",
     "confirm_ok": "New game",
     "confirm_cancel": "Cancel",
+    "rules_label": "Game rules",
     "difficulties": {
       "easy": "Easy",
       "medium": "Medium",

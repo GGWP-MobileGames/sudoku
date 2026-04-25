@@ -21,6 +21,7 @@
     "confirm_message": "進行中のゲームがあります。新しいゲームを始めると進行状況が失われます。続けますか？",
     "confirm_ok": "新しいゲーム",
     "confirm_cancel": "キャンセル",
+    "rules_label": "ゲームのルール",
     "difficulties": {
       "easy": "かんたん",
       "medium": "ふつう",

@@ -39,6 +39,11 @@ const CLASSIC = {
   bgGold:  "rgba(212,168,60,0.42)",
 
   hintHighlight: "#C5DEB8",
+
+  hypothesis:    "#3A6BC4",
+  bgHypothesis:  "#3A6BC424",
+  success:       "#4A7A41",
+  errorsOnDark:  "#FFD0CC",
 };
 
 const DARK = {
@@ -78,6 +83,11 @@ const DARK = {
   bgGold:  "rgba(212,168,60,0.42)",
 
   hintHighlight: "#2E4E2C",
+
+  hypothesis:    "#5A8FE0",
+  bgHypothesis:  "#5A8FE024",
+  success:       "#6AAA60",
+  errorsOnDark:  "#FFD0CC",
 };
 
 const GRUVBOX_LIGHT = {
@@ -117,6 +127,11 @@ const GRUVBOX_LIGHT = {
   bgGold:  "rgba(215,153,33,0.40)",
 
   hintHighlight: "#B8BB26",
+
+  hypothesis:    "#458588",
+  bgHypothesis:  "#45858824",
+  success:       "#98971A",
+  errorsOnDark:  "#FFD0CC",
 };
 
 const GRUVBOX_DARK = {
@@ -156,6 +171,11 @@ const GRUVBOX_DARK = {
   bgGold:  "rgba(250,189,47,0.40)",
 
   hintHighlight: "#3C5A38",
+
+  hypothesis:    "#83A598",
+  bgHypothesis:  "#83A59824",
+  success:       "#B8BB26",
+  errorsOnDark:  "#FFD0CC",
 };
 
 const OCEAN = {
@@ -195,6 +215,11 @@ const OCEAN = {
   bgGold:  "rgba(91,164,207,0.40)",
 
   hintHighlight: "#1A4050",
+
+  hypothesis:    "#5BA4CF",
+  bgHypothesis:  "#5BA4CF24",
+  success:       "#68C8A0",
+  errorsOnDark:  "#FFD0CC",
 };
 
 const FOREST = {
@@ -234,6 +259,11 @@ const FOREST = {
   bgGold:  "rgba(140,192,124,0.38)",
 
   hintHighlight: "#2A4825",
+
+  hypothesis:    "#7CB87A",
+  bgHypothesis:  "#7CB87A24",
+  success:       "#A0D090",
+  errorsOnDark:  "#FFD0CC",
 };
 
 // ── Registre des thèmes ─────────────────────────────────────────────────────

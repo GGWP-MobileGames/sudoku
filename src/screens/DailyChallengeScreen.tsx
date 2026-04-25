@@ -8,7 +8,7 @@ import { useSettings } from "../context/SettingsContext";
 import { COLORS, type ColorTheme } from "../utils/theme";
 import { useResponsive } from "../hooks/useResponsive";
 import {
-  getTodayKey, formatDayLabel, loadDailyRecords, loadTodayRecord,
+  getTodayKey, loadDailyRecords, loadTodayRecord,
   type DailyRecord,
 } from "../utils/dailyChallenge";
 import { formatTime } from "../utils/storage";
@@ -76,7 +76,7 @@ function MonthCalendar({ records, year, month, colors, onDayPress, t, savedPastD
               cal.cell,
               done         && { backgroundColor: COLORS.gold },
               doneCatchup  && { backgroundColor: colors.hintHighlight },
-              failed       && { backgroundColor: '#E05040' },
+              failed       && { backgroundColor: colors.error },
               attempted    && { backgroundColor: colors.borderThin },
               isToday      && { borderWidth: 1.5, borderColor: colors.borderBox },
               isCatchupActive && { borderWidth: 1.5, borderColor: colors.hintHighlight },
@@ -203,10 +203,10 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
       <ScrollView contentContainerStyle={[s.scroll, isTablet && { maxWidth: 520, alignSelf: "center" as const, width: "100%" as const }]} showsVerticalScrollIndicator={false}>
 
         {/* Date du jour + statut */}
-        <View style={[s.dateCard, { borderColor: completed ? COLORS.gold : failed ? '#E05040' : colors.borderBox, backgroundColor: (completed || failed) ? colors.bgCard : colors.bg }]}>
+        <View style={[s.dateCard, { borderColor: completed ? COLORS.gold : failed ? colors.error : colors.borderBox, backgroundColor: (completed || failed) ? colors.bgCard : colors.bg }]}>
           <Text style={[s.dateLabel, { color: colors.textSecondary }]}>{t('daily.today')}</Text>
           <Text style={[s.dateValue, { color: colors.textPrimary }]}>{todayLabel}</Text>
-          <Text style={[s.dateLevel, { color: completed ? COLORS.gold : failed ? '#E05040' : alreadyPlayed ? colors.textSecondary : COLORS.gold }]}>
+          <Text style={[s.dateLevel, { color: completed ? COLORS.gold : failed ? colors.error : alreadyPlayed ? colors.textSecondary : COLORS.gold }]}>
             {completed
               ? t('daily.success_title')
               : failed
@@ -275,7 +275,7 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
               <Text style={[s.calLegendText, { color: colors.textSecondary }]}>{t('daily.legend_done')}</Text>
             </View>
             <View style={s.calLegendItem}>
-              <View style={[s.calLegendDot, { backgroundColor: '#E05040' }]} />
+              <View style={[s.calLegendDot, { backgroundColor: colors.error }]} />
               <Text style={[s.calLegendText, { color: colors.textSecondary }]}>{t('daily.legend_failed')}</Text>
             </View>
             <View style={s.calLegendItem}>
@@ -346,7 +346,7 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
                     color: !rec ? (isCatchupInProgress ? colors.hintColor : colors.textSecondary)
                       : rec.completed && rec.isCatchup ? colors.hintColor
                       : rec.completed ? COLORS.gold
-                      : rec.failed    ? '#E05040'
+                      : rec.failed    ? colors.error
                       : colors.textSecondary
                   }]}>
                     {!rec
@@ -392,7 +392,7 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
                         setSelectedDay(null);
                         onAbandonAndStartPast(key);
                       }}
-                      style={[modal.playBtn, { backgroundColor: "#E05040", borderColor: "#E05040" }]}
+                      style={[modal.playBtn, { backgroundColor: colors.error, borderColor: colors.error }]}
                       activeOpacity={0.75}
                     >
                       <Text style={[modal.playTxt, { color: "#FFFFFF" }]}>

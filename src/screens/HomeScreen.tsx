@@ -98,7 +98,7 @@ export default function HomeScreen({ initialDifficulty, onStart, onResume, onSta
           <TouchableOpacity onPress={onInfo} style={styles.infoBtn} activeOpacity={0.7}>
             <Text style={[styles.infoBtnText, { color: colors.textSecondary }]}>GGWP</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={onRules} style={styles.rulesBtn} activeOpacity={0.7} accessibilityLabel="Rules">
+          <TouchableOpacity onPress={onRules} style={styles.rulesBtn} activeOpacity={0.7} accessibilityLabel={t("home.rules_label")}>
             <Ionicons name="help-circle-outline" size={24} color={colors.textSecondary} />
           </TouchableOpacity>
           <TouchableOpacity onPress={onSettings} style={styles.gearBtn} activeOpacity={0.7}>
@@ -192,10 +192,10 @@ export default function HomeScreen({ initialDifficulty, onStart, onResume, onSta
         {/* Défi du jour */}
         <TouchableOpacity
           onPress={onDaily}
-          style={[styles.dailyBtn, { borderColor: dailyDone ? "#4A7A41" : COLORS.gold }]}
+          style={[styles.dailyBtn, { borderColor: dailyDone ? colors.success : COLORS.gold }]}
           activeOpacity={0.75}
         >
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[styles.dailyText, { color: dailyDone ? "#4A7A41" : COLORS.gold }]}>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[styles.dailyText, { color: dailyDone ? colors.success : COLORS.gold }]}>
             {dailyDone ? t("home.daily_done") : t("home.daily_todo")}
           </Text>
         </TouchableOpacity>

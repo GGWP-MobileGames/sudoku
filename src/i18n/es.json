@@ -21,6 +21,7 @@
     "confirm_message": "Tienes una partida en curso. Empezar una nueva borrará tu progreso. ¿Continuar?",
     "confirm_ok": "Nueva partida",
     "confirm_cancel": "Cancelar",
+    "rules_label": "Reglas del juego",
     "difficulties": {
       "easy": "Fácil",
       "medium": "Intermedio",

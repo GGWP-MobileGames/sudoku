@@ -43,7 +43,7 @@ const SudokuCell = React.memo(function SudokuCell({
   if (isHintTarget)           bg = colors.hintColor;
   else if (isSelected)        bg = colors.bgCellSelectedGrid;
   else if (isFreePlayError)   bg = colors.error + "28"; // rouge translucide
-  else if (isHypothesis)      bg = "#3A6BC424";          // bleu translucide
+  else if (isHypothesis)      bg = colors.bgHypothesis;  // bleu translucide
   else if (isHintHighlight)   bg = colors.hintHighlight;
   else if (isMatchValue)      bg = colors.bgCellMatch;
   else if (isHighlighted)     bg = colors.bgCellHighlight;
@@ -53,7 +53,7 @@ const SudokuCell = React.memo(function SudokuCell({
   if (isSelected) textColor = '#1A1A1A';
   else if (isHintTarget) textColor = colors.bg;
   else if (isFreePlayError) textColor = colors.error;
-  else if (isHypothesis) textColor = "#3A6BC4";
+  else if (isHypothesis) textColor = colors.hypothesis;
 
   const noteNumbers  = value === 0 ? [...notes].sort((a, b) => a - b) : [];
   const showNotes    = noteNumbers.length > 0;
@@ -79,16 +79,16 @@ const SudokuCell = React.memo(function SudokuCell({
       {/* Grille 3×3 notes + erreurs */}
       {(showNotes || showErrors) && (
         <View style={styles.notesGrid}>
-          {ROWS_3x3.map((row, ri) => (
+          {ROWS_3x3.map((rowDigits, ri) => (
             <View key={ri} style={styles.notesRow}>
-              {row.map(n => {
+              {rowDigits.map(n => {
                 const isNote     = noteNumbers.includes(n);
                 const isErr      = errorNumbers.includes(n);
                 const isNoteHit  = isNote && !!highlightNoteValue && n === highlightNoteValue;
                 const isHypoNote = isNote && !isErr && (hypothesisNoteKeys?.has(`${row},${col},${n}`) ?? false);
                 const badgeSize  = nfs + 5;
                 const noteColor  = isErr ? colors.error
-                  : isHypoNote ? "#3A6BC4"
+                  : isHypoNote ? colors.hypothesis
                   : colors.textSecondary;
                 return (
                   <View key={n} style={styles.noteCell}>
@@ -100,7 +100,7 @@ const SudokuCell = React.memo(function SudokuCell({
                         <Text style={[
                           isErr ? styles.errorDigit : styles.noteDigit,
                           { fontSize: nfs, color: noteColor },
-                          onDark && (isErr ? styles.errorsOnDark : styles.notesOnDark),
+                          onDark && (isErr ? { color: colors.errorsOnDark } : styles.notesOnDark),
                           isNoteHit && styles.noteHit,
                         ]}>
                           {n}
@@ -185,8 +185,6 @@ const styles = StyleSheet.create({
   },
   notesOnDark:  { color: "#1A1A1A" },
   errorDigit:   { fontWeight: "700" },
-  errorsOnDark: { color: "#FFD0CC" },
-
   goldOverlay: {
     position: "absolute",
     top: 0, left: 0, right: 0, bottom: 0,

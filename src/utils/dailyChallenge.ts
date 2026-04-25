@@ -1,7 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { Difficulty } from "./puzzles";
-import database from "./puzzleDatabase.json";
-import type { Grid } from "./sudoku";
 import { addHistory, type SavedGame } from "./storage";
 
 export type DailySavedGame = Omit<SavedGame, "savedAt"> & { dateKey: string; isCatchup?: boolean };
@@ -16,32 +14,12 @@ export interface DailyRecord {
   isCatchup?: boolean;  // partie de rattrapage (jour passé)
 }
 
-const MONTH_NAMES = [
-  "janvier","février","mars","avril","mai","juin",
-  "juillet","août","septembre","octobre","novembre","décembre",
-];
-
 export function getTodayKey(): string {
   const d = new Date();
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
-}
-
-export function formatDayLabel(dateKey: string): string {
-  const [y, m, d] = dateKey.split("-").map(Number);
-  return `${d} ${MONTH_NAMES[m - 1]} ${y}`;
-}
-
-export function getDailyPuzzle(dateKey?: string): { puzzle: Grid; solution: Grid; label: string; dateKey: string } {
-  const key = dateKey ?? getTodayKey();
-  const [y, m, d] = key.split("-").map(Number);
-  const db = database as Record<string, { puzzle: Grid; solution: Grid }[]>;
-  const hardPuzzles = db["hard"];
-  const seed = y * 10000 + m * 100 + d;
-  const idx = seed % hardPuzzles.length;
-  return { ...hardPuzzles[idx], label: formatDayLabel(key), dateKey: key };
 }
 
 const KEY = "daily_records";
@@ -91,7 +69,7 @@ export async function clearDailyGame(): Promise<void> {
 
 // Logger le défi du jour dans l'historique global
 export async function recordDailyInHistory(
-  seconds: number, mistakes: number
+  seconds: number, mistakes: number, hintsUsed: number = 0
 ): Promise<void> {
   try {
     await addHistory({
@@ -99,13 +77,14 @@ export async function recordDailyInHistory(
       result: "daily-win",
       seconds,
       mistakes,
+      hintsUsed,
       date: Date.now(),
     });
   } catch (e) { console.warn("recordDailyInHistory error", e); }
 }
 
 export async function recordDailyFailureInHistory(
-  seconds: number, mistakes: number
+  seconds: number, mistakes: number, hintsUsed: number = 0
 ): Promise<void> {
   try {
     await addHistory({
@@ -113,6 +92,7 @@ export async function recordDailyFailureInHistory(
       result: "daily-failed",
       seconds,
       mistakes,
+      hintsUsed,
       date: Date.now(),
     });
   } catch (e) { console.warn("recordDailyFailureInHistory error", e); }

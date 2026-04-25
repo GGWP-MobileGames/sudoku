@@ -21,6 +21,7 @@
     "confirm_message": "Você tem um jogo em andamento. Começar um novo apagará seu progresso. Continuar?",
     "confirm_ok": "Novo jogo",
     "confirm_cancel": "Cancelar",
+    "rules_label": "Regras do jogo",
     "difficulties": {
       "easy": "Fácil",
       "medium": "Médio",

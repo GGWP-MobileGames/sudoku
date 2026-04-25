@@ -222,17 +222,20 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
   });
 
   // ── Haptics (conditionné par le paramètre) ──────────────────────────────────
-  const haptic = settings.hapticFeedback;
-  React.useEffect(() => { if (bounceCell && haptic) lightImpact(); }, [bounceCell]);
-  React.useEffect(() => { if (shakeCell && haptic) errorNotification(); }, [shakeCell]);
+  // hapticRef garde toujours la valeur courante pour éviter les stale closures
+  // dans les effets dont les deps ne contiennent pas hapticFeedback.
+  const hapticRef = React.useRef(settings.hapticFeedback);
+  hapticRef.current = settings.hapticFeedback;
+  React.useEffect(() => { if (bounceCell && hapticRef.current) lightImpact(); }, [bounceCell]);
+  React.useEffect(() => { if (shakeCell && hapticRef.current) errorNotification(); }, [shakeCell]);
   const prevCompletedGroupsRef = React.useRef<number>(0);
   React.useEffect(() => {
-    if (haptic && completedGroups.length > 0 && completedGroups.length !== prevCompletedGroupsRef.current) {
+    if (hapticRef.current && completedGroups.length > 0 && completedGroups.length !== prevCompletedGroupsRef.current) {
       mediumImpact();
     }
     prevCompletedGroupsRef.current = completedGroups.length;
   }, [completedGroups]);
-  React.useEffect(() => { if (completed && haptic) successNotification(); }, [completed]);
+  React.useEffect(() => { if (completed && hapticRef.current) successNotification(); }, [completed]);
 
   const victoryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const defeatTimerRef  = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -272,7 +275,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
       const hintsUsed = hintsPerGame - hintsLeftRef.current;
       if (isDaily) {
         saveDailyRecord({ dateKey: gameDateKey, seconds: secondsRef.current, mistakes: mistakesRef.current, hints: hintsUsed, completed: true, isCatchup });
-        recordDailyInHistory(secondsRef.current, mistakesRef.current);
+        recordDailyInHistory(secondsRef.current, mistakesRef.current, hintsUsed);
         clearDailyGame();
         // Pour les défis quotidiens : juste le badge Parfait, pas de comparaison perso
         setVictoryStats({
@@ -321,7 +324,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
       setDefeatStats({ seconds: secondsRef.current, mistakes: mistakesRef.current, hintsUsed });
       if (isDaily) {
         saveDailyRecord({ dateKey: gameDateKey, seconds: secondsRef.current, mistakes: mistakesRef.current, hints: hintsUsed, completed: false, failed: true, isCatchup }).catch(() => {});
-        recordDailyFailureInHistory(secondsRef.current, mistakesRef.current);
+        recordDailyFailureInHistory(secondsRef.current, mistakesRef.current, hintsUsed);
         clearDailyGame();
       } else {
         clearSavedGame();
@@ -455,7 +458,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={validateHypothesis}
-                style={[styles.hypothesisCircleBtn, { backgroundColor: "#3A6BC4" }]}
+                style={[styles.hypothesisCircleBtn, { backgroundColor: colors.hypothesis }]}
                 activeOpacity={0.75}
               >
                 <Text style={styles.hypothesisCircleText}>✓</Text>
