@@ -160,7 +160,7 @@ export async function recordFailure(
     const listH: HistoryEntry[] = rawH ? JSON.parse(rawH) : [];
     const cleanH = listH.filter(e => e.result !== "ongoing");
     await AsyncStorage.setItem(KEYS.history, JSON.stringify(cleanH));
-    await addHistory({ difficulty, result: "failed", seconds, mistakes, date: Date.now() });
+    await addHistory({ difficulty, result: "failed", seconds, mistakes, hintsUsed, date: Date.now() });
   } catch (e) { console.warn("recordFailure error", e); }
 }
 
