@@ -228,7 +228,7 @@
       "hidden_pair": "HIDDEN PAIR",
       "pointing_pair": "POINTING PAIR",
       "naked_triple": "NAKED TRIPLE",
-      "fallback": "ANALYSIS NEEDED"
+      "fallback": "ADVANCED TECHNIQUE"
     },
     "naked_single": "Cell {{cell}} has only one possible candidate. Look at what its {{row}}, {{col}} and {{box}} have already placed: together, they eliminate every digit except one. Find which one.",
     "hidden_single_row": "Scan {{row}} cell by cell: only one missing digit can go in cell {{cell}}. For each digit not yet in the row, count how many cells can still hold it — one of them has only one option left.",

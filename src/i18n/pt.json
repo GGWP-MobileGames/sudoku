@@ -228,7 +228,7 @@
       "hidden_pair": "HIDDEN PAIR",
       "pointing_pair": "POINTING PAIR",
       "naked_triple": "NAKED TRIPLE",
-      "fallback": "ANALYSIS NEEDED"
+      "fallback": "ADVANCED TECHNIQUE"
     },
     "naked_single": "A célula {{cell}} tem apenas um candidato possível. Veja o que sua {{row}}, sua {{col}} e seu {{box}} já têm colocado: juntos, eliminam todos os dígitos exceto um. Descubra qual.",
     "hidden_single_row": "Percorra a {{row}} célula por célula: apenas um dígito ausente pode ir para a célula {{cell}}. Para cada dígito não presente na linha, conte quantas células ainda podem recebê-lo — um deles tem apenas uma opção.",

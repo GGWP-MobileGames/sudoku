@@ -228,7 +228,7 @@
       "hidden_pair": "HIDDEN PAIR",
       "pointing_pair": "POINTING PAIR",
       "naked_triple": "NAKED TRIPLE",
-      "fallback": "ANALYSIS NEEDED"
+      "fallback": "ADVANCED TECHNIQUE"
     },
     "naked_single": "Feld {{cell}} hat nur einen möglichen Kandidaten. Schau, was {{row}}, {{col}} und {{box}} bereits gesetzt haben: Zusammen eliminieren sie alle Ziffern bis auf eine. Finde welche.",
     "hidden_single_row": "Geh {{row}} Feld für Feld durch: Nur eine fehlende Ziffer kann in Feld {{cell}}. Zähle für jede fehlende Ziffer der Zeile, wie viele Felder sie noch aufnehmen können — eine hat nur noch eine Option.",

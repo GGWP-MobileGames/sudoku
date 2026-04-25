@@ -228,7 +228,7 @@
       "hidden_pair": "HIDDEN PAIR",
       "pointing_pair": "POINTING PAIR",
       "naked_triple": "NAKED TRIPLE",
-      "fallback": "ANALYSIS NEEDED"
+      "fallback": "ADVANCED TECHNIQUE"
     },
     "naked_single": "La case {{cell}} n'a qu'un seul candidat possible. Regardez ce que sa {{row}}, sa {{col}} et son {{box}} ont déjà placé : ensemble, ils éliminent tous les chiffres sauf un. Trouvez lequel.",
     "hidden_single_row": "Parcourez la {{row}} case par case : un seul chiffre manquant ne peut se placer que dans la case {{cell}}. Pour chaque chiffre absent de la ligne, comptez combien de cases peuvent encore l'accueillir — l'un d'eux n'en a qu'une seule.",
