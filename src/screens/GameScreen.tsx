@@ -373,7 +373,12 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
       defeatTimerRef.current = setTimeout(() => setDefeatReady(true), DEFEAT_DELAY_MS);
     }
     return () => { if (defeatTimerRef.current) clearTimeout(defeatTimerRef.current); };
-  }, [isDefeated, defeatPending, isDaily, hintsPerGame, gameDateKey, isCatchup]);
+    // `defeatPending` est volontairement exclu des deps : il est mis à `true`
+    // *à l'intérieur* de l'effet ; l'inclure provoquerait une ré-exécution
+    // immédiate dont le cleanup annulerait le setTimeout du DEFEAT_DELAY_MS,
+    // empêchant la modale Game Over d'apparaître.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDefeated, isDaily, hintsPerGame, gameDateKey, isCatchup]);
 
   // ── Blocs réutilisés en portrait et paysage ────────────────────────────────
   const headerBlock = (
