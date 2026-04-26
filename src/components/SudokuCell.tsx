@@ -1,6 +1,7 @@
 import React from "react";
 import { TouchableOpacity, Text, View, StyleSheet, Animated } from "react-native";
 import { useSettings } from "../context/SettingsContext";
+import { withAlpha } from "../utils/theme";
 import type { CellNotes, CellErrors } from "../hooks/useGameState";
 
 interface Props {
@@ -41,7 +42,7 @@ const SudokuCell = React.memo(function SudokuCell({
   let bg = colors.bgCellDefault;
   if (isHintTarget)           bg = colors.hintColor;
   else if (isSelected)        bg = colors.bgCellSelectedGrid;
-  else if (isFreePlayError)   bg = colors.error + "28"; // rouge translucide
+  else if (isFreePlayError)   bg = withAlpha(colors.error, 0.16); // rouge translucide
   else if (isHypothesis)      bg = colors.bgHypothesis;  // bleu translucide
   else if (isHintHighlight)   bg = colors.hintHighlight;
   else if (isMatchValue)      bg = colors.bgCellMatch;
@@ -49,7 +50,7 @@ const SudokuCell = React.memo(function SudokuCell({
 
   // Chiffre principal
   let textColor = isFixed ? colors.textFixed : colors.textUser;
-  if (isSelected) textColor = '#1A1A1A';
+  if (isSelected) textColor = colors.textOnGold;
   else if (isHintTarget) textColor = colors.bg;
   else if (isFreePlayError) textColor = colors.error;
   else if (isHypothesis) textColor = colors.hypothesis;
@@ -99,7 +100,11 @@ const SudokuCell = React.memo(function SudokuCell({
                         <Text style={[
                           isErr ? styles.errorDigit : styles.noteDigit,
                           { fontSize: nfs, color: noteColor },
-                          onDark && (isErr ? { color: colors.errorsOnDark } : styles.notesOnDark),
+                          // Sur fond accent : texte rouge spécifique pour les erreurs ; sinon
+                          // texte sombre (gold = isSelected) ou clair (hintColor = isHintTarget).
+                          onDark && (isErr
+                            ? { color: colors.errorsOnDark }
+                            : { color: isSelected ? colors.textOnGold : colors.bg }),
                           isNoteHit && styles.noteHit,
                         ]}>
                           {n}
@@ -182,7 +187,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  notesOnDark:  { color: "#1A1A1A" },
   errorDigit:   { fontWeight: "700" },
   goldOverlay: {
     position: "absolute",

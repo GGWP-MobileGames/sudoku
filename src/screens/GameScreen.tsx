@@ -10,7 +10,7 @@ import NumberPad from "../components/NumberPad";
 import VictoryModal from "../components/VictoryModal";
 import DefeatModal from "../components/DefeatModal";
 import HintModal from "../components/HintModal";
-import { SPACING } from "../utils/theme";
+import { SPACING, withAlpha } from "../utils/theme";
 import { useSettings } from "../context/SettingsContext";
 import { useResponsive } from "../hooks/useResponsive";
 import { useKeyboard } from "../hooks/useKeyboard";
@@ -123,12 +123,20 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
     if (!settings.blitzMode) setBlitzNumber(null);
   }, [settings.blitzMode]);
 
-  // Désélectionner automatiquement un chiffre quand il est complètement placé (9 fois)
+  // Désélectionner automatiquement un chiffre quand il est correctement placé 9 fois.
+  // En Free Play, les valeurs erronées apparaissent dans `grid` ; on les exclut en
+  // comparant à `solution` pour ne pas désélectionner prématurément.
   React.useEffect(() => {
     if (!settings.blitzMode || blitzNumber === null || blitzNumber <= 0) return;
-    const placed = grid.flat().filter(v => v === blitzNumber).length;
-    if (placed >= 9) setBlitzNumber(null);
-  }, [grid, blitzNumber, settings.blitzMode]);
+    if (!solution.length) return;
+    let correct = 0;
+    for (let r = 0; r < 9; r++) {
+      for (let c = 0; c < 9; c++) {
+        if (grid[r]?.[c] === blitzNumber && solution[r]?.[c] === blitzNumber) correct++;
+      }
+    }
+    if (correct >= 9) setBlitzNumber(null);
+  }, [grid, blitzNumber, settings.blitzMode, solution]);
 
   const pausedRef = React.useRef(paused);
   pausedRef.current = paused;
@@ -255,8 +263,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
   const dailySaveTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   // Sauvegarde immédiate du défi quotidien — appelée sur retour menu et passage en arrière-plan
   // pour éviter la perte des coups effectués dans la fenêtre de debounce.
-  const dailyFlushSaveRef = React.useRef<(() => void) | null>(null);
-  dailyFlushSaveRef.current = () => {
+  const dailyFlushSave = React.useCallback(() => {
     if (!isDaily || !grid.length || completed || isDefeated) return;
     if (dailySaveTimerRef.current) { clearTimeout(dailySaveTimerRef.current); dailySaveTimerRef.current = null; }
     try {
@@ -270,7 +277,11 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         isCatchup,
       });
     } catch (e) { console.warn("saveDailyGame failed", e); }
-  };
+  }, [isDaily, grid, completed, isDefeated, difficulty, notes, cellErrors, puzzle, solution, gameDateKey, isCatchup, mistakesRef, hintsLeftRef, secondsRef]);
+  // Ref synchronisée par effet pour éviter les écritures pendant le render
+  // (et permettre l'invocation depuis un setTimeout/AppState handler stables).
+  const dailyFlushSaveRef = React.useRef<(() => void) | null>(null);
+  React.useEffect(() => { dailyFlushSaveRef.current = dailyFlushSave; }, [dailyFlushSave]);
   React.useEffect(() => {
     if (!isDaily || !grid.length || completed || isDefeated) return;
     if (dailySaveTimerRef.current) clearTimeout(dailySaveTimerRef.current);
@@ -278,7 +289,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
       dailyFlushSaveRef.current?.();
     }, SAVE_DEBOUNCE_MS);
     return () => { if (dailySaveTimerRef.current) clearTimeout(dailySaveTimerRef.current); };
-  }, [grid, notes, mistakes]);
+  }, [grid, notes, mistakes, isDaily, completed, isDefeated]);
 
   // Pour le défi quotidien, useGameState ne traite pas AppState (flushSave skip si isDaily).
   // On gère ici le passage en arrière-plan pour flush immédiatement.
@@ -339,7 +350,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
       victoryTimerRef.current = setTimeout(() => setVictoryReady(true), VICTORY_DELAY_MS);
     }
     return () => { if (victoryTimerRef.current) clearTimeout(victoryTimerRef.current); };
-  }, [completed]);
+  }, [completed, isDaily, hintsPerGame, gameDateKey, isCatchup, difficulty]);
 
   React.useEffect(() => {
     if (isDefeated && !defeatPending) {
@@ -355,7 +366,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
       defeatTimerRef.current = setTimeout(() => setDefeatReady(true), DEFEAT_DELAY_MS);
     }
     return () => { if (defeatTimerRef.current) clearTimeout(defeatTimerRef.current); };
-  }, [isDefeated]);
+  }, [isDefeated, defeatPending, isDaily, hintsPerGame, gameDateKey, isCatchup]);
 
   // ── Blocs réutilisés en portrait et paysage ────────────────────────────────
   const headerBlock = (
@@ -374,7 +385,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         <Text numberOfLines={1} adjustsFontSizeToFit style={[styles.backText, { color: colors.textPrimary }]}>{t('game.menu')}</Text>
       </TouchableOpacity>
       <View style={[styles.diffPill, { backgroundColor: isDaily ? colors.gold : colors.bgCellSelected }]}>
-        <Text numberOfLines={1} adjustsFontSizeToFit style={[styles.diffText, { color: isDaily ? '#1A1A1A' : colors.textOnSelected }]}>
+        <Text numberOfLines={1} adjustsFontSizeToFit style={[styles.diffText, { color: isDaily ? colors.textOnGold : colors.textOnSelected }]}>
           {isDaily ? t('game.daily_badge') : t(`home.difficulties.${difficulty}`).toUpperCase()}
         </Text>
       </View>
@@ -463,7 +474,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
             activeOpacity={0.75}
             accessibilityLabel={t('game.clear_errors')}
           >
-            <Text style={styles.hypothesisCircleText}>⌫</Text>
+            <Text style={[styles.hypothesisCircleText, { color: colors.textOnError }]}>⌫</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -479,7 +490,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
                 activeOpacity={0.75}
                 accessibilityLabel={t('game.hypothesis_cancel')}
               >
-                <Text style={styles.hypothesisCircleText}>✕</Text>
+                <Text style={[styles.hypothesisCircleText, { color: colors.textOnError }]}>✕</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={validateHypothesis}
@@ -487,7 +498,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
                 activeOpacity={0.75}
                 accessibilityLabel={t('game.hypothesis_validate')}
               >
-                <Text style={styles.hypothesisCircleText}>✓</Text>
+                <Text style={[styles.hypothesisCircleText, { color: colors.textOnHypothesis }]}>✓</Text>
               </TouchableOpacity>
             </View>
           ) : (
@@ -635,7 +646,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
 
       {/* Overlay jeu libre : grille remplie mais cases erronées */}
       {!!freePlayErrors && freePlayErrors.length > 0 && !freePlayOverlayDismissed && (
-        <View style={[styles.freePlayOverlayWrap, { backgroundColor: colors.bg + "CC" }]}>
+        <View style={[styles.freePlayOverlayWrap, { backgroundColor: withAlpha(colors.bg, 0.8) }]}>
           <View style={[styles.freePlayCard, { backgroundColor: colors.bgCard, borderColor: colors.borderBox }]}>
             <Text style={[styles.freePlayTitle, { color: colors.textPrimary }]}>
               {t('game.free_play_title')}
@@ -757,7 +768,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   hypothesisCircleText: {
-    color: "#FFFFFF",
     fontSize: 14,
     fontWeight: "800",
   },

@@ -229,7 +229,7 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
       });
     }, 2000);
     return () => { if (saveTimerRef.current) clearTimeout(saveTimerRef.current); };
-  }, [grid, notes, mistakes]);
+  }, [grid, notes, mistakes, puzzle, solution, difficulty, completed, defeated, init.isDaily]);
 
   // ── Sauvegarde immédiate (appelée à la fermeture / passage en arrière-plan) ─
   const flushSave = useCallback(() => {
@@ -243,7 +243,8 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
       savedAt: Date.now(),
     });
   }, [puzzle, solution, difficulty, completed, defeated]);
-  flushSaveRef.current = flushSave;
+  // Synchroniser la ref dans un effet (évite les écritures pendant le render).
+  useEffect(() => { flushSaveRef.current = flushSave; }, [flushSave]);
 
   // ── Historique : capture l'état courant avant chaque action ────────────────
   const pushHistory = useCallback(() => {

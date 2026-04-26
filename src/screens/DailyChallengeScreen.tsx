@@ -24,8 +24,8 @@ interface Props {
   savedPastDateKey?:      string;      // rattrapage en cours (dateKey)
 }
 
-function MonthCalendar({ records, year, month, colors, onDayPress, t, savedPastDateKey, today, thirtyDaysAgo }: {
-  records: DailyRecord[]; year: number; month: number; colors: ColorTheme;
+function MonthCalendar({ recordsByKey, year, month, colors, onDayPress, t, savedPastDateKey, today, thirtyDaysAgo }: {
+  recordsByKey: Map<string, DailyRecord>; year: number; month: number; colors: ColorTheme;
   onDayPress: (key: string, rec: DailyRecord | null) => void;
   t: (key: string) => string;
   savedPastDateKey?: string;
@@ -51,7 +51,7 @@ function MonthCalendar({ records, year, month, colors, onDayPress, t, savedPastD
       {cells.map((d, i) => {
         if (!d) return <View key={`e-${i}`} style={cal.empty} />;
         const key = `${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
-        const rec = records.find(r => r.dateKey === key);
+        const rec = recordsByKey.get(key);
         const isToday    = key === today;
         const isFuture   = key > today;
         const isPast     = key < today;
@@ -84,11 +84,15 @@ function MonthCalendar({ records, year, month, colors, onDayPress, t, savedPastD
           >
             <Text style={[
               cal.cellText,
-              { color: isFuture ? colors.borderThin : (done || doneCatchup || failed) ? "#FFFFFF" : colors.textPrimary },
-              done        && { color: "#1A1A1A" },
-              doneCatchup && { color: colors.hintColor },
-              isToday     && { fontWeight: "700" },
-              !isTappable && !isFuture && { color: colors.borderThin }, // hors fenêtre, pas jouable
+              { color:
+                  isFuture       ? colors.borderThin
+                : !isTappable    ? colors.borderThin   // hors fenêtre, pas jouable
+                : done           ? colors.textOnGold
+                : failed         ? colors.textOnError
+                : doneCatchup    ? colors.hintColor
+                : colors.textPrimary
+              },
+              isToday && { fontWeight: "700" },
             ]}>{d}</Text>
           </TouchableOpacity>
         );
@@ -110,6 +114,11 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
   const { isTablet } = useResponsive();
   const [todayRecord, setTodayRecord] = useState<DailyRecord | null>(null);
   const [allRecords,  setAllRecords]  = useState<DailyRecord[]>([]);
+  // Map indexée par dateKey pour éviter une recherche linéaire par cellule du calendrier.
+  const recordsByKey = React.useMemo(
+    () => new Map(allRecords.map(r => [r.dateKey, r])),
+    [allRecords]
+  );
   // Recalculé au passage de minuit / retour en foreground pour que la date "aujourd'hui",
   // la fenêtre de 30 jours et la streak restent synchronisées sans reload manuel.
   const [todayTick, setTodayTick] = useState(() => getTodayKey());
@@ -129,7 +138,8 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
   const streak = React.useMemo(() => {
     const isCompleted = (d: Date) => {
       const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-      return !!allRecords.find(r => r.dateKey === key && r.completed && !r.isCatchup);
+      const r = recordsByKey.get(key);
+      return !!(r && r.completed && !r.isCatchup);
     };
     const [ty, tm, td] = today.split("-").map(Number);
     const todayDate = new Date(ty, tm - 1, td);
@@ -141,7 +151,7 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
       d.setDate(d.getDate() - 1);
     }
     return count;
-  }, [allRecords, today]);
+  }, [recordsByKey, today]);
 
   useEffect(() => {
     loadTodayRecord().then(setTodayRecord);
@@ -288,7 +298,7 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
             </View>
           </View>
           <MonthCalendar
-            records={allRecords}
+            recordsByKey={recordsByKey}
             year={calYear}
             month={calMonth}
             colors={colors}
@@ -395,7 +405,7 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
                       style={[modal.playBtn, { backgroundColor: colors.error, borderColor: colors.error }]}
                       activeOpacity={0.75}
                     >
-                      <Text style={[modal.playTxt, { color: "#FFFFFF" }]}>
+                      <Text style={[modal.playTxt, { color: colors.textOnError }]}>
                         {t("daily.catch_up_abandon_btn")}
                       </Text>
                     </TouchableOpacity>
@@ -414,7 +424,7 @@ export default function DailyChallengeScreen({ onStart, onResume, onBack, hasSav
                   style={[modal.playBtn, { backgroundColor: colors.hintColor, borderColor: colors.hintColor }]}
                   activeOpacity={0.75}
                 >
-                  <Text style={[modal.playTxt, { color: "#FFFFFF" }]}>
+                  <Text style={[modal.playTxt, { color: colors.bg }]}>
                     {canResumePast ? t("daily.resume") : t("daily.play_past")}
                   </Text>
                 </TouchableOpacity>

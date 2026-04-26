@@ -44,6 +44,13 @@ const CLASSIC = {
   bgHypothesis:  "#3A6BC424",
   success:       "#4A7A41",
   errorsOnDark:  "#FFD0CC",
+
+  // Texte contrasté sur surfaces accent — invariants entre thèmes :
+  // gold est toujours brillant (texte sombre), error/hypothesis sont toujours
+  // assez saturés pour que du blanc reste lisible.
+  textOnGold:       "#1A1A1A",
+  textOnError:      "#FFFFFF",
+  textOnHypothesis: "#FFFFFF",
 };
 
 const DARK = {
@@ -88,6 +95,10 @@ const DARK = {
   bgHypothesis:  "#5A8FE024",
   success:       "#6AAA60",
   errorsOnDark:  "#FFD0CC",
+  textOnGold:       "#1A1A1A",
+  textOnError:      "#FFFFFF",
+  textOnHypothesis: "#FFFFFF",
+
 };
 
 const GRUVBOX_LIGHT = {
@@ -132,6 +143,10 @@ const GRUVBOX_LIGHT = {
   bgHypothesis:  "#45858824",
   success:       "#98971A",
   errorsOnDark:  "#FFD0CC",
+  textOnGold:       "#1A1A1A",
+  textOnError:      "#FFFFFF",
+  textOnHypothesis: "#FFFFFF",
+
 };
 
 const GRUVBOX_DARK = {
@@ -176,6 +191,10 @@ const GRUVBOX_DARK = {
   bgHypothesis:  "#83A59824",
   success:       "#B8BB26",
   errorsOnDark:  "#FFD0CC",
+  textOnGold:       "#1A1A1A",
+  textOnError:      "#FFFFFF",
+  textOnHypothesis: "#FFFFFF",
+
 };
 
 const OCEAN = {
@@ -220,6 +239,10 @@ const OCEAN = {
   bgHypothesis:  "#5BA4CF24",
   success:       "#68C8A0",
   errorsOnDark:  "#FFD0CC",
+  textOnGold:       "#1A1A1A",
+  textOnError:      "#FFFFFF",
+  textOnHypothesis: "#FFFFFF",
+
 };
 
 const FOREST = {
@@ -264,6 +287,10 @@ const FOREST = {
   bgHypothesis:  "#7CB87A24",
   success:       "#A0D090",
   errorsOnDark:  "#FFD0CC",
+  textOnGold:       "#1A1A1A",
+  textOnError:      "#FFFFFF",
+  textOnHypothesis: "#FFFFFF",
+
 };
 
 // ── Registre des thèmes ─────────────────────────────────────────────────────
@@ -302,3 +329,20 @@ export const SPACING = {
   lg: 20,
   xl: 28,
 };
+
+// ── Utilitaire alpha ─────────────────────────────────────────────────────────
+// Applique une transparence à une couleur hex (#RRGGBB) ou rgb(a)(...).
+// Évite les concaténations fragiles type `colors.bg + "CC"` qui supposent
+// un format hex sans alpha pré-existant.
+export function withAlpha(color: string, alpha: number): string {
+  const a = Math.max(0, Math.min(1, alpha));
+  if (color.startsWith("#") && color.length === 7) {
+    const hex = Math.round(a * 255).toString(16).padStart(2, "0").toUpperCase();
+    return color + hex;
+  }
+  if (color.startsWith("rgb(")) {
+    return color.replace(/^rgb\(([^)]+)\)$/, `rgba($1, ${a})`);
+  }
+  // rgba(...) ou hex avec alpha déjà — on ne tente pas de remplacer.
+  return color;
+}

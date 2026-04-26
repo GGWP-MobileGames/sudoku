@@ -15,7 +15,3 @@ export function getRandomPuzzle(difficulty: Difficulty): PuzzleEntry {
   const list = db[difficulty];
   return list[Math.floor(Math.random() * list.length)];
 }
-
-export function getPuzzleCount(difficulty: Difficulty): number {
-  return db[difficulty]?.length ?? 0;
-}

@@ -124,20 +124,25 @@ function AppContent({ onReady }: AppContentProps) {
   const handleAbandonAndStartPast   = (dateKey: string) => openPastDay(dateKey, "abandon");
 
   // ── Geste retour Android ──────────────────────────────────────────────────
+  // L'écouteur est attaché une fois ; il lit l'écran courant via une ref pour
+  // éviter de détacher/rattacher à chaque navigation.
+  const screenRef = React.useRef<Screen | null>(screen);
+  screenRef.current = screen;
   React.useEffect(() => {
     const onBack = () => {
-      if (!screen || screen === "home" || screen === "welcome") return false;
-      if (screen === "game")       { handleBackToHome();   return true; }
-      if (screen === "stats")      { handleBackStats();    return true; }
-      if (screen === "settings")   { handleBackSettings(); return true; }
-      if (screen === "daily")      { handleBackDaily();    return true; }
-      if (screen === "daily-game") { handleBackToHome();   return true; }
-      if (screen === "rules")      { handleBackRules();    return true; }
+      const s = screenRef.current;
+      if (!s || s === "home" || s === "welcome") return false;
+      if (s === "game")       { handleBackToHome();   return true; }
+      if (s === "stats")      { handleBackStats();    return true; }
+      if (s === "settings")   { handleBackSettings(); return true; }
+      if (s === "daily")      { handleBackDaily();    return true; }
+      if (s === "daily-game") { handleBackToHome();   return true; }
+      if (s === "rules")      { handleBackRules();    return true; }
       return false;
     };
     const sub = BackHandler.addEventListener("hardwareBackPress", onBack);
     return () => sub.remove();
-  }, [screen]);
+  }, []);
 
   if (!screen) return null;
 
