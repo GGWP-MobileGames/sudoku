@@ -514,7 +514,16 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
           <View style={styles.pausedActions}>
             {onSettings && (
               <TouchableOpacity
-                onPress={(e) => { e.stopPropagation(); setPaused(false); onSettings(); }}
+                onPress={(e) => {
+                  e.stopPropagation();
+                  setPaused(false);
+                  // Flush avant navigation : le cleanup de l'auto-save annule
+                  // le setTimeout en attente — sans flush, les coups effectués
+                  // dans les 2 dernières secondes seraient perdus.
+                  if (isDaily) dailyFlushSaveRef.current?.();
+                  else         flushSave();
+                  onSettings();
+                }}
                 style={[styles.pausedBtn, { borderColor: colors.borderBox }]}
                 activeOpacity={0.7}
               >
