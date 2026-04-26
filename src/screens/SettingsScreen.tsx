@@ -7,7 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useSettings } from "../context/SettingsContext";
 import { SUPPORTED_LANGUAGES, type Language } from "../i18n";
 import { useResponsive } from "../hooks/useResponsive";
-import { THEME_LIST, type ThemeKey, type ColorTheme } from "../utils/theme";
+import { THEME_LIST, type ColorTheme } from "../utils/theme";
 
 interface RowProps {
   label: string; desc?: string; value: boolean;

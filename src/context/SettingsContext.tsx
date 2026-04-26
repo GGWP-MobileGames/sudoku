@@ -30,13 +30,15 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
           loaded.theme = "dark";
         }
       }
-      delete (loaded as any).darkMode;
+      delete loaded.darkMode;
       // Migration : remplacer 'auto' par la langue détectée du système
       if (!loaded.language || loaded.language === 'auto') {
         loaded.language = DEVICE_LANGUAGE;
       }
-      saveSettings(loaded);
-      setSettings(loaded);
+      // À ce stade, loaded ne contient plus darkMode et est compatible AppSettings.
+      const clean: AppSettings = loaded;
+      saveSettings(clean);
+      setSettings(clean);
     });
   }, []);
 

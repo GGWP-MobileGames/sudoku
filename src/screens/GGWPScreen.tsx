@@ -28,7 +28,7 @@ function withGGWP(text: string, baseStyle: object, ggwpColor: string) {
 }
 
 export default function GGWPScreen({ onClose }: Props) {
-  const { colors, settings, t } = useSettings();
+  const { colors, t } = useSettings();
   const { isTablet } = useResponsive();
 
   return (

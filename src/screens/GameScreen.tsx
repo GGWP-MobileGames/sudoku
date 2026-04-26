@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import {
   View, Text, TouchableOpacity, StyleSheet, Platform,
-  StatusBar, Animated,
+  StatusBar, Animated, AppState, type AppStateStatus,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useGameState } from "../hooks/useGameState";
@@ -14,7 +14,7 @@ import { SPACING } from "../utils/theme";
 import { useSettings } from "../context/SettingsContext";
 import { useResponsive } from "../hooks/useResponsive";
 import { useKeyboard } from "../hooks/useKeyboard";
-import { clearOngoing, serializeNotes, serializeCellErrors, loadStats, calcAdjustedTime } from "../utils/storage";
+import { serializeNotes, serializeCellErrors, loadStats, calcAdjustedTime } from "../utils/storage";
 import type { VictoryStats } from "../components/VictoryModal";
 import { saveDailyRecord, getTodayKey, saveDailyGame, clearDailyGame, recordDailyInHistory, recordDailyFailureInHistory } from "../utils/dailyChallenge";
 import type { Difficulty } from "../utils/puzzles";
@@ -253,24 +253,45 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
   const isDefeated = effectiveLimitErrors && !completed && mistakes >= effectiveMaxErrors;
 
   const dailySaveTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Sauvegarde immédiate du défi quotidien — appelée sur retour menu et passage en arrière-plan
+  // pour éviter la perte des coups effectués dans la fenêtre de debounce.
+  const dailyFlushSaveRef = React.useRef<(() => void) | null>(null);
+  dailyFlushSaveRef.current = () => {
+    if (!isDaily || !grid.length || completed || isDefeated) return;
+    if (dailySaveTimerRef.current) { clearTimeout(dailySaveTimerRef.current); dailySaveTimerRef.current = null; }
+    try {
+      saveDailyGame({
+        difficulty, grid,
+        notes: serializeNotes(notes),
+        cellErrors: serializeCellErrors(cellErrors),
+        puzzle, solution,
+        mistakes: mistakesRef.current, hintsLeft: hintsLeftRef.current, seconds: secondsRef.current,
+        dateKey: gameDateKey,
+        isCatchup,
+      });
+    } catch (e) { console.warn("saveDailyGame failed", e); }
+  };
   React.useEffect(() => {
     if (!isDaily || !grid.length || completed || isDefeated) return;
     if (dailySaveTimerRef.current) clearTimeout(dailySaveTimerRef.current);
     dailySaveTimerRef.current = setTimeout(() => {
-      try {
-        saveDailyGame({
-          difficulty, grid,
-          notes: serializeNotes(notes),
-          cellErrors: serializeCellErrors(cellErrors),
-          puzzle, solution,
-          mistakes: mistakesRef.current, hintsLeft: hintsLeftRef.current, seconds: secondsRef.current,
-          dateKey: gameDateKey,
-          isCatchup,
-        });
-      } catch (e) { console.warn("saveDailyGame failed", e); }
+      dailyFlushSaveRef.current?.();
     }, SAVE_DEBOUNCE_MS);
     return () => { if (dailySaveTimerRef.current) clearTimeout(dailySaveTimerRef.current); };
   }, [grid, notes, mistakes]);
+
+  // Pour le défi quotidien, useGameState ne traite pas AppState (flushSave skip si isDaily).
+  // On gère ici le passage en arrière-plan pour flush immédiatement.
+  React.useEffect(() => {
+    if (!isDaily) return;
+    const handler = (state: AppStateStatus) => {
+      if (state === "background" || state === "inactive") {
+        dailyFlushSaveRef.current?.();
+      }
+    };
+    const sub = AppState.addEventListener("change", handler);
+    return () => sub.remove();
+  }, [isDaily]);
 
   React.useEffect(() => {
     if (completed) {
@@ -345,7 +366,8 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
             // Pour les rattrapages, on ne crée pas de record : le jour reste "non joué"
             saveDailyRecord({ dateKey: gameDateKey, seconds: secondsRef.current, mistakes: mistakesRef.current, hints: hintsPerGame - hintsLeftRef.current, completed: false }).catch(() => {});
           }
-          flushSave();
+          if (isDaily) dailyFlushSaveRef.current?.();
+          else         flushSave();
           onBackToHome();
         }} style={[styles.backBtn, { borderColor: colors.borderBox }]} activeOpacity={0.7}>
         <Text style={[styles.chevron, { color: colors.textPrimary }]}>‹</Text>

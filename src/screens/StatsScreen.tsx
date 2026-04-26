@@ -18,15 +18,6 @@ const LEVELS = [
   { key: "diabolical" as const },
 ];
 
-function getResultLabels(t: (k: string) => string, colors: ColorTheme): Record<string, { label: string; color: string }> {
-  return {
-    win:         { label: t("stats.result_win"),    color: colors.success },
-    "daily-win": { label: t("stats.result_daily"),  color: colors.gold },
-    failed:      { label: t("stats.result_failed"), color: colors.error },
-    ongoing:     { label: t("stats.result_ongoing"),color: colors.gold },
-  };
-}
-
 function TableTitle({ label, colors }: { label: string; colors: ColorTheme }) {
   return (
     <View style={tbl.titleRow}>
@@ -36,7 +27,7 @@ function TableTitle({ label, colors }: { label: string; colors: ColorTheme }) {
 }
 
 export default function StatsScreen({ onBack }: Props) {
-  const { colors, settings, t } = useSettings();
+  const { colors, t } = useSettings();
   const { isTablet } = useResponsive();
   const [stats,   setStats]   = useState<AllStats | null>(null);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
@@ -47,7 +38,6 @@ export default function StatsScreen({ onBack }: Props) {
   }, []);
 
   const isDark = colors.isDark;
-  const RESULT_LABELS = getResultLabels(t, colors);
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.bg }]}>
@@ -192,7 +182,6 @@ export default function StatsScreen({ onBack }: Props) {
   );
 }
 
-// Tous les StyleSheet utilisent COLORS (statique) — jamais colors (runtime)
 const tbl = StyleSheet.create({
   table:    { width: "100%" },
   titleRow: { width: "100%", paddingVertical: 10, alignItems: "center" },

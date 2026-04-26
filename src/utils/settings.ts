@@ -1,7 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export interface AppSettings {
-  darkMode:           boolean;  // @deprecated — conservé pour migration
   theme:              string;   // ThemeKey: classic | dark | gruvbox-light | gruvbox-dark | ocean | forest
   highlightIdentical: boolean;  // surligner les chiffres identiques
   highlightGroup:     boolean;  // surligner ligne/colonne/bloc
@@ -20,8 +19,13 @@ export interface AppSettings {
   testModeEnabled:    boolean;  // afficher le bouton T (mode Test/Hypothèse)
 }
 
+// Pour la migration darkMode → theme : ancien schéma encore présent dans le storage
+// des utilisateurs sortis avant l'ajout des thèmes. Voir SettingsContext.
+export interface LegacyAppSettings extends AppSettings {
+  darkMode?: boolean;
+}
+
 export const DEFAULT_SETTINGS: AppSettings = {
-  darkMode:           false,
   theme:              "classic",
   highlightIdentical: true,
   highlightGroup:     true,
@@ -42,7 +46,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
 
 const KEY = "app_settings";
 
-export async function loadSettings(): Promise<AppSettings> {
+export async function loadSettings(): Promise<LegacyAppSettings> {
   try {
     const raw = await AsyncStorage.getItem(KEY);
     if (!raw) return DEFAULT_SETTINGS;

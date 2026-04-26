@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import {
   View, Text, TouchableOpacity, StyleSheet,
-  StatusBar, ScrollView, Animated, LayoutAnimation, Platform, Modal,
+  StatusBar, ScrollView, Animated, Platform, Modal,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS } from "../utils/theme";
-import { loadTodayRecord, getTodayKey } from "../utils/dailyChallenge";
+import { loadTodayRecord } from "../utils/dailyChallenge";
 import { useSettings } from "../context/SettingsContext";
 import { useResponsive } from "../hooks/useResponsive";
 import { Ionicons } from "@expo/vector-icons";
@@ -34,8 +34,8 @@ interface Props {
 }
 
 export default function HomeScreen({ initialDifficulty, onStart, onResume, onStats, onSettings, onDaily, onInfo, onRules, onDifficultyChange }: Props) {
-  const { colors, settings, t } = useSettings();
-  const { scale, isTablet } = useResponsive();
+  const { colors, t } = useSettings();
+  const { isTablet } = useResponsive();
   const [selected,    setSelected]    = useState<Difficulty>(initialDifficulty);
   const [dailyDone,   setDailyDone]   = useState(false);
   const [savedGame,   setSavedGame]   = useState<SavedGame | null>(null);

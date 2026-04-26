@@ -81,7 +81,7 @@ export default function HintModal({ hint, onApply, onDismiss }: Props) {
             style={[styles.btnPrimary, { backgroundColor: colors.hintColor }]}
             activeOpacity={0.7}
           >
-            <Text style={styles.btnPrimaryText}>
+            <Text style={[styles.btnPrimaryText, { color: colors.bg }]}>
               {t('hint.reveal')}
             </Text>
           </TouchableOpacity>
@@ -147,6 +147,5 @@ const styles = StyleSheet.create({
     fontSize:      12,
     fontWeight:    "800",
     letterSpacing: 2,
-    color:         "#1A1A1A",
   },
 });
