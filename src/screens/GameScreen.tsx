@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import {
   View, Text, TouchableOpacity, StyleSheet, Platform,
-  StatusBar, Animated, AppState, type AppStateStatus,
+  StatusBar, Animated, AppState, type AppStateStatus, Modal,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useGameState } from "../hooks/useGameState";
@@ -207,6 +207,13 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
   const [defeatPending, setDefeatPending] = React.useState(false);
   const [defeatReady,   setDefeatReady]   = React.useState(false);
   const [defeatStats,   setDefeatStats]   = React.useState<{ seconds: number; mistakes: number; hintsUsed: number } | null>(null);
+  const [showRestartConfirm, setShowRestartConfirm] = React.useState(false);
+
+  const doRestart = React.useCallback(() => {
+    setPaused(false);
+    setBlitzNumber(null);
+    newGame();
+  }, [setPaused, newGame]);
 
   // Navigation au clavier : flèches directionnelles
   const handleArrow = React.useCallback((dir: "up" | "down" | "left" | "right") => {
@@ -553,7 +560,7 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
       )}
       {!isDaily && (
         <TouchableOpacity
-          onPress={() => { setPaused(false); setBlitzNumber(null); newGame(); }}
+          onPress={() => setShowRestartConfirm(true)}
           style={[styles.pausedBtn, { borderColor: colors.borderBox }]}
           activeOpacity={0.7}
         >
@@ -648,6 +655,32 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         onReplay={() => { setDefeatPending(false); setDefeatReady(false); setDefeatStats(null); setBlitzNumber(null); newGame(); }}
         onHome={onBackToHome}
       />
+
+      {/* Confirmation de redémarrage — réutilise les clés home.confirm_* du menu */}
+      <Modal visible={showRestartConfirm} transparent animationType="fade">
+        <View style={[restartStyles.overlay, { backgroundColor: colors.overlay }]}>
+          <View style={[restartStyles.card, { backgroundColor: colors.bg, borderColor: colors.borderBox }]}>
+            <Text style={[restartStyles.title, { color: colors.textPrimary }]}>{t("home.confirm_title")}</Text>
+            <Text style={[restartStyles.message, { color: colors.textSecondary }]}>{t("home.confirm_message")}</Text>
+            <View style={restartStyles.btnRow}>
+              <TouchableOpacity
+                onPress={() => setShowRestartConfirm(false)}
+                style={[restartStyles.btn, { borderColor: colors.borderThin }]}
+                activeOpacity={0.7}
+              >
+                <Text style={[restartStyles.btnText, { color: colors.textSecondary }]}>{t("home.confirm_cancel")}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => { setShowRestartConfirm(false); doRestart(); }}
+                style={[restartStyles.btn, { backgroundColor: colors.bgCellSelected, borderColor: colors.borderBox }]}
+                activeOpacity={0.7}
+              >
+                <Text style={[restartStyles.btnText, { color: colors.textOnSelected }]}>{t("home.confirm_ok")}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       {/* Overlay jeu libre : grille remplie mais cases erronées */}
       {!!freePlayErrors && freePlayErrors.length > 0 && !freePlayOverlayDismissed && (
@@ -834,4 +867,15 @@ const styles = StyleSheet.create({
   freePlayBtnText: {
     fontSize: 12, fontWeight: "700", letterSpacing: 2.5,
   },
+});
+
+// Modale de confirmation de redémarrage — calquée sur celle du menu principal
+const restartStyles = StyleSheet.create({
+  overlay: { flex: 1, alignItems: "center", justifyContent: "center", padding: 32 },
+  card:    { width: "100%", maxWidth: 400, padding: 24, borderWidth: 1, gap: 16 },
+  title:   { fontSize: 16, fontWeight: "700", letterSpacing: 2, textAlign: "center" },
+  message: { fontSize: 14, lineHeight: 20, textAlign: "center" },
+  btnRow:  { flexDirection: "row", gap: 10 },
+  btn:     { flex: 1, paddingVertical: 14, alignItems: "center", borderWidth: 1.5 },
+  btnText: { fontSize: 13, fontWeight: "700", letterSpacing: 2 },
 });
