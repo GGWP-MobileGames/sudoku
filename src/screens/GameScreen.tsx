@@ -522,46 +522,51 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         >
           <Text style={[styles.pausedText, { color: colors.textPrimary }]}>{t('game.paused_text')}</Text>
           <Text style={[styles.pausedSub, { color: colors.textSecondary }]}>{t('game.paused_sub')}</Text>
-          <View style={styles.pausedActions}>
-            {onSettings && (
-              <TouchableOpacity
-                onPress={(e) => {
-                  e.stopPropagation();
-                  setPaused(false);
-                  // Flush avant navigation : le cleanup de l'auto-save annule
-                  // le setTimeout en attente — sans flush, les coups effectués
-                  // dans les 2 dernières secondes seraient perdus.
-                  if (isDaily) dailyFlushSaveRef.current?.();
-                  else         flushSave();
-                  onSettings();
-                }}
-                style={[styles.pausedBtn, { borderColor: colors.borderBox }]}
-                activeOpacity={0.7}
-              >
-                <Text style={[styles.pausedBtnText, { color: colors.textPrimary }]}>
-                  {t('game.pause_settings')}
-                </Text>
-              </TouchableOpacity>
-            )}
-            {!isDaily && (
-              <TouchableOpacity
-                onPress={(e) => { e.stopPropagation(); setPaused(false); setBlitzNumber(null); newGame(); }}
-                style={[styles.pausedBtn, { borderColor: colors.borderBox }]}
-                activeOpacity={0.7}
-              >
-                <Text style={[styles.pausedBtnText, { color: colors.textPrimary }]}>
-                  {t('game.pause_restart')}
-                </Text>
-              </TouchableOpacity>
-            )}
-          </View>
         </TouchableOpacity>
       )}
     </TouchableOpacity>
   );
 
-  const padBlock = (
-    <TouchableOpacity activeOpacity={1} onPress={e => e.stopPropagation()} style={[styles.padWrapper, (paused || defeatPending) && styles.padHidden]} disabled={paused || defeatPending}>
+  // Actions affichées dans la zone du pavé numérique pendant la pause
+  // (remplacent le NumberPad ; gardent l'utilisateur dans le flux d'interaction
+  // sans superposer un overlay sur la grille).
+  const pausedActionsBlock = (
+    <View style={[styles.padWrapper, styles.pausedActionsRow]}>
+      {onSettings && (
+        <TouchableOpacity
+          onPress={() => {
+            setPaused(false);
+            // Flush avant navigation : le cleanup de l'auto-save annule
+            // le setTimeout en attente — sans flush, les coups effectués
+            // dans les 2 dernières secondes seraient perdus.
+            if (isDaily) dailyFlushSaveRef.current?.();
+            else         flushSave();
+            onSettings();
+          }}
+          style={[styles.pausedBtn, { borderColor: colors.borderBox }]}
+          activeOpacity={0.7}
+        >
+          <Text style={[styles.pausedBtnText, { color: colors.textPrimary }]}>
+            {t('game.pause_settings')}
+          </Text>
+        </TouchableOpacity>
+      )}
+      {!isDaily && (
+        <TouchableOpacity
+          onPress={() => { setPaused(false); setBlitzNumber(null); newGame(); }}
+          style={[styles.pausedBtn, { borderColor: colors.borderBox }]}
+          activeOpacity={0.7}
+        >
+          <Text style={[styles.pausedBtnText, { color: colors.textPrimary }]}>
+            {t('game.pause_restart')}
+          </Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+
+  const padBlock = paused ? pausedActionsBlock : (
+    <TouchableOpacity activeOpacity={1} onPress={e => e.stopPropagation()} style={[styles.padWrapper, defeatPending && styles.padHidden]} disabled={defeatPending}>
       <NumberPad
         onInput={handleInput} onErase={() => handleInput(0)} onHint={useHint}
         hintsLeft={hintsLeft} notesMode={notesMode}
@@ -746,11 +751,12 @@ const styles = StyleSheet.create({
   // Grille avec overlay pause
   gridWrapper: { position: "relative", overflow: "visible" },
 
-  // Bouton Test — ancré en absolu juste au-dessus du bord supérieur droit de la grille
+  // Bouton Test — ancré en absolu juste au-dessus du bord supérieur droit de la grille.
+  // `right: 0` aligne le bord droit du bouton avec le bord droit de la grille.
   hypothesisAnchor: {
     position: "absolute",
     top: -40,   // bouton (34px) + espace (6px) au-dessus du bord supérieur de la grille
-    right: 8,
+    right: 0,
     zIndex: 10,
   },
   // Bouton "Retirer les erreurs" — miroir à gauche du bouton Test
@@ -779,18 +785,22 @@ const styles = StyleSheet.create({
   },
   pausedText: { fontSize: 22, fontWeight: "800", letterSpacing: 8 },
   pausedSub:  { fontSize: 12, letterSpacing: 1 },
-  pausedActions: {
-    marginTop: 24,
+  // Boutons d'actions affichés à la place du pavé numérique pendant la pause
+  pausedActionsRow: {
     flexDirection: "row",
+    justifyContent: "center",
     gap: 10,
+    paddingHorizontal: 16,
   },
   pausedBtn: {
-    paddingVertical: 10,
-    paddingHorizontal: 18,
+    flex: 1,
+    paddingVertical: 14,
     borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
   pausedBtnText: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: "700",
     letterSpacing: 2,
   },
