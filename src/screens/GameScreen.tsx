@@ -491,8 +491,10 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
         </View>
       )}
 
-      {/* Bouton Test — ancré juste au-dessus du coin supérieur droit de la grille */}
-      {!completed && !defeatPending && settings.testModeEnabled && (
+      {/* Bouton Test — ancré juste au-dessus du coin supérieur droit de la grille.
+          Caché pendant la pause ; le state hypothesisMode est conservé dans
+          useGameState et le bouton réapparaît dans l'état où il était à la reprise. */}
+      {!completed && !defeatPending && !paused && settings.testModeEnabled && (
         <View style={styles.hypothesisAnchor} pointerEvents="box-none">
           {hypothesisMode ? (
             <View style={{ flexDirection: "row", gap: 6 }}>
@@ -539,60 +541,66 @@ export default function GameScreen({ difficulty, savedGame, prebuilt, isDaily, d
     </TouchableOpacity>
   );
 
-  // Actions affichées dans la zone du pavé numérique pendant la pause
-  // (remplacent le NumberPad ; gardent l'utilisateur dans le flux d'interaction
-  // sans superposer un overlay sur la grille).
-  const pausedActionsBlock = (
-    <View style={[styles.padWrapper, styles.pausedActionsRow]}>
-      {onSettings && (
-        <TouchableOpacity
-          onPress={() => {
-            setPaused(false);
-            // Flush avant navigation : le cleanup de l'auto-save annule
-            // le setTimeout en attente — sans flush, les coups effectués
-            // dans les 2 dernières secondes seraient perdus.
-            if (isDaily) dailyFlushSaveRef.current?.();
-            else         flushSave();
-            onSettings();
-          }}
-          style={[styles.pausedBtn, { borderColor: colors.borderBox }]}
-          activeOpacity={0.7}
-        >
-          <Text style={[styles.pausedBtnText, { color: colors.textPrimary }]}>
-            {t('game.pause_settings')}
-          </Text>
-        </TouchableOpacity>
-      )}
-      {!isDaily && (
-        <TouchableOpacity
-          onPress={() => setShowRestartConfirm(true)}
-          style={[styles.pausedBtn, { borderColor: colors.borderBox }]}
-          activeOpacity={0.7}
-        >
-          <Text style={[styles.pausedBtnText, { color: colors.textPrimary }]}>
-            {t('game.pause_restart')}
-          </Text>
-        </TouchableOpacity>
+  // Le NumberPad est toujours rendu pour conserver la hauteur du layout stable
+  // (sinon `space-evenly` redistribue les éléments quand on passe en pause).
+  // Pendant la pause, on superpose un overlay absolu avec les boutons d'action.
+  const padBlock = (
+    <View style={styles.padWrapper}>
+      <View
+        style={(paused || defeatPending) ? styles.padHidden : undefined}
+        pointerEvents={(paused || defeatPending) ? "none" : "auto"}
+      >
+        <NumberPad
+          onInput={handleInput} onErase={() => handleInput(0)} onHint={useHint}
+          hintsLeft={hintsLeft} notesMode={notesMode}
+          onToggleNotes={() => setNotesMode(prev => !prev)}
+          onLongPressNotes={settings.autoNotesEnabled ? autoFillNotes : undefined}
+          grid={grid}
+          compact={isCompact}
+          blitzMode={settings.blitzMode}
+          blitzNumber={blitzNumber}
+          onSelectBlitzNumber={setBlitzNumber}
+          canUndo={canUndo}
+          onUndo={undo}
+        />
+      </View>
+      {paused && (
+        <View style={styles.pausedActionsOverlay}>
+          <View style={styles.pausedActionsRow}>
+            {onSettings && (
+              <TouchableOpacity
+                onPress={() => {
+                  setPaused(false);
+                  // Flush avant navigation : le cleanup de l'auto-save annule
+                  // le setTimeout en attente — sans flush, les coups effectués
+                  // dans les 2 dernières secondes seraient perdus.
+                  if (isDaily) dailyFlushSaveRef.current?.();
+                  else         flushSave();
+                  onSettings();
+                }}
+                style={[styles.pausedBtn, { borderColor: colors.borderBox }]}
+                activeOpacity={0.7}
+              >
+                <Text style={[styles.pausedBtnText, { color: colors.textPrimary }]}>
+                  {t('game.pause_settings')}
+                </Text>
+              </TouchableOpacity>
+            )}
+            {!isDaily && (
+              <TouchableOpacity
+                onPress={() => setShowRestartConfirm(true)}
+                style={[styles.pausedBtn, { borderColor: colors.borderBox }]}
+                activeOpacity={0.7}
+              >
+                <Text style={[styles.pausedBtnText, { color: colors.textPrimary }]}>
+                  {t('game.pause_restart')}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
       )}
     </View>
-  );
-
-  const padBlock = paused ? pausedActionsBlock : (
-    <TouchableOpacity activeOpacity={1} onPress={e => e.stopPropagation()} style={[styles.padWrapper, defeatPending && styles.padHidden]} disabled={defeatPending}>
-      <NumberPad
-        onInput={handleInput} onErase={() => handleInput(0)} onHint={useHint}
-        hintsLeft={hintsLeft} notesMode={notesMode}
-        onToggleNotes={() => setNotesMode(prev => !prev)}
-        onLongPressNotes={settings.autoNotesEnabled ? autoFillNotes : undefined}
-        grid={grid}
-        compact={isCompact}
-        blitzMode={settings.blitzMode}
-        blitzNumber={blitzNumber}
-        onSelectBlitzNumber={setBlitzNumber}
-        canUndo={canUndo}
-        onUndo={undo}
-      />
-    </TouchableOpacity>
   );
 
   return (
@@ -823,12 +831,19 @@ const styles = StyleSheet.create({
   },
   pausedText: { fontSize: 22, fontWeight: "800", letterSpacing: 8 },
   pausedSub:  { fontSize: 12, letterSpacing: 1 },
-  // Boutons d'actions affichés à la place du pavé numérique pendant la pause
+  // Overlay couvrant la zone du pavé numérique pendant la pause — superposé
+  // au NumberPad (gardé en place pour préserver la hauteur du layout).
+  pausedActionsOverlay: {
+    position: "absolute",
+    top: 0, left: 0, right: 0, bottom: 0,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   pausedActionsRow: {
     flexDirection: "row",
-    justifyContent: "center",
     gap: 10,
     paddingHorizontal: 16,
+    width: "100%",
   },
   pausedBtn: {
     flex: 1,
@@ -844,7 +859,7 @@ const styles = StyleSheet.create({
   },
 
   // Pavé masqué (mais toujours dans le layout)
-  padWrapper: { width: "100%" },
+  padWrapper: { width: "100%", position: "relative" },
   padHidden:  { opacity: 0 },
 
   // Overlay jeu libre
