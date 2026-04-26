@@ -183,14 +183,18 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
   }, [difficulty]);
 
   // ── Timer ───────────────────────────────────────────────────────────────────
+  // Note : `defeated` est déclaré plus bas mais référencé ici via la closure du
+  // re-render — quand mistakes franchit maxErrors, le re-render rejoue cet
+  // effet avec la nouvelle valeur de `defeated`.
+  const defeated = !!(init.limitErrors && !init.freePlayMode && mistakes >= (init.maxErrors ?? 3));
   useEffect(() => {
-    if (paused || completed || !grid.length) {
+    if (paused || completed || defeated || !grid.length) {
       if (timerRef.current) clearInterval(timerRef.current);
       return;
     }
     timerRef.current = setInterval(() => setSeconds(s => s + 1), 1000);
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [paused, completed, grid.length]);
+  }, [paused, completed, defeated, grid.length]);
 
   // ── Pause automatique en arrière-plan + flush save ───────────────────────────
   const flushSaveRef = useRef<(() => void) | null>(null);
@@ -214,7 +218,6 @@ export function useGameState(difficulty: Difficulty, init: GameInit = {}) {
   }, [completed, grid.length]);
 
   // ── Sauvegarde auto (debounced, pas à chaque tick du timer) ─────────────────
-  const defeated = !!(init.limitErrors && !init.freePlayMode && mistakes >= (init.maxErrors ?? 3));
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
     if (!grid.length || !puzzle.length || completed || defeated || init.isDaily) return;
